@@ -1,0 +1,2690 @@
+= 
+
+
+Table of Contents
+
+. <<articles,Create an article.>>
+. <<authentications,Create a user session.>>
+. <<experiments/test,test API.>>
+. <<locations,Create an location.>>
+. <<oauth,Retrieve oauth connections.>>
+. <<roles,Create a role.>>
+. <<upload/articles,upload images to storage. And sync article data. Request should contain multipart form data.>>
+. <<upload/files,Create a file.>>
+. <<upload/images,upload images to storage. Request should contain multipart form data.>>
+. <<user,Retrieve the current user.>>
+. <<users,Create a user.>>
+
+[[articles]]
+== [red,white-background]#articles#
+
+[width="60%",options="header"]
+|==========
+|Specification |Value 
+|Resource Path |/articles 
+|API Version |1.0.0 
+|BasePath for the API |http://127.0.0.1:3000 
+|Consumes |application/json 
+|Produces | 
+|==========
+
+
+=== Operations
+
+
+[width="60%",options="header"]
+|==========
+|Resource Path |Operation |Description 
+|/articles |<<createArticle,POST>> |Create an article. 
+|/articles |<<retrieveArticles,GET>> |Retrieve article array. 
+|/articles/\{id\} |<<retrieveArticle,GET>> |Retrieve an article. 
+|/articles/\{id\} |<<updateArticle,PUT>> |Update an article. 
+|/articles/\{id\} |<<deleteArticle,DELETE>> |Delete an article. 
+|/articles/comments |<<createCommentOnArticle,POST>> |Create a comment on an article. 
+|/articles/\{id\}/comments |<<retrieveCommentsOnArticle,GET>> |Retrieve comments on an article. 
+|/articles/\{id\}/comments/\{commentId\} |<<updateCommentOnArticle,PUT>> |Update a comment on article. 
+|/articles/\{id\}/comments/\{commentId\} |<<deleteCommentOnArticle,DELETE>> |Delete a comment on article. 
+|/articles/likings |<<createLikingOnArticle,POST>> |Create a liking on an article. 
+|/articles/\{id\}/likings |<<retrieveLikingsOnArticles,GET>> |Retrieve likings on an article. 
+|/articles/\{id\}/likings/\{likingId\} |<<deleteLikingOnArticle,DELETE>> |Delete a liking on article. 
+|==========
+
+
+
+[[createArticle]]
+==== [black,green-background]#API: /articles (POST)#
+
+
+Create an article.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|title |form |string |Article title. |Yes 
+|url |form |string |Article url. |Yes 
+|content |form |string |Article content. | 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|201 |object |<<github.com.dorajistyle.goyangi.model.Article,Article>> |Created 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Article is not created 
+|==========
+
+
+[[retrieveArticles]]
+==== [black,cyan-background]#API: /articles (GET)#
+
+
+Retrieve article array.
+
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |array |<<github.com.dorajistyle.goyangi.model.Article,Article>> |OK 
+|==========
+
+
+[[retrieveArticle]]
+==== [black,cyan-background]#API: /articles/\{id\} (GET)#
+
+
+Retrieve an article.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|id |path |int |Article Id |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.model.Article,Article>> |OK 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Article is not found 
+|==========
+
+
+[[updateArticle]]
+==== [black,orange-background]#API: /articles/\{id\} (PUT)#
+
+
+Update an article.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|id |path |int |Article Id |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.model.Article,Article>> |OK 
+|400 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Article is not updated 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Article is not found 
+|==========
+
+
+[[deleteArticle]]
+==== [black,cyan-background]#API: /articles/\{id\} (DELETE)#
+
+
+Delete an article.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|id |path |int |Article Id |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Article deleted 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|==========
+
+
+[[createCommentOnArticle]]
+==== [black,green-background]#API: /articles/comments (POST)#
+
+
+Create a comment on an article.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|articleId |form |int |Article Id. |Yes 
+|content |form |string |Comment content. |Yes 
+|imageName |form |string |Article image name. |Yes 
+|description |form |string |Article description. | 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|201 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Comment created 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|403 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |FormUser's Id is not identical with currentUser's Id 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Article is not found 
+|==========
+
+
+[[retrieveCommentsOnArticle]]
+==== [black,cyan-background]#API: /articles/\{id\}/comments (GET)#
+
+
+Retrieve comments on an article.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|articleId |path |int |Article Id |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |array |<<github.com.dorajistyle.goyangi.model.Comment,Comment>> |Retrieve comments successfully 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|==========
+
+
+[[updateCommentOnArticle]]
+==== [black,orange-background]#API: /articles/\{id\}/comments/\{commentId\} (PUT)#
+
+
+Update a comment on article.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|articleId |path |int |Article Id |Yes 
+|id |path |int |Comment Id |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.model.Comment,Comment>> |Comment updated successfully 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|403 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |FormUser's Id is not identical with currentUser's Id 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Comment is not updated 
+|==========
+
+
+[[deleteCommentOnArticle]]
+==== [black,cyan-background]#API: /articles/\{id\}/comments/\{commentId\} (DELETE)#
+
+
+Delete a comment on article.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|articleId |path |int |Article Id |Yes 
+|id |path |int |Comment Id |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Comment is deleted successfully 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|403 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |FormUser's Id is not identical with currentUser's Id 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Comment is not deleted 
+|==========
+
+
+[[createLikingOnArticle]]
+==== [black,green-background]#API: /articles/likings (POST)#
+
+
+Create a liking on an article.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|articleId |form |int |Article Id. |Yes 
+|content |form |string |Liking content. |Yes 
+|imageName |form |string |Article image name. |Yes 
+|description |form |string |Article description. | 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|201 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Liking created 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|403 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |FormUser's Id is not identical with currentUser's Id 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Article is not found 
+|==========
+
+
+[[retrieveLikingsOnArticles]]
+==== [black,cyan-background]#API: /articles/\{id\}/likings (GET)#
+
+
+Retrieve likings on an article.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|articleId |path |int |Article Id |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |array |<<github.com.dorajistyle.goyangi.model.PublicUser,PublicUser>> |OK 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|==========
+
+
+[[deleteLikingOnArticle]]
+==== [black,cyan-background]#API: /articles/\{id\}/likings/\{likingId\} (DELETE)#
+
+
+Delete a liking on article.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|articleId |path |int |Article Id |Yes 
+|id |path |int |Liking Id |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Liking is deleted successfully 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|403 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |FormUser's Id is not identical with currentUser's Id 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Liking is not deleted 
+|==========
+
+
+
+=== Models
+
+[[github.com.dorajistyle.goyangi.api.response.BasicResponse]]
+==== [orange,white-background]#BasicResponse#
+
+[width="60%",options="header"]
+|==========
+|Field Name (alphabetical) |Field Type |Description 
+|message |string | 
+|messageType |string | 
+|status |int | 
+|==========
+
+[[github.com.dorajistyle.goyangi.model.Article]]
+==== [orange,white-background]#Article#
+
+[width="60%",options="header"]
+|==========
+|Field Name (alphabetical) |Field Type |Description 
+|Comments |array | 
+|Likings |array | 
+|active |bool | 
+|author |interface | 
+|categoryId |int | 
+|commentCount |int | 
+|commentList |interface | 
+|content |string | 
+|createdAt |Time | 
+|deletedAt |Time | 
+|id |int64 | 
+|imageName |string | 
+|likingCount |int | 
+|likingList |interface | 
+|nextId |int64 | 
+|prevId |int64 | 
+|referralId |int64 | 
+|referralUserId |int64 | 
+|sharingCount |int | 
+|thumbnailName |string | 
+|title |string | 
+|updatedAt |Time | 
+|url |string | 
+|userId |int64 | 
+|==========
+
+[[github.com.dorajistyle.goyangi.model.Comment]]
+==== [orange,white-background]#Comment#
+
+[width="60%",options="header"]
+|==========
+|Field Name (alphabetical) |Field Type |Description 
+|content |string | 
+|createdAt |Time | 
+|deletedAt |Time | 
+|id |int64 | 
+|likingCount |int | 
+|updatedAt |Time | 
+|user |interface | 
+|userId |int64 | 
+|==========
+
+[[github.com.dorajistyle.goyangi.model.PublicUser]]
+==== [orange,white-background]#PublicUser#
+
+[width="60%",options="header"]
+|==========
+|Field Name (alphabetical) |Field Type |Description 
+|Connections |array | 
+|Languages |array | 
+|Liked |array | 
+|Likings |array | 
+|Roles |array | 
+|activateUntil |omit | 
+|activatedAt |omit | 
+|activation |omit | 
+|activationToken |omit | 
+|articles |omit | 
+|birthday |omit | 
+|connections |omit | 
+|createdAt |Time | 
+|currentLoginAt |omit | 
+|currentLoginIp |omit | 
+|deletedAt |omit | 
+|description |string | 
+|email |omit | 
+|gender |omit | 
+|id |int64 | 
+|languages |omit | 
+|lastLoginAt |omit | 
+|lastLoginIp |omit | 
+|likedCount |int | 
+|likedList |interface | 
+|likingCount |int | 
+|likingList |interface | 
+|md5 |string | 
+|name |omit | 
+|password |omit | 
+|passwordResetToken |omit | 
+|passwordResetUntil |omit | 
+|roles |omit | 
+|token |omit | 
+|tokenExperiation |omit | 
+|updatedAt |omit | 
+|username |string | 
+|==========
+
+
+[[authentications]]
+== [red,white-background]#authentications#
+
+[width="60%",options="header"]
+|==========
+|Specification |Value 
+|Resource Path |/authentications 
+|API Version |1.0.0 
+|BasePath for the API |http://127.0.0.1:3000 
+|Consumes |application/json 
+|Produces | 
+|==========
+
+
+=== Operations
+
+
+[width="60%",options="header"]
+|==========
+|Resource Path |Operation |Description 
+|/authentications |<<createUserAuthentication,POST>> |Create a user session. 
+|/authentications |<<deleteUserAuthentication,DELETE>> |Delete a user session. 
+|==========
+
+
+
+[[createUserAuthentication]]
+==== [black,green-background]#API: /authentications (POST)#
+
+
+Create a user session.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|loginEmail |form |string |User email. |Yes 
+|loginPassword |form |string |User password. |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|201 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |User authentication created 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Password incorrect 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |User is not found 
+|==========
+
+
+[[deleteUserAuthentication]]
+==== [black,cyan-background]#API: /authentications (DELETE)#
+
+
+Delete a user session.
+
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |User logged out successfully 
+|==========
+
+
+
+=== Models
+
+[[github.com.dorajistyle.goyangi.api.response.BasicResponse]]
+==== [orange,white-background]#BasicResponse#
+
+[width="60%",options="header"]
+|==========
+|Field Name (alphabetical) |Field Type |Description 
+|message |string | 
+|messageType |string | 
+|status |int | 
+|==========
+
+
+[[experiments/test]]
+== [red,white-background]#experiments/test#
+
+[width="60%",options="header"]
+|==========
+|Specification |Value 
+|Resource Path |/experiments/test 
+|API Version |1.0.0 
+|BasePath for the API |http://127.0.0.1:3000 
+|Consumes |application/json 
+|Produces | 
+|==========
+
+
+=== Operations
+
+
+[width="60%",options="header"]
+|==========
+|Resource Path |Operation |Description 
+|/experiments |<<test,GET>> |test API. 
+|==========
+
+
+
+[[test]]
+==== [black,cyan-background]#API: /experiments (GET)#
+
+
+test API.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|theString |form |string |The string that required. |Yes 
+|theInt |form |int |The int that optional. | 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |OK 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|==========
+
+
+
+=== Models
+
+[[github.com.dorajistyle.goyangi.api.response.BasicResponse]]
+==== [orange,white-background]#BasicResponse#
+
+[width="60%",options="header"]
+|==========
+|Field Name (alphabetical) |Field Type |Description 
+|message |string | 
+|messageType |string | 
+|status |int | 
+|==========
+
+
+[[locations]]
+== [red,white-background]#locations#
+
+[width="60%",options="header"]
+|==========
+|Specification |Value 
+|Resource Path |/locations 
+|API Version |1.0.0 
+|BasePath for the API |http://127.0.0.1:3000 
+|Consumes |application/json 
+|Produces | 
+|==========
+
+
+=== Operations
+
+
+[width="60%",options="header"]
+|==========
+|Resource Path |Operation |Description 
+|/locations |<<createLocation,POST>> |Create an location. 
+|/locations |<<retrieveLocations,GET>> |Retrieve location array. 
+|/locations/\{id\} |<<retrieveLocation,GET>> |Retrieve an location. 
+|/locations/\{id\} |<<updateLocation,PUT>> |Update an location. 
+|/locations/\{id\} |<<deleteLocation,DELETE>> |Delete an location. 
+|/locations/comments |<<createCommentOnLocation,POST>> |Create a comment on an location. 
+|/locations/\{id\}/comments |<<retrieveCommentsOnLocation,GET>> |Retrieve comments on an location. 
+|/locations/\{id\}/comments/\{commentId\} |<<updateCommentOnLocation,PUT>> |Update a comment on location. 
+|/locations/\{id\}/comments/\{commentId\} |<<deleteCommentOnLocation,DELETE>> |Delete a comment on location. 
+|/locations/likings |<<createLikingOnLocation,POST>> |Create a liking on an location. 
+|/locations/\{id\}/likings |<<retrieveLikingsOnLocations,GET>> |Retrieve likings on an location. 
+|/locations/\{id\}/likings/\{likingId\} |<<deleteLikingOnLocation,DELETE>> |Delete a liking on location. 
+|==========
+
+
+
+[[createLocation]]
+==== [black,green-background]#API: /locations (POST)#
+
+
+Create an location.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|title |form |string |Location title. |Yes 
+|url |form |string |Location url |Yes 
+|latitude |form |int |Location latitude |Yes 
+|longitude |form |int |Location longitude |Yes 
+|content |form |string |Location content | 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|201 |object |<<github.com.dorajistyle.goyangi.model.Location,Location>> |Created 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Location is not created 
+|==========
+
+
+[[retrieveLocations]]
+==== [black,cyan-background]#API: /locations (GET)#
+
+
+Retrieve location array.
+
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |array |<<github.com.dorajistyle.goyangi.model.Location,Location>> |OK 
+|==========
+
+
+[[retrieveLocation]]
+==== [black,cyan-background]#API: /locations/\{id\} (GET)#
+
+
+Retrieve an location.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|id |path |int |Location Id |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.model.Location,Location>> |OK 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Location is not found 
+|==========
+
+
+[[updateLocation]]
+==== [black,orange-background]#API: /locations/\{id\} (PUT)#
+
+
+Update an location.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|id |path |int |Location Id |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.model.Location,Location>> |OK 
+|400 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Location is not updated 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Location is not found 
+|==========
+
+
+[[deleteLocation]]
+==== [black,cyan-background]#API: /locations/\{id\} (DELETE)#
+
+
+Delete an location.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|id |path |int |Location Id |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Location deleted 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|==========
+
+
+[[createCommentOnLocation]]
+==== [black,green-background]#API: /locations/comments (POST)#
+
+
+Create a comment on an location.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|locationId |form |int |Location id. |Yes 
+|content |form |string |Comment content. |Yes 
+|description |form |string |Location description. | 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|201 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Comment created 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|403 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |FormUser's Id is not identical with currentUser's Id 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Location is not found 
+|==========
+
+
+[[retrieveCommentsOnLocation]]
+==== [black,cyan-background]#API: /locations/\{id\}/comments (GET)#
+
+
+Retrieve comments on an location.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|locationId |path |int |Location Id |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.model.Comment,Comment>> |Comment updated successfully 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|403 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |FormUser's Id is not identical with currentUser's Id 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Comment is not updated 
+|==========
+
+
+[[updateCommentOnLocation]]
+==== [black,orange-background]#API: /locations/\{id\}/comments/\{commentId\} (PUT)#
+
+
+Update a comment on location.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|locationId |path |int |Location Id |Yes 
+|id |path |int |Comment Id |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.model.Comment,Comment>> |Comment updated successfully 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|403 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |FormUser's Id is not identical with currentUser's Id 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Comment is not updated 
+|==========
+
+
+[[deleteCommentOnLocation]]
+==== [black,cyan-background]#API: /locations/\{id\}/comments/\{commentId\} (DELETE)#
+
+
+Delete a comment on location.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|locationId |path |int |Location Id |Yes 
+|id |path |int |Comment Id |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Comment is deleted successfully 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|403 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |FormUser's Id is not identical with currentUser's Id 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Comment is not deleted 
+|==========
+
+
+[[createLikingOnLocation]]
+==== [black,green-background]#API: /locations/likings (POST)#
+
+
+Create a liking on an location.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|locationId |form |int |Location id. |Yes 
+|content |form |string |Liking content. |Yes 
+|imageName |form |string |Location image name. |Yes 
+|description |form |string |Location description. | 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|201 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Liking created 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|403 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |FormUser's Id is not identical with currentUser's Id 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Location is not found 
+|==========
+
+
+[[retrieveLikingsOnLocations]]
+==== [black,cyan-background]#API: /locations/\{id\}/likings (GET)#
+
+
+Retrieve likings on an location.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|locationId |path |int |Location Id |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |array |<<github.com.dorajistyle.goyangi.model.PublicUser,PublicUser>> |OK 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|==========
+
+
+[[deleteLikingOnLocation]]
+==== [black,cyan-background]#API: /locations/\{id\}/likings/\{likingId\} (DELETE)#
+
+
+Delete a liking on location.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|locationId |path |int |Location Id |Yes 
+|id |path |int |Liking Id |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Liking is deleted successfully 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|403 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |FormUser's Id is not identical with currentUser's Id 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Liking is not deleted 
+|==========
+
+
+
+=== Models
+
+[[github.com.dorajistyle.goyangi.api.response.BasicResponse]]
+==== [orange,white-background]#BasicResponse#
+
+[width="60%",options="header"]
+|==========
+|Field Name (alphabetical) |Field Type |Description 
+|message |string | 
+|messageType |string | 
+|status |int | 
+|==========
+
+[[github.com.dorajistyle.goyangi.model.Comment]]
+==== [orange,white-background]#Comment#
+
+[width="60%",options="header"]
+|==========
+|Field Name (alphabetical) |Field Type |Description 
+|content |string | 
+|createdAt |Time | 
+|deletedAt |Time | 
+|id |int64 | 
+|likingCount |int | 
+|updatedAt |Time | 
+|user |interface | 
+|userId |int64 | 
+|==========
+
+[[github.com.dorajistyle.goyangi.model.Location]]
+==== [orange,white-background]#Location#
+
+[width="60%",options="header"]
+|==========
+|Field Name (alphabetical) |Field Type |Description 
+|Comments |array | 
+|Likings |array | 
+|active |bool | 
+|address |string | 
+|author |interface | 
+|commentCount |int | 
+|commentList |interface | 
+|content |string | 
+|createdAt |Time | 
+|deletedAt |Time | 
+|id |int64 | 
+|latitude |float64 | 
+|likingCount |int | 
+|likingList |interface | 
+|longitude |float64 | 
+|name |string | 
+|nextId |int64 | 
+|prevId |int64 | 
+|referralId |int64 | 
+|referralUserId |int64 | 
+|sharingCount |int | 
+|type |string | 
+|updatedAt |Time | 
+|url |string | 
+|userId |int64 | 
+|==========
+
+[[github.com.dorajistyle.goyangi.model.PublicUser]]
+==== [orange,white-background]#PublicUser#
+
+[width="60%",options="header"]
+|==========
+|Field Name (alphabetical) |Field Type |Description 
+|Connections |array | 
+|Languages |array | 
+|Liked |array | 
+|Likings |array | 
+|Roles |array | 
+|activateUntil |omit | 
+|activatedAt |omit | 
+|activation |omit | 
+|activationToken |omit | 
+|articles |omit | 
+|birthday |omit | 
+|connections |omit | 
+|createdAt |Time | 
+|currentLoginAt |omit | 
+|currentLoginIp |omit | 
+|deletedAt |omit | 
+|description |string | 
+|email |omit | 
+|gender |omit | 
+|id |int64 | 
+|languages |omit | 
+|lastLoginAt |omit | 
+|lastLoginIp |omit | 
+|likedCount |int | 
+|likedList |interface | 
+|likingCount |int | 
+|likingList |interface | 
+|md5 |string | 
+|name |omit | 
+|password |omit | 
+|passwordResetToken |omit | 
+|passwordResetUntil |omit | 
+|roles |omit | 
+|token |omit | 
+|tokenExperiation |omit | 
+|updatedAt |omit | 
+|username |string | 
+|==========
+
+
+[[oauth]]
+== [red,white-background]#oauth#
+
+[width="60%",options="header"]
+|==========
+|Specification |Value 
+|Resource Path |/oauth 
+|API Version |1.0.0 
+|BasePath for the API |http://127.0.0.1:3000 
+|Consumes |application/json 
+|Produces | 
+|==========
+
+
+=== Operations
+
+
+[width="60%",options="header"]
+|==========
+|Resource Path |Operation |Description 
+|/oauth |<<retrieveOauthStatus,GET>> |Retrieve oauth connections. 
+|/oauth/google |<<googleAuth,GET>> |Get google oauth url. 
+|/oauth/google |<<googleRevoke,DELETE>> |Get google oauth url. 
+|/oauth/google/redirect |<<googleRedirect,GET>> |Redirect from Google oauth. 
+|/oauth/github |<<githubAuth,GET>> |Get github oauth url. 
+|/oauth/github |<<githubRevoke,DELETE>> |Get github oauth url. 
+|/oauth/github/redirect |<<githubRedirect,GET>> |Redirect from Github oauth. 
+|/oauth/facebook |<<facebookAuth,GET>> |Get facebook oauth url. 
+|/oauth/facebook |<<facebookRevoke,DELETE>> |Get facebook oauth url. 
+|/oauth/facebook/redirect |<<facebookRedirect,GET>> |Redirect from Facebook oauth. 
+|/oauth/linkedin |<<linkedinAuth,GET>> |Get linkedin oauth url. 
+|/oauth/linkedin |<<linkedinRevoke,DELETE>> |Get linkedin oauth url. 
+|/oauth/linkedin/redirect |<<linkedinRedirect,GET>> |Redirect from Linkedin oauth. 
+|==========
+
+
+
+[[retrieveOauthStatus]]
+==== [black,cyan-background]#API: /oauth (GET)#
+
+
+Retrieve oauth connections.
+
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |array |<<github.com.dorajistyle.goyangi.service.oauthService.oauthStatusMap,oauthStatusMap>> |OK 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|==========
+
+
+[[googleAuth]]
+==== [black,cyan-background]#API: /oauth/google (GET)#
+
+
+Get google oauth url.
+
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.gin-gonic.gin.H,H>> |OauthURL retrieved 
+|==========
+
+
+[[googleRevoke]]
+==== [black,cyan-background]#API: /oauth/google (DELETE)#
+
+
+Get google oauth url.
+
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.gin-gonic.gin.H,H>> |Revoked 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Connection is not found 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Connection not revoked from user 
+|==========
+
+
+[[googleRedirect]]
+==== [black,cyan-background]#API: /oauth/google/redirect (GET)#
+
+
+Redirect from Google oauth.
+
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|303 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Connection linked. 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |User is not found 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Connection not linked 
+|==========
+
+
+[[githubAuth]]
+==== [black,cyan-background]#API: /oauth/github (GET)#
+
+
+Get github oauth url.
+
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.gin-gonic.gin.H,H>> |{url: oauthURL} 
+|==========
+
+
+[[githubRevoke]]
+==== [black,cyan-background]#API: /oauth/github (DELETE)#
+
+
+Get github oauth url.
+
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.gin-gonic.gin.H,H>> |Revoked 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Connection is not found 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Connection not revoked from user 
+|==========
+
+
+[[githubRedirect]]
+==== [black,cyan-background]#API: /oauth/github/redirect (GET)#
+
+
+Redirect from Github oauth.
+
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|303 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Connection linked. 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |User is not found 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Connection not linked 
+|==========
+
+
+[[facebookAuth]]
+==== [black,cyan-background]#API: /oauth/facebook (GET)#
+
+
+Get facebook oauth url.
+
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.gin-gonic.gin.H,H>> |{url: oauthURL} 
+|==========
+
+
+[[facebookRevoke]]
+==== [black,cyan-background]#API: /oauth/facebook (DELETE)#
+
+
+Get facebook oauth url.
+
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.gin-gonic.gin.H,H>> |Revoked 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Connection is not found 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Connection not revoked from user 
+|==========
+
+
+[[facebookRedirect]]
+==== [black,cyan-background]#API: /oauth/facebook/redirect (GET)#
+
+
+Redirect from Facebook oauth.
+
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|303 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Connection linked. 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |User is not found 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Connection not linked 
+|==========
+
+
+[[linkedinAuth]]
+==== [black,cyan-background]#API: /oauth/linkedin (GET)#
+
+
+Get linkedin oauth url.
+
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.gin-gonic.gin.H,H>> |{url: oauthURL} 
+|==========
+
+
+[[linkedinRevoke]]
+==== [black,cyan-background]#API: /oauth/linkedin (DELETE)#
+
+
+Get linkedin oauth url.
+
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.gin-gonic.gin.H,H>> |Revoked 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Connection is not found 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Connection not revoked from user 
+|==========
+
+
+[[linkedinRedirect]]
+==== [black,cyan-background]#API: /oauth/linkedin/redirect (GET)#
+
+
+Redirect from Linkedin oauth.
+
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|303 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Connection linked. 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |User is not found 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Connection not linked 
+|==========
+
+
+
+=== Models
+
+[[github.com.dorajistyle.goyangi.api.response.BasicResponse]]
+==== [orange,white-background]#BasicResponse#
+
+[width="60%",options="header"]
+|==========
+|Field Name (alphabetical) |Field Type |Description 
+|message |string | 
+|messageType |string | 
+|status |int | 
+|==========
+
+[[github.com.dorajistyle.goyangi.service.oauthService.oauthStatusMap]]
+==== [orange,white-background]#oauthStatusMap#
+
+[width="60%",options="header"]
+|==========
+|Field Name (alphabetical) |Field Type |Description 
+|==========
+
+[[github.com.gin-gonic.gin.H]]
+==== [orange,white-background]#H#
+
+[width="60%",options="header"]
+|==========
+|Field Name (alphabetical) |Field Type |Description 
+|==========
+
+
+[[roles]]
+== [red,white-background]#roles#
+
+[width="60%",options="header"]
+|==========
+|Specification |Value 
+|Resource Path |/roles 
+|API Version |1.0.0 
+|BasePath for the API |http://127.0.0.1:3000 
+|Consumes |application/json 
+|Produces | 
+|==========
+
+
+=== Operations
+
+
+[width="60%",options="header"]
+|==========
+|Resource Path |Operation |Description 
+|/roles |<<createRole,POST>> |Create a role. 
+|/roles |<<retrieveRoles,GET>> |Retrieve role array. 
+|/roles/\{id\} |<<retrieveRole,GET>> |Retrieve a role. 
+|/roles/\{id\} |<<updateRole,PUT>> |Update a role. 
+|/roles/\{id\} |<<deleteRole,DELETE>> |Delete a role. 
+|==========
+
+
+
+[[createRole]]
+==== [black,green-background]#API: /roles (POST)#
+
+
+Create a role.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|name |form |string |Name of Role. |Yes 
+|description |form |string |Description of Role. |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|201 |object |<<github.com.dorajistyle.goyangi.model.Role,Role>> |Created 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Role is not created 
+|==========
+
+
+[[retrieveRoles]]
+==== [black,cyan-background]#API: /roles (GET)#
+
+
+Retrieve role array.
+
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |array |<<github.com.dorajistyle.goyangi.model.Role,Role>> |OK 
+|==========
+
+
+[[retrieveRole]]
+==== [black,cyan-background]#API: /roles/\{id\} (GET)#
+
+
+Retrieve a role.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|id |path |int |Role ID |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.model.Role,Role>> |OK 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|==========
+
+
+[[updateRole]]
+==== [black,orange-background]#API: /roles/\{id\} (PUT)#
+
+
+Update a role.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|id |path |int |Role ID |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.model.Role,Role>> |OK 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Role is not updated 
+|==========
+
+
+[[deleteRole]]
+==== [black,cyan-background]#API: /roles/\{id\} (DELETE)#
+
+
+Delete a role.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|id |path |int |Role ID |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> | 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|==========
+
+
+
+=== Models
+
+[[github.com.dorajistyle.goyangi.api.response.BasicResponse]]
+==== [orange,white-background]#BasicResponse#
+
+[width="60%",options="header"]
+|==========
+|Field Name (alphabetical) |Field Type |Description 
+|message |string | 
+|messageType |string | 
+|status |int | 
+|==========
+
+[[github.com.dorajistyle.goyangi.model.Role]]
+==== [orange,white-background]#Role#
+
+[width="60%",options="header"]
+|==========
+|Field Name (alphabetical) |Field Type |Description 
+|description |string | 
+|id |int64 | 
+|name |string | 
+|==========
+
+
+[[upload/articles]]
+== [red,white-background]#upload/articles#
+
+[width="60%",options="header"]
+|==========
+|Specification |Value 
+|Resource Path |/upload/articles 
+|API Version |1.0.0 
+|BasePath for the API |http://127.0.0.1:3000 
+|Consumes |application/json 
+|Produces | 
+|==========
+
+
+=== Operations
+
+
+[width="60%",options="header"]
+|==========
+|Resource Path |Operation |Description 
+|/upload |<<uploadAndSyncArticles,POST>> |upload images to storage. And sync article data. Request should contain multipart form data. 
+|==========
+
+
+
+[[uploadAndSyncArticles]]
+==== [black,green-background]#API: /upload (POST)#
+
+
+upload images to storage. And sync article data. Request should contain multipart form data.
+
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|201 |object |<<github.com.gin-gonic.gin.H,H>> |Uploaded 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Upload failed 
+|==========
+
+
+
+=== Models
+
+[[github.com.dorajistyle.goyangi.api.response.BasicResponse]]
+==== [orange,white-background]#BasicResponse#
+
+[width="60%",options="header"]
+|==========
+|Field Name (alphabetical) |Field Type |Description 
+|message |string | 
+|messageType |string | 
+|status |int | 
+|==========
+
+[[github.com.gin-gonic.gin.H]]
+==== [orange,white-background]#H#
+
+[width="60%",options="header"]
+|==========
+|Field Name (alphabetical) |Field Type |Description 
+|==========
+
+
+[[upload/files]]
+== [red,white-background]#upload/files#
+
+[width="60%",options="header"]
+|==========
+|Specification |Value 
+|Resource Path |/upload/files 
+|API Version |1.0.0 
+|BasePath for the API |http://127.0.0.1:3000 
+|Consumes |application/json 
+|Produces | 
+|==========
+
+
+=== Operations
+
+
+[width="60%",options="header"]
+|==========
+|Resource Path |Operation |Description 
+|/upload |<<createArticles,POST>> |Create a file. 
+|/upload |<<createFile,POST>> |Create a file. 
+|/upload |<<createFiles,POST>> |Create a file. 
+|/upload |<<retrieveFiles,GET>> |Retrieve file array. 
+|/upload/\{id\} |<<retrieveFile,GET>> |Retrieve a file. 
+|/upload/\{id\} |<<updateFile,PUT>> |Update a file. 
+|/upload/\{id\} |<<deleteFile,DELETE>> |Delete a file. 
+|==========
+
+
+
+[[createArticles]]
+==== [black,green-background]#API: /upload (POST)#
+
+
+Create a file.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|title |form |string |Article title. |Yes 
+|url |form |string |Article url. |Yes 
+|imageName |form |string |Article imagename. |Yes 
+|content |form |string |Article content. | 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|201 |object |<<github.com.dorajistyle.goyangi.model.Article,Article>> |Created 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Article is not created 
+|==========
+
+
+[[createFile]]
+==== [black,green-background]#API: /upload (POST)#
+
+
+Create a file.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|name |form |string |Name of File. |Yes 
+|size |form |int |Description of File. |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|201 |object |<<github.com.dorajistyle.goyangi.model.File,File>> |Created 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |File is not created 
+|==========
+
+
+[[createFiles]]
+==== [black,green-background]#API: /upload (POST)#
+
+
+Create a file.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|name |form |string |Name of File. |Yes 
+|size |form |int |Description of File. |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|201 |object |<<github.com.dorajistyle.goyangi.model.File,File>> |Created 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |File is not created 
+|==========
+
+
+[[retrieveFiles]]
+==== [black,cyan-background]#API: /upload (GET)#
+
+
+Retrieve file array.
+
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |array |<<github.com.dorajistyle.goyangi.model.File,File>> |OK 
+|==========
+
+
+[[retrieveFile]]
+==== [black,cyan-background]#API: /upload/\{id\} (GET)#
+
+
+Retrieve a file.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|id |path |int |File ID |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.model.File,File>> |OK 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|==========
+
+
+[[updateFile]]
+==== [black,orange-background]#API: /upload/\{id\} (PUT)#
+
+
+Update a file.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|id |path |int |File ID |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.model.File,File>> |OK 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |File is not updated 
+|==========
+
+
+[[deleteFile]]
+==== [black,cyan-background]#API: /upload/\{id\} (DELETE)#
+
+
+Delete a file.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|id |path |int |File ID |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> | 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|==========
+
+
+
+=== Models
+
+[[github.com.dorajistyle.goyangi.api.response.BasicResponse]]
+==== [orange,white-background]#BasicResponse#
+
+[width="60%",options="header"]
+|==========
+|Field Name (alphabetical) |Field Type |Description 
+|message |string | 
+|messageType |string | 
+|status |int | 
+|==========
+
+[[github.com.dorajistyle.goyangi.model.Article]]
+==== [orange,white-background]#Article#
+
+[width="60%",options="header"]
+|==========
+|Field Name (alphabetical) |Field Type |Description 
+|Comments |array | 
+|Likings |array | 
+|active |bool | 
+|author |interface | 
+|categoryId |int | 
+|commentCount |int | 
+|commentList |interface | 
+|content |string | 
+|createdAt |Time | 
+|deletedAt |Time | 
+|id |int64 | 
+|imageName |string | 
+|likingCount |int | 
+|likingList |interface | 
+|nextId |int64 | 
+|prevId |int64 | 
+|referralId |int64 | 
+|referralUserId |int64 | 
+|sharingCount |int | 
+|thumbnailName |string | 
+|title |string | 
+|updatedAt |Time | 
+|url |string | 
+|userId |int64 | 
+|==========
+
+[[github.com.dorajistyle.goyangi.model.File]]
+==== [orange,white-background]#File#
+
+[width="60%",options="header"]
+|==========
+|Field Name (alphabetical) |Field Type |Description 
+|createdAt |Time | 
+|id |int64 | 
+|name |string | 
+|size |int | 
+|userId |int64 | 
+|==========
+
+
+[[upload/images]]
+== [red,white-background]#upload/images#
+
+[width="60%",options="header"]
+|==========
+|Specification |Value 
+|Resource Path |/upload/images 
+|API Version |1.0.0 
+|BasePath for the API |http://127.0.0.1:3000 
+|Consumes |application/json 
+|Produces | 
+|==========
+
+
+=== Operations
+
+
+[width="60%",options="header"]
+|==========
+|Resource Path |Operation |Description 
+|/upload |<<uploadImages,POST>> |upload images to storage. Request should contain multipart form data. 
+|==========
+
+
+
+[[uploadImages]]
+==== [black,green-background]#API: /upload (POST)#
+
+
+upload images to storage. Request should contain multipart form data.
+
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|201 |object |<<github.com.gin-gonic.gin.H,H>> |Uploaded 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Upload failed 
+|==========
+
+
+
+=== Models
+
+[[github.com.dorajistyle.goyangi.api.response.BasicResponse]]
+==== [orange,white-background]#BasicResponse#
+
+[width="60%",options="header"]
+|==========
+|Field Name (alphabetical) |Field Type |Description 
+|message |string | 
+|messageType |string | 
+|status |int | 
+|==========
+
+[[github.com.gin-gonic.gin.H]]
+==== [orange,white-background]#H#
+
+[width="60%",options="header"]
+|==========
+|Field Name (alphabetical) |Field Type |Description 
+|==========
+
+
+[[user]]
+== [red,white-background]#user#
+
+[width="60%",options="header"]
+|==========
+|Specification |Value 
+|Resource Path |/user 
+|API Version |1.0.0 
+|BasePath for the API |http://127.0.0.1:3000 
+|Consumes |application/json 
+|Produces | 
+|==========
+
+
+=== Operations
+
+
+[width="60%",options="header"]
+|==========
+|Resource Path |Operation |Description 
+|/user/current |<<retrieveCurrentUser,GET>> |Retrieve the current user. 
+|/user/send/password/reset/token |<<sendPasswordResetToken,POST>> |Create a user session. 
+|/user/reset/password |<<resetPassword,PUT>> |Create a user session. 
+|/user/send/email/verification/token |<<sendEmailVerificationToken,POST>> |Create a user session. 
+|/user/verify/email |<<verifyEmail,PUT>> |Create a user session. 
+|/user/email/\{email\} |<<retrieveUserByEmail,GET>> |Retrieve user by email. 
+|/user/email/\{email\}/list |<<retrieveUsersByEmail,GET>> |Retrieve user array by email. 
+|/user/username/\{username\} |<<retrieveUserByUsername,GET>> |Retrieve user by username. 
+|/user/admin/\{id\} |<<retrieveCurrentUser,GET>> |Retrieve a user for admin. It contains more information than normal query. 
+|/user/admin |<<retrieveUsersForAdmin,GET>> |Retrieve user array for admin. It contains more information than normal query. 
+|/users/\{id\} |<<activateUser,PUT>> |Activate/Deactivate a user. 
+|/user/test/send/email |<<sendTestEmail,GET>> |send a test email. 
+|==========
+
+
+
+[[retrieveCurrentUser]]
+==== [black,cyan-background]#API: /user/current (GET)#
+
+
+Retrieve the current user.
+
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.model.User,User>> |OK 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Liking is not deleted 
+|==========
+
+
+[[sendPasswordResetToken]]
+==== [black,green-background]#API: /user/send/password/reset/token (POST)#
+
+
+Create a user session.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|email |form |string |User email. |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Sent 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Password reset token not sent 
+|==========
+
+
+[[resetPassword]]
+==== [black,orange-background]#API: /user/reset/password (PUT)#
+
+
+Create a user session.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|token |form |string |User password reset token |Yes 
+|newPassword |form |string |New password |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |User password updated 
+|400 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |User password is not updated. 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Password reset token not sent 
+|==========
+
+
+[[sendEmailVerificationToken]]
+==== [black,green-background]#API: /user/send/email/verification/token (POST)#
+
+
+Create a user session.
+
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|201 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Created 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Email verification token not sent 
+|==========
+
+
+[[verifyEmail]]
+==== [black,orange-background]#API: /user/verify/email (PUT)#
+
+
+Create a user session.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|token |form |string |User email validation token |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |User email verified. 
+|400 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |User email not verified. 
+|==========
+
+
+[[retrieveUserByEmail]]
+==== [black,cyan-background]#API: /user/email/\{email\} (GET)#
+
+
+Retrieve user by email.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|email |path |string |User email |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.model.PublicUser,PublicUser>> |OK 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|==========
+
+
+[[retrieveUsersByEmail]]
+==== [black,cyan-background]#API: /user/email/\{email\}/list (GET)#
+
+
+Retrieve user array by email.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|email |path |string |User email |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |array |<<github.com.dorajistyle.goyangi.model.PublicUser,PublicUser>> |OK 
+|==========
+
+
+[[retrieveUserByUsername]]
+==== [black,cyan-background]#API: /user/username/\{username\} (GET)#
+
+
+Retrieve user by username.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|username |path |string |User email |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.model.PublicUser,PublicUser>> |OK 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|==========
+
+
+[[retrieveCurrentUser]]
+==== [black,cyan-background]#API: /user/admin/\{id\} (GET)#
+
+
+Retrieve a user for admin. It contains more information than normal query.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|id |path |int |User ID |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.model.User,User>> |OK 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|==========
+
+
+[[retrieveUsersForAdmin]]
+==== [black,cyan-background]#API: /user/admin (GET)#
+
+
+Retrieve user array for admin. It contains more information than normal query.
+
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |array |<<github.com.dorajistyle.goyangi.model.User,User>> |OK 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|==========
+
+
+[[activateUser]]
+==== [black,orange-background]#API: /users/\{id\} (PUT)#
+
+
+Activate/Deactivate a user.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|id |path |int |User ID |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.model.User,User>> |OK 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|==========
+
+
+[[sendTestEmail]]
+==== [black,cyan-background]#API: /user/test/send/email (GET)#
+
+
+send a test email.
+
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |OK 
+|==========
+
+
+
+=== Models
+
+[[github.com.dorajistyle.goyangi.api.response.BasicResponse]]
+==== [orange,white-background]#BasicResponse#
+
+[width="60%",options="header"]
+|==========
+|Field Name (alphabetical) |Field Type |Description 
+|message |string | 
+|messageType |string | 
+|status |int | 
+|==========
+
+[[github.com.dorajistyle.goyangi.model.PublicUser]]
+==== [orange,white-background]#PublicUser#
+
+[width="60%",options="header"]
+|==========
+|Field Name (alphabetical) |Field Type |Description 
+|Connections |array | 
+|Languages |array | 
+|Liked |array | 
+|Likings |array | 
+|Roles |array | 
+|activateUntil |omit | 
+|activatedAt |omit | 
+|activation |omit | 
+|activationToken |omit | 
+|articles |omit | 
+|birthday |omit | 
+|connections |omit | 
+|createdAt |Time | 
+|currentLoginAt |omit | 
+|currentLoginIp |omit | 
+|deletedAt |omit | 
+|description |string | 
+|email |omit | 
+|gender |omit | 
+|id |int64 | 
+|languages |omit | 
+|lastLoginAt |omit | 
+|lastLoginIp |omit | 
+|likedCount |int | 
+|likedList |interface | 
+|likingCount |int | 
+|likingList |interface | 
+|md5 |string | 
+|name |omit | 
+|password |omit | 
+|passwordResetToken |omit | 
+|passwordResetUntil |omit | 
+|roles |omit | 
+|token |omit | 
+|tokenExperiation |omit | 
+|updatedAt |omit | 
+|username |string | 
+|==========
+
+[[github.com.dorajistyle.goyangi.model.User]]
+==== [orange,white-background]#User#
+
+[width="60%",options="header"]
+|==========
+|Field Name (alphabetical) |Field Type |Description 
+|Connections |array | 
+|Languages |array | 
+|Liked |array | 
+|Likings |array | 
+|Roles |array | 
+|activateUntil |Time | 
+|activatedAt |Time | 
+|activation |bool | 
+|activationToken |string | 
+|birthday |Time | 
+|createdAt |Time | 
+|currentLoginAt |Time | 
+|currentLoginIp |string | 
+|deletedAt |Time | 
+|description |string | 
+|email |string | 
+|gender |int8 | 
+|id |int64 | 
+|lastLoginAt |Time | 
+|lastLoginIp |string | 
+|likedCount |int | 
+|likedList |interface | 
+|likingCount |int | 
+|likingList |interface | 
+|md5 |string | 
+|name |string | 
+|password |string | 
+|passwordResetToken |string | 
+|passwordResetUntil |Time | 
+|token |string | 
+|tokenExperiation |Time | 
+|updatedAt |Time | 
+|username |string | 
+|==========
+
+
+[[users]]
+== [red,white-background]#users#
+
+[width="60%",options="header"]
+|==========
+|Specification |Value 
+|Resource Path |/users 
+|API Version |1.0.0 
+|BasePath for the API |http://127.0.0.1:3000 
+|Consumes |application/json 
+|Produces | 
+|==========
+
+
+=== Operations
+
+
+[width="60%",options="header"]
+|==========
+|Resource Path |Operation |Description 
+|/users |<<createUser,POST>> |Create a user. 
+|/users |<<retrieveUsers,GET>> |Retrieve user array. 
+|/users/\{id\} |<<retrieveUser,GET>> |Retrieve a user. 
+|/users/\{id\} |<<updateUser,PUT>> |Update a user. 
+|/users/\{id\} |<<deleteUser,DELETE>> |Delete a user. 
+|/users/roles |<<addRoleToUser,POST>> |Add a role to user. 
+|/users/\{id\}/roles/\{roleId\} |<<removeRoleFromUser,DELETE>> |Remove a role from user. 
+|/users/likings |<<createLikingOnUser,POST>> |Create a liking on a user. 
+|/users/\{id\}/likings |<<retrieveLikingsOnUsers,GET>> |Retrieve likings on a user. 
+|/users/\{id\}/liked |<<retrieveLikedOnUsers,GET>> |Retrieve likings on a user. 
+|/users/\{id\}/likings/\{likingId\} |<<deleteLikingOnUser,DELETE>> |Delete a liking on user. 
+|==========
+
+
+
+[[createUser]]
+==== [black,green-background]#API: /users (POST)#
+
+
+Create a user.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|registrationEmail |form |string |User Email. |Yes 
+|registrationPassword |form |string |User Password. |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|201 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |User is registered successfully 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |User not logged in. 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |User is not created. 
+|==========
+
+
+[[retrieveUsers]]
+==== [black,cyan-background]#API: /users (GET)#
+
+
+Retrieve user array.
+
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |array |<<github.com.dorajistyle.goyangi.model.PublicUser,PublicUser>> |OK 
+|==========
+
+
+[[retrieveUser]]
+==== [black,cyan-background]#API: /users/\{id\} (GET)#
+
+
+Retrieve a user.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|id |path |int |User ID |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.model.PublicUser,PublicUser>> |OK 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|==========
+
+
+[[updateUser]]
+==== [black,orange-background]#API: /users/\{id\} (PUT)#
+
+
+Update a user.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|id |path |int |User ID |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.model.User,User>> |OK 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |User is not updated. 
+|==========
+
+
+[[deleteUser]]
+==== [black,cyan-background]#API: /users/\{id\} (DELETE)#
+
+
+Delete a user.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|id |path |int |User ID |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> | 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |User is not deleted. 
+|==========
+
+
+[[addRoleToUser]]
+==== [black,green-background]#API: /users/roles (POST)#
+
+
+Add a role to user.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|userId |form |int |User ID. |Yes 
+|roleId |form |int |Role ID. |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|201 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Created 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |User or role is not found 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Role is not added to a user 
+|==========
+
+
+[[removeRoleFromUser]]
+==== [black,cyan-background]#API: /users/\{id\}/roles/\{roleId\} (DELETE)#
+
+
+Remove a role from user.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|id |path |int |User ID. |Yes 
+|roleId |form |int |Role ID. |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |OK 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Role is not deleted from a user 
+|==========
+
+
+[[createLikingOnUser]]
+==== [black,green-background]#API: /users/likings (POST)#
+
+
+Create a liking on a user.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|parentId |form |int |Parent item id. |Yes 
+|userId |form |int |User id. |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|201 |object |<<github.com.dorajistyle.goyangi.model.PublicUser,PublicUser>> |Created 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Liking is not created 
+|==========
+
+
+[[retrieveLikingsOnUsers]]
+==== [black,cyan-background]#API: /users/\{id\}/likings (GET)#
+
+
+Retrieve likings on a user.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|userId |path |int |User ID |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |array |<<github.com.dorajistyle.goyangi.model.PublicUser,PublicUser>> |OK 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|==========
+
+
+[[retrieveLikedOnUsers]]
+==== [black,cyan-background]#API: /users/\{id\}/liked (GET)#
+
+
+Retrieve likings on a user.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|userId |path |int |User ID |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |array |<<github.com.dorajistyle.goyangi.model.PublicUser,PublicUser>> |OK 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|==========
+
+
+[[deleteLikingOnUser]]
+==== [black,cyan-background]#API: /users/\{id\}/likings/\{likingId\} (DELETE)#
+
+
+Delete a liking on user.
+
+
+
+[width="60%",options="header"]
+|==========
+|Param Name |Param Type |Data Type |Description |Required? 
+|userId |path |int |User ID |Yes 
+|id |path |int |Liking ID |Yes 
+|==========
+
+
+[width="60%",options="header"]
+|==========
+|Code |Type |Model |Message 
+|200 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> | 
+|401 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Authentication required 
+|404 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Not found 
+|500 |object |<<github.com.dorajistyle.goyangi.api.response.BasicResponse,BasicResponse>> |Liking is not deleted 
+|==========
+
+
+
+=== Models
+
+[[github.com.dorajistyle.goyangi.api.response.BasicResponse]]
+==== [orange,white-background]#BasicResponse#
+
+[width="60%",options="header"]
+|==========
+|Field Name (alphabetical) |Field Type |Description 
+|message |string | 
+|messageType |string | 
+|status |int | 
+|==========
+
+[[github.com.dorajistyle.goyangi.model.PublicUser]]
+==== [orange,white-background]#PublicUser#
+
+[width="60%",options="header"]
+|==========
+|Field Name (alphabetical) |Field Type |Description 
+|Connections |array | 
+|Languages |array | 
+|Liked |array | 
+|Likings |array | 
+|Roles |array | 
+|activateUntil |github.com.dorajistyle.goyangi.model.omit | 
+|activatedAt |github.com.dorajistyle.goyangi.model.omit | 
+|activation |github.com.dorajistyle.goyangi.model.omit | 
+|activationToken |github.com.dorajistyle.goyangi.model.omit | 
+|articles |github.com.dorajistyle.goyangi.model.omit | 
+|birthday |github.com.dorajistyle.goyangi.model.omit | 
+|connections |github.com.dorajistyle.goyangi.model.omit | 
+|createdAt |Time | 
+|currentLoginAt |github.com.dorajistyle.goyangi.model.omit | 
+|currentLoginIp |github.com.dorajistyle.goyangi.model.omit | 
+|deletedAt |github.com.dorajistyle.goyangi.model.omit | 
+|description |string | 
+|email |github.com.dorajistyle.goyangi.model.omit | 
+|gender |github.com.dorajistyle.goyangi.model.omit | 
+|id |int64 | 
+|languages |github.com.dorajistyle.goyangi.model.omit | 
+|lastLoginAt |github.com.dorajistyle.goyangi.model.omit | 
+|lastLoginIp |github.com.dorajistyle.goyangi.model.omit | 
+|likedCount |int | 
+|likedList |interface | 
+|likingCount |int | 
+|likingList |interface | 
+|md5 |string | 
+|name |github.com.dorajistyle.goyangi.model.omit | 
+|password |github.com.dorajistyle.goyangi.model.omit | 
+|passwordResetToken |github.com.dorajistyle.goyangi.model.omit | 
+|passwordResetUntil |github.com.dorajistyle.goyangi.model.omit | 
+|roles |github.com.dorajistyle.goyangi.model.omit | 
+|token |github.com.dorajistyle.goyangi.model.omit | 
+|tokenExperiation |github.com.dorajistyle.goyangi.model.omit | 
+|updatedAt |github.com.dorajistyle.goyangi.model.omit | 
+|username |string | 
+|==========
+
+[[github.com.dorajistyle.goyangi.model.User]]
+==== [orange,white-background]#User#
+
+[width="60%",options="header"]
+|==========
+|Field Name (alphabetical) |Field Type |Description 
+|Connections |array | 
+|Languages |array | 
+|Liked |array | 
+|Likings |array | 
+|Roles |array | 
+|activateUntil |Time | 
+|activatedAt |Time | 
+|activation |bool | 
+|activationToken |string | 
+|birthday |Time | 
+|createdAt |Time | 
+|currentLoginAt |Time | 
+|currentLoginIp |string | 
+|deletedAt |Time | 
+|description |string | 
+|email |string | 
+|gender |int8 | 
+|id |int64 | 
+|lastLoginAt |Time | 
+|lastLoginIp |string | 
+|likedCount |int | 
+|likedList |interface | 
+|likingCount |int | 
+|likingList |interface | 
+|md5 |string | 
+|name |string | 
+|password |string | 
+|passwordResetToken |string | 
+|passwordResetUntil |Time | 
+|token |string | 
+|tokenExperiation |Time | 
+|updatedAt |Time | 
+|username |string | 
+|==========
+
+[[github.com.dorajistyle.goyangi.model.omit]]
+==== [orange,white-background]#omit#
+
+[width="60%",options="header"]
+|==========
+|Field Name (alphabetical) |Field Type |Description 
+|==========
+
+

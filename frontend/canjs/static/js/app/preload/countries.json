@@ -1,0 +1,12 @@
+[
+  	{
+		"nativeName": "\ub300\ud55c\ubbfc\uad6d",
+		"cca2": "KR",
+		"currency": ["KRW"]
+	},
+	{
+		"nativeName": "\u4e2d\u56fd",
+		"cca2": "CN",
+		"currency": ["CNY"]
+	}
+]

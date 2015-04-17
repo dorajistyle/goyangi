@@ -1,0 +1,19 @@
+<div class="uk-modal" id="{{ modalDestroyId }}">
+  <div class="uk-modal-dialog">
+    <a type="button" class="uk-modal-close uk-close cancel-confirm"></a>
+    <div class="uk-modal-header">
+      <h4 class="modal-title">{{i18n 'destroy.confirm.title' str=modalDestroyName}}</h4>
+    </div>
+    <p>
+      {{i18n 'destroy.confirm.content' str=modalDestroyName}}
+    </p>
+    <div class="uk-modal-footer uk-text-right">
+      <button type="button" data-dismiss="modal"
+      class="uk-button uk-modal-close cancel-confirm">{{i18n 'destroy.confirm.close' str=modalDestroyName}}</button>
+      <button type="button"
+      class="uk-button delete-{{modalDestroyName}}-final uk-button-inverse">{{i18n 'destroy.confirm.submit' str=modalDestroyName}}</button>
+    </div>
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->

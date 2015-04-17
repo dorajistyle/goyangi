@@ -1,0 +1,19 @@
+<h1 id="pageTitle">{{i18n 'admin.title'}}</h1>
+<div class="uk-grid">
+    <div id="adminNav" class="admin-nav uk-width-medium-1-4 uk-width-large-1-4">
+        <ul class="uk-nav uk-nav-side">
+            <li class="uk-active role-tab">
+                <a href="/admin/role" class="role">{{i18n 'admin.role.title'}}</a>
+            </li>
+            <li class="user-tab">
+                <a href="/admin/user" class="user">{{i18n 'admin.user.title'}}</a>
+            </li>
+        </ul>
+    </div>
+    <div class="admin-text uk-width-medium-3-4 uk-width-large-3-4">
+        <div id="adminWrapper" class="admin-wrapper uk-panel uk-width-medium-1-1 uk-width-large-1-1">
+            <div id="admin-role"></div>
+            <div id="admin-user" class="uk-hidden"></div>
+        </div>
+    </div>
+</div>

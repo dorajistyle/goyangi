@@ -1,0 +1,10 @@
+<div>
+  <div id="index" class="uk-panel">
+    <h1 id="pageTitle" class="uk-panel-title">{{i18n 'emailVerification.title'}}</h1>
+    {{#if verified}}
+      <p class="uk-text-success"> {{i18n 'emailVerification.done'}} </p>
+    {{else}}
+      <p class="uk-text-danger"> {{i18n 'emailVerification.fail'}} </p>
+    {{/if}}
+  </div>
+</div>

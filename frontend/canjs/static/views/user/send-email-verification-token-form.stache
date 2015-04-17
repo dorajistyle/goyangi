@@ -1,0 +1,15 @@
+<div>
+  <div id="index" class="uk-panel">
+    <h1 id="pageTitle" class="uk-panel-title">{{i18n 'emailVerification.title'}}</h1>
+      <p class="uk-text-danger"> {{i18n 'emailVerification.send.notYet'}} </p>
+      <form id="emailVerificationTokenForm" name="emailVerificationTokenForm" method="post" class="uk-form">
+        <fieldset>
+          <div class="perform-login-wrapper uk-form-row">
+            <button type="submit" class="uk-button uk-button-danger send-email-verification-token uk-float-right" tabindex="4">
+              {{i18n 'emailVerification.send.submit'}}
+            </button>
+          </div>
+        </fieldset>
+      </form>
+  </div>
+</div>

@@ -1,0 +1,21 @@
+<h4>{{i18n 'user.view.oauth.connect.title'}}</h4>
+<hr/>
+<div id="oauthWrapper">
+  {{> views_partial_oauth }}
+  <div class="uk-modal" id="revokeOauth">
+    <div class="uk-modal-dialog">
+      <a type="button" class="uk-modal-close uk-close cancel-confirm"></a>
+      <div class="uk-modal-header">
+        <h4 class="modal-title">{{i18n 'user.view.oauth.revoke.title'}}</h4>
+      </div>
+      <div id="revokeContent"></div>
+      <div class="uk-modal-footer uk-text-right uk-margin-large-top">
+        <button type="button" data-dismiss="modal" class="uk-button uk-modal-close close-oauth-modal">{{i18n 'user.view.oauth.revoke.close'}}</button>
+        <button type="button"
+        class="uk-button revoke-oauth-final uk-button-inverse">{{i18n 'user.view.oauth.revoke.submit'}}</button>
+      </div>
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  <!-- /.modal -->
+</div>

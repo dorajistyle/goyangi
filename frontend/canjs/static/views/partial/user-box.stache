@@ -1,0 +1,25 @@
+<div class="component-box sub-box">
+    <table class="uk-width-medium-1-1 uk-width-large-1-1 uk-table table-comment table-width table-fixed reply-table-margin">
+        <tr>
+            <!-- profile image -->
+            <td class="td-width border-none">
+              <div class="user-profile-img uk-text-center">
+                <a href="/profile/{{id}}" title="{{username}}">
+                  {{> views_partial_user-image-small}}
+                  <span class="user-title uk-text-center">{{username}}</span>
+                </a>
+              </div>
+            </td>
+        </tr>
+        <!-- {{#if name}}
+            <tr>
+                <td class="uk-text-center"> {{i18n 'user.name'}} : {{ name }}</td>
+            </tr>
+        {{/if}}
+        {{#if description}}
+            <tr>
+                <td class="uk-text-center"> {{i18n 'user.description'}} : {{description}}</td>
+            </tr>
+        {{/if}} -->
+    </table>
+</div>

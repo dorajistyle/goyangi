@@ -1,0 +1,52 @@
+<h1 id="pageTitle">{{i18n 'profile.title'}}</h1>
+
+{{#userData}}
+    <div class="user-wrapper uk-panel uk-panel-box uk-width-medium-1-1 uk-width-large-1-1">
+    <ul class="uk-list uk-text-center">
+        {{#user}}
+        <li class="uk-text-large uk-h3 uk-text-bold uk-margin-bottom">{{username}}</li>
+            <li class="uk-margin">{{> views_partial_user-image-large}} </li>
+            {{#if likingList}}
+              <li>
+                <dl class="uk-description-list-line">
+                  <dt>{{i18n 'profile.following.title'}}</dt>
+                  <dd> {{> views_user_following }} </dd>
+                </dl>
+              </li>
+            {{/if}}
+            {{#if likedList}}
+            <li>
+              <dl class="uk-description-list-line">
+                <dt>{{i18n 'profile.followers.title'}}</dt>
+                <dd> {{> views_user_followers }} </dd>
+              </dl>
+            </li>
+
+        {{/if}}
+
+            {{#if followers}}
+                <li>
+                    <ul>
+                        {{#followers}}
+                            <li><a href="/profile/{{ id }}">{{email}}</a></li>
+                        {{/followers}}
+                    </ul>
+                </li>
+            {{/if}}
+            {{#followersFlag.hasNext}}
+                <li>
+                    <div class="show-more-followers-wrapper">
+                        <button type="button" class="uk-button uk-button-default uk-button-mini show-more-followers" tabindex="2">
+                            {{i18n 'profile.followers.more'}}
+                        </button>
+                    </div>
+                </li>
+            {{/followersFlag.hasNext}}
+        </ul>
+          {{> views_user_liking-button }}
+        {{/user}}
+        {{^user}}
+            :(
+        {{/user}}
+    </div>
+{{/userData}}

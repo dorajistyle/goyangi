@@ -1,0 +1,2 @@
+<button type="button" class="uk-button uk-button-facebook uk-float-right uk-button-margin share-to-fb full-width mt2em" data-title="{{parentTitle}}"
+data-id="{{parentId}}" data-description="{{parentDescription}}" data-tags="{{{parentTagNames}}}"><strong>{{i18n 'sharing.facebook.title'}}</strong></button>

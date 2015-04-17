@@ -1,0 +1,19 @@
+{{#unless isAuthor}}
+<form id="likingsForm" name="likingsForm" class="uk-form">
+  <input type="hidden" id="userId" name="userId" value="{{currentUserId}}"/>
+  <input type="hidden" id="parentId" name="parentId" value="{{parentId}}"/>
+  {{#unless likingList.isLiked}}
+  <div class="perform-follow-wrapper">
+    <button type="button" class="uk-button uk-button-success perform-like uk-float-right" tabindex="1">
+      {{i18n 'profile.follow.title'}}
+    </button>
+  </div>
+  {{else}}
+  <div class="perform-unfollow-wrapper">
+    <button type="button" class="uk-button uk-button-default perform-unlike uk-float-right" tabindex="2">
+      {{i18n 'profile.unfollow.title'}}
+    </button>
+  </div>
+  {{/unless}}
+</form>
+{{/unless}}

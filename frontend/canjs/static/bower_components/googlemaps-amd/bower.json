@@ -1,0 +1,28 @@
+{
+  "name": "Google Maps AMD Loader Plugin",
+  "description": "Loads the Google maps library as an AMD plugin",
+  "keywords": ["google", "maps", "amd", "requirejs"],
+  "version": "1.0.1",
+  "authors": [
+    {
+      "name": "Edan Schwartz",
+      "email": "edan@edanschwartz.com",
+      "homepage": "http://www.edanschwartz.com"
+    }
+  ],
+  "dependencies": {
+    "requirejs-plugins": "~1.0.2"
+  },
+  "devDependencies": {
+    "jasmine": "~1.3.1",
+    "sinon": "http://sinonjs.org/releases/sinon-1.7.1.js",
+    "requirejs": "~2.1.8",
+    "underscore": "~1.5.2"
+  },
+  "location": "https://github.com/hamweather/googlemaps-amd.git",
+  "main": "src/googlemaps.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hamweather/googlemaps-amd.git"
+  }
+}

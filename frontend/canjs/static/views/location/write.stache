@@ -1,0 +1,50 @@
+<div>
+    <!-- title -->
+    <div class="top-title uk-text-center">
+        <div id="titleWrite">
+            {{i18n 'location.view.write.title'}}<br>
+        </div>
+    </div>
+    <div class="form-box">
+        <form id="locationWriteForm" name="locationWriteForm" enctype="multipart/form-data" method="location" class="uk-form">
+            <fieldset>
+                    <input type="hidden" id="id" name="id" value="{{location.id}}"/>
+                    <input type="hidden" id="type" name="type" value="{{#if location}}{{location.type}}{{else}}locality{{/if}}"/>
+                    <div class="uk-form-row">
+                        <label for="name">{{i18n 'location.name'}}</label>
+                        <input id="locationName" name="name" type="text"
+                               placeholder="{{i18n 'location.view.write.placeholder.name'}}" class="uk-width-1-1" value="{{location.name}}"/>
+                    </div>
+                    <div class="uk-form-row">
+                        <label for="latitude">{{i18n 'location.latitude'}}</label>
+                        <input id="locationLatitude" name="latitude" type="text"
+                               placeholder="{{i18n 'location.view.write.placeholder.latitude'}}" class="uk-width-1-1" value="{{location.latitude}}"/>
+                    </div>
+                    <div class="uk-form-row">
+                        <label for="longitude">{{i18n 'location.longitude'}}</label>
+                        <input id="locationLongitude" name="longitude" type="text"
+                               placeholder="{{i18n 'location.view.write.placeholder.longitude'}}" class="uk-width-1-1" value="{{location.longitude}}"/>
+                    </div>
+                    <div class="uk-form-row">
+                        <label for="address">{{i18n 'location.address'}}</label>
+                        <input id="locationAddress" name="address" type="text"
+                               placeholder="{{i18n 'location.view.write.placeholder.address'}}" class="uk-width-1-1" value="{{location.address}}"/>
+                    </div>
+
+
+                    <div class="uk-form-row form-margin-bottom">
+                        <label for="content">{{i18n 'location.content'}}</label>
+                    </div>
+                    <div class="uk-form-row">
+                        <textarea id="locationContent" name="content" rows="10" cols="50" class=""
+                                  placeholder="{{i18n 'location.view.write.placeholder.content'}}">{{location.content}}</textarea>
+                    </div>
+                    <div class="uk-form-row uk-text-center">
+                        <button type="submit" class="uk-button uk-button-danger write-location" tabindex="7">
+                            {{i18n 'location.view.write.submit'}}
+                        </button>
+                    </div>
+            </fieldset>
+        </form>
+    </div>
+</div>

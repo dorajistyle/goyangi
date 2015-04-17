@@ -1,0 +1,35 @@
+<form id="loginForm" name="loginForm" method="post" class="uk-form">
+    <fieldset>
+        <div class="email uk-form-row">
+            <input id="loginEmail" name="loginEmail" type="email" placeholder="{{i18n 'login.enterEmail'}}"
+                   class="email uk-width-medium-1-1 uk-width-large-1-1" autocomplete="on" tabindex="1"/>
+            <label for="loginEmail" class="uk-hidden">{{i18n 'login.enterEmail'}}</label>
+        </div>
+        <div class="password uk-form-row">
+            <input id="loginPassword" name="loginPassword" type="password"
+                   placeholder="{{i18n 'login.enterPassword'}}" class="password uk-width-medium-1-1 uk-width-large-1-1" tabindex="2"/>
+            <label for="loginPassword" class="uk-hidden">{{i18n 'login.enterPassword'}}</label>
+        </div>
+        <div class="remember-forgot uk-form-row uk-float-right">
+            <label class="remember inline">
+                <input class="inline-item" type="checkbox" value="1" id="rememberMe" name="rememberMe" tabindex="3">
+                <span>{{i18n 'login.rememberMe'}}</span>
+            </label>
+            <span class="separator inline">·</span>
+            <a class="forgot inline" href="/send/password/reset/form">{{i18n 'login.forgotPassword'}}?</a>
+        </div>
+        <div class="uk-clearfix"></div>
+        <br />
+        <div class="perform-login-wrapper uk-form-row">
+            <button type="submit" class="uk-button uk-button-primary perform-login uk-float-right" tabindex="4">
+                {{i18n 'login.submit'}}
+            </button>
+        </div>
+    </fieldset>
+</form>
+{{> views_user_oauth-modal }}
+<!-- <form action="/oauth/login/facebook" method="POST" class="uk-form oauth-login-form">
+    <div class="uk-form-row">
+        <button type="submit" class="uk-button uk-button-primary uk-float-right uk-margin-top" tabindex="5"><i class="uk-icon-facebook-square"></i>{{i18n 'user.view.oauth.login.prefix'}} {{i18n 'user.view.oauth.facebook'}} {{i18n 'user.view.oauth.login.postfix'}}</button>
+    </div>
+</form> -->

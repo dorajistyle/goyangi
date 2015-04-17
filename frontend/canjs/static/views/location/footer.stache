@@ -1,0 +1,16 @@
+<div class="hr br"></div>
+<div id="location-sub" class="uk-width-medium-1-1 uk-width-large-1-1 sub-wrapper no-padding">
+  {{#location.author}}
+  <div id="location-author">
+    {{> views_partial_user-box}}
+  </div>
+  {{/location.author}}
+</div>
+<div class="br"></div>
+{{> views_partial_sharing}}
+<div class="hr"></div>
+<div class="bottom uk-width-medium-1-1 uk-width-large-1-1">
+  <div class="comment-wrapper">
+    {{> views_partial_comments}}
+  </div>
+</div>

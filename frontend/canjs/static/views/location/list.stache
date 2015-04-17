@@ -1,0 +1,28 @@
+<div class="uk-width-medium-1-1 uk-width-large-1-1 location-top-margin">
+<!--<h2>{{i18n 'location.view.list.title'}}</h2>-->
+ {{#if canWrite}}
+     <div class="uk-text-center">
+        <a href="/locations/write" class="uk-button uk-button-small">{{i18n 'location.view.list.write'}}</a>
+     </div>
+     <div class="br"></div>
+ {{/if}}
+
+<div id="listMain">
+        <div class="basic-list-frame">
+            <table id="locationsWrapper" class="uk-table uk-table-hover uk-table-striped">
+                <tbody>
+                    {{#locations}}
+                        {{> views_location_list-item}}
+                    {{/locations}}
+                </tbody>
+            </table>
+        </div>
+        {{#if hasNext}}
+            <div class="uk-width-medium-1-1 uk-width-large-1-1 uk-text-center">
+                <button type="button" class="uk-button more">
+                    <i class="uk-icon-chevron-down" data-id="{{location.id}}"></i>&nbsp;{{i18n 'location.view.list.more'}}
+                </button>
+            </div>
+        {{/if}}
+</div>
+</div>

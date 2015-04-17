@@ -1,0 +1,122 @@
+<div id="commentWrapper" class="comment-wrapper">
+  <!-- comment button -->
+    <div class="uk-button-group">
+      <button type="button" class="uk-button uk-button-to-xs" tabindex="1">
+        <i class="uk-icon-comment"></i>
+      </button>
+      <button id="commentCount" type="button" class="uk-button uk-button-to-xs">{{commentList.count}}</button>
+    </div>
+  <div class="br"></div>
+  <!-- comment list -->
+  <div class="comment-list">
+    <ul class="comment-list uk-list">
+      {{#commentList.comments}}
+      <li class="comment-padding-bottom">
+        <table class="uk-width-medium-1-1 uk-width-large-1-1 uk-table table-comment comment-box">
+          <tbody>
+            <tr>
+              <!-- profile image -->
+              <td class="uk-width-large-1-6">
+                <div class="user-profile-img">
+                  <!--<a href="/#!profile/{{userId}}">{{> views_partial_user-image}}</a>-->
+                  {{#user}}
+                    {{#if id}}
+                      <a href="/profile/{{id}}" title="{{username}}">{{> views_partial_user-image}}</a>
+                    {{ else }}
+                      {{> views_partial_user-image}}
+                    {{/if}}
+                  {{/user}}
+                </div>
+              </td>
+              <td class="border-none">
+                <!-- comment -->
+                <table class="uk-table">
+                  <thead>
+                    <tr>
+                      <td class="uk-float-right comment-content border-none pd3">
+                        {{#user}}
+                          {{#if id}}
+                            <a href="/profile/{{id}}" title="{{username}}">{{username}}</a>,&nbsp;
+                            {{/if}}
+                        {{/user}}
+                        <span class="uk-text-muted">{{timeago createdAt}}</span>
+                        {{#compare userId currentUserId}}
+                        <i class="destroy-comment uk-icon-times uk-icon-medium delete-uk-button-wrapper" data-parent-id="{{parentId}}" data-id="{{id}}"></i>
+                        {{/compare}}
+                      </td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="comment-content border-none">
+                        {{content}}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot>
+          </tfoot>
+        </table>
+      </li>
+      {{/commentList.comments}}
+      {{#if commentList.hasNext}}
+      <li>
+        <div class="">
+          <button class="uk-button uk-button-link show-more-comments uk-align-center">
+            {{i18n 'comment.showMore'}}
+          </button>
+        </div>
+      </li>
+      {{/if}}
+    </ul>
+  </div>
+
+  <div class="br-comment"></div>
+
+  <!-- comment writing form -->
+  <div class="comment-form">
+    <form id="commentForm" name="commentForm" class="uk-form uk-form-horizontal no-padding">
+      <!-- hidden -->
+      <input type="hidden" id="userId" name="userId" value="{{currentUserId}}"/>
+      <input type="hidden" id="parentId" name="parentId" value="{{parentId}}"/>
+      <!-- text area -->
+      <div class="uk-grid" data-uk-grid-match>
+        <div class="uk-form-row uk-width-medium-3-4 uk-width-large-3-4 no-padding">
+          <textarea id="content" name="content" rows="3" cols="40" class="enter-as-save uk-width-1-1"
+          placeholder="{{i18n 'comment.placeholder.content'}}"></textarea>
+        </div>
+        <!-- comment button -->
+        <div class="uk-form-row uk-width-medium-1-4 uk-width-large-1-4 no-padding">
+          <button type="submit" class="uk-button submit-comment comment-uk-button-wrapper uk-button-to-xs uk-width-1-1" tabindex="2">
+            {{i18n 'comment.submit'}}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- uk-modal -->
+  <div class="uk-modal" id="destroyCommentConfirm">
+    <div class="uk-modal-dialog">
+      <a class="uk-modal-close uk-close cancel-confirm"></a>
+      <div class="uk-modal-header">
+        <h4>{{i18n 'comment.confirm.title'}}</h4>
+      </div>
+      <p>
+        {{i18n 'comment.confirm.content'}}
+      </p>
+      <div class="uk-modal-footer uk-text-right">
+        <button type="button" data-dismiss="uk-modal"
+        class="uk-button uk-modal-close cancel-confirm">{{i18n 'comment.confirm.close'}}</button>
+        <button type="button"
+        class="uk-button destroy-comment-final uk-button-inverse">{{i18n 'comment.confirm.submit'}}</button>
+      </div>
+      <!-- /.uk-modal-content -->
+    </div>
+    <!-- /.uk-modal-dialog -->
+  </div>
+  <!-- /.uk-modal -->
+</div>

@@ -1,0 +1,15 @@
+  <button type="buttion" class="uk-button uk-float-right uk-margin-top oauth-connect" tabindex="5"><i class="uk-icon-openid uk-icon-small uk-margin-small-right"></i>{{i18n 'user.view.oauth.connect.title'}}</button>
+    <div class="uk-modal" id="ConnectOauth">
+    <div class="uk-modal-dialog">
+      <a type="button" class="uk-modal-close uk-close cancel-confirm"></a>
+      <div class="uk-modal-header">
+        <h4 class="modal-title">{{i18n 'user.view.oauth.connect.title'}}</h4>
+      </div>
+      {{> views_partial_oauth }}        
+      <div class="uk-modal-footer uk-text-right uk-margin-large-top">
+        <button type="button" data-dismiss="modal" class="uk-button uk-modal-close close-oauth-modal">{{i18n 'user.view.oauth.connect.close'}}</button>
+      </div>
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+  <!-- /.modal -->

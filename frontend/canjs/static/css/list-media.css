@@ -1,0 +1,128 @@
+/* ==========================================================================
+   list - media
+   ========================================================================== */
+.article-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px; }
+@media \0screen {
+  .article-content img {
+    width: auto;
+    /* for ie 8 */ } }
+
+.article-list td {
+  padding: 0; }
+.article-list a {
+  color: #666666;
+  text-decoration: none;
+  font-size: 2em;
+  display: block;
+  padding: 8px; }
+.article-list a:hover {
+  color: #777; }
+
+a.linked-item {
+  color: #666666;
+  text-decoration: none;
+  font-size: 1.2em; }
+
+a.linked-item:hover {
+  color: #777; }
+
+.video {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden; }
+
+.video iframe, .video object, .video embed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; }
+
+#likePost {
+  height: 20px;
+  padding-right: 4px;
+  overflow: hidden; }
+
+.comment-wrapper {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em; }
+
+.br-comment {
+  display: inline-block;
+  width: 100%;
+  margin: 0.5em 0 0.5em 0;
+  height: 1em; }
+
+.delete-btn-wrapper {
+  margin: 0 5px; }
+
+.comment-list {
+  padding-left: 0; }
+
+.comment-box {
+  padding: 5px;
+  background: #EEE;
+  border: none;
+  margin-bottom: 5px; }
+  .comment-box tr {
+    border: none;
+    background-color: #EEE; }
+  .comment-box td {
+    border: none;
+    background-color: #EEE; }
+  .comment-box table {
+    border: none;
+    background-color: #EEE; }
+
+.comment-padding-bottom {
+  padding-bottom: 3px; }
+
+.comment-content {
+  font-size: 100%;
+  font-weight: normal;
+  margin-bottom: 0.2em;
+  color: #787878;
+  word-break: break-all;
+  font-size: 90%; }
+
+.author-content {
+  font-size: 90%;
+  color: #D6D6D6; }
+
+.user-title {
+  display: block;
+  margin-top: 0.5em;
+  color: #7E7E7E;
+  word-break: break-all;
+  font-size: 120%; }
+
+.form-bottom {
+  margin-bottom: 5px; }
+
+.comment-form {
+  background-color: #FBFBFB;
+  padding: 15px 15px 5px 15px; }
+
+@media screen and (max-width: 400px) {
+  .item-top-margin {
+    margin-top: 0; } }
+
+@media screen and (min-width: 401px) and (max-width: 677px) {
+  .item-top-margin {
+    margin-top: 0; } }
+
+@media screen and (min-width: 678px) {
+  .item-top-margin {
+    margin-top: 0; } }
+
+@media screen and (max-width: 767px) {
+  .item-top-margin {
+    margin-top: 0; } }
+
+@media screen and (min-width: 768px) {
+  .item-top-margin {
+    margin-top: 90px; } }

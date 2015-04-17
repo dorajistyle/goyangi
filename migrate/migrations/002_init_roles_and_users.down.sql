@@ -1,0 +1,2 @@
+DELETE FROM role WHERE TRUE;
+

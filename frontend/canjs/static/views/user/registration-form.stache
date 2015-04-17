@@ -1,0 +1,38 @@
+<form id="registrationForm" name="registrationForm" method="post" class="uk-form">
+  <fieldset>
+    <h4>
+        {{i18n 'registration.title'}}
+    </h4>
+    <hr/>
+    {{#if registrationMessage}}
+        <div class="uk-form-row">
+            <label class="uk-form-label uk-text-center"><small>{{registrationMessage}}</small></label>
+        </div>
+    {{/if}}
+    <div class="username uk-form-row">
+      <input id="registrationUsername" name="registrationUsername" type="text"
+      placeholder="{{i18n 'registration.enterUsername'}}" class="username uk-width-medium-1-1 uk-width-large-1-1" autocomplete="off" tabindex="6"/>
+      <label for="registrationUsername" class="uk-hidden">{{i18n 'registration.enterUsername'}}</label>
+    </div>
+    <div class="email uk-form-row">
+        <input id="registrationEmail" name="registrationEmail" type="email"
+               placeholder="{{i18n 'registration.enterEmail'}}" class="email uk-width-medium-1-1 uk-width-large-1-1" autocomplete="off" tabindex="7"/>
+        <label for="registrationEmail" class="uk-hidden">{{i18n 'registration.enterEmail'}}</label>
+    </div>
+    <div class="password uk-form-row">
+        <input id="registrationPassword" name="registrationPassword" type="password"
+               placeholder="{{i18n 'registration.enterPassword'}}" class="password uk-width-medium-1-1 uk-width-large-1-1" tabindex="8"/>
+        <label for="registrationPassword" class="uk-hidden">{{i18n 'registration.enterPassword'}}</label>
+    </div>
+    <div class="password uk-form-row">
+      <input id="registrationVerifyPassword" name="registrationVerifyPassword" type="password"
+      placeholder="{{i18n 'registration.enterVerifyPassword'}}" class="password uk-width-medium-1-1 uk-width-large-1-1" tabindex="9"/>
+      <label for="registrationVerifyPassword" class="uk-hidden">{{i18n 'registration.enterVerifyPassword'}}</label>
+    </div>
+    <div class="register-user-wrapper uk-form-row">
+        <button type="submit" class="uk-button uk-button-warning register-user uk-float-right" tabindex="10">
+            {{i18n 'registration.submit'}}
+        </button>
+    </div>
+  </fieldset>
+</form>

@@ -1,0 +1,9 @@
+<ul class="clearfix uk-list">
+    {{#likings}}
+        <li class="uk-float-left">
+          <a href="/profile/{{id}}">
+            {{> views_partial_user-link }}
+          </a>
+        </li>
+    {{/likings}}
+</ul>

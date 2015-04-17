@@ -1,0 +1,23 @@
+<div id="locationHeader" class="uk-width-medium-1-1 uk-width-large-1-1">
+  <div class="uk-float-left">
+    {{> views_partial_like-box}}
+  </div>
+  <div class="uk-float-right">
+      <a href="/locations/search/{{location.id}}" class="uk-button uk-button-mini"><i class="uk-icon-search uk-icon-large"></i></a>
+    {{#if isAuthor}}
+    <!-- author - edit & delete button -->
+    <button type="button" class="uk-button delete-location-confirm uk-float-right uk-button-margin uk-button-mini"
+    data-id="{{location.id}}">
+    <i class="delete-location-confirm uk-icon-times uk-icon-large" data-id="{{location.id}}"></i>
+  </button>
+  <button type="button" class="uk-button update-location uk-float-right uk-button-margin uk-button-mini"
+  data-id="{{location.id}}">
+    <i class="edit-location uk-icon-edit uk-icon-large" data-id="{{location.id}}"></i>
+</button>
+  <!-- <a class="uk-button edit-location uk-float-right uk-button-margin uk-button-mini" data-id="{{location.id}}" href="/locations/write/{{location.id}}">
+    <i class="edit-location uk-icon-edit uk-icon-large"></i>
+  </a> -->
+  {{/if}}
+</div>
+{{> views_partial_modal-destroy}}
+</div>

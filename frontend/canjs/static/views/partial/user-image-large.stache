@@ -1,0 +1,5 @@
+{{#if md5}}
+      <img alt="{{md5}}" src="{{gravatar md5 150}}" class="uk-border-rounded"/>
+{{else}}
+      <img alt="unknown" src="{{gravatar unknown 150}}" class="uk-border-circle"/>
+{{/if}}

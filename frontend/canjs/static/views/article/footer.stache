@@ -1,0 +1,38 @@
+<div class="uk-float-right">
+  <aside>
+    <ul class="tags" class="uk-width-medium-1-1 uk-width-large-1-1">
+      {{#article.tags}}
+      <li class="tag-article">
+        <a href="/articles/tag/{{encodedUrl name}}" class="badge" title="{{name}}">
+          {{name}}
+        </a>
+      </li>
+      {{/article.tags}}
+    </ul>
+  </aside>
+</div>
+<div class="hr br"></div>
+<div id="article-sub" class="uk-width-medium-1-1 uk-width-large-1-1 sub-wrapper no-padding">
+  {{#article.author}}
+  <div id="article-author">
+    {{> views_partial_user-box}}
+  </div>
+  {{/article.author}}
+</div>
+<div class="br"></div>
+<div id="likearticle" class="uk-float-right">
+  <!--<fb:like href="{{currentUrl}}&title={{truncate article.title}}&description={{truncate article.content}}" layout="button_count" action="like" show_faces="true" share="false"></fb:like>-->
+</div>
+<!--<a id="fbLikeuk-button" class="uk-button" href="http://www.facebook.com/plugins/like.php?href={{currentUrl}}">-->
+<!--<i class="uk-icon-thumbs-o-up uk-icon-large fb"></i>-->
+<!--<span id="fbCount">0</span>-->
+<!--</a>-->
+<!--<button id="fbLikeuk-button" class="uk-button fb-like">-->
+<!--<i class="uk-icon-thumbs-o-up uk-icon-large fb"></i>-->
+<!--<span id="fbCount">0</span>-->
+<!--</button>-->
+{{> views_partial_sharing}}
+<div class="hr"></div>
+<div class="bottom uk-width-medium-1-1 uk-width-large-1-1">
+  {{> views_partial_comments}}
+</div>

@@ -1,0 +1,29 @@
+<div id="articleWrapper" class="uk-width-medium-1-1 uk-width-large-1-1 item-top-margin">
+  {{> views_article_header}}
+  <div class="br clearfix"></div>
+  <article class="uk-text-center">
+    <h1 id="pageTitle" class="mb3">{{article.title}}</h1>
+    <!--<button type="button" class="uk-button uk-button-facebook uk-float-right uk-button-margin uk-button-mini fb-like">{{i18n 'article.view.item.facebook.like'}}</button>-->
+    <div class="hr"></div>
+    <img src="{{article.imageName}}" class="uk-responsive-width uk-responsive-height uk-border-rounded"/>
+    <div id="pageDescription" class="pre basic-content">{{{article.content}}}</div>
+  </article>
+  <div class="clearfix"></div>
+    {{> views_article_footer}}
+  <div class="clearfix"></div>
+  {{#if article.prev}}
+      <a href="/article/{{safeTitle article.prev.title}}/{{article.prev.id}}" title="{{truncate article.prev.title}}" class="uk-float-left linked-article">
+        	<i class="uk-icon-angle-double-left"></i>&nbsp;{{truncate article.prev.title}}
+    	</a>
+  {{/if}}
+  {{#if article.next}}
+      <a href="/article/{{safeTitle article.next.title}}/{{article.next.id}}" title="{{truncate article.next.title}}" class="uk-float-right linked-article">
+        	{{truncate article.next.title}}&nbsp;<i class="uk-icon-angle-double-right"></i>
+    	</a>
+  {{/if}}
+  <div class="clearfix"></div>
+  <div class="uk-text-center pt10">
+      <a href="/{{articleCategoryRoute article.categoryId}}" class="uk-button">{{i18n 'article.view.item.list'}}</a>
+      <!-- <a href="/" class="uk-button">{{i18n 'article.view.item.list'}}</a> -->
+  </div>
+</div>

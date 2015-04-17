@@ -1,0 +1,22 @@
+[
+  {
+    "id": "link",
+    "translation": "연결"
+  },
+  {
+    "id": "verify_email_title",
+    "translation": "고양이 서비스 이메일을 검증해주세요."
+  },
+  {
+    "id": "verify_email_content",
+    "translation": "이메일을 검증하시려면 아래 링크를 클릭하세요."
+  },
+  {
+    "id": "reset_password_title",
+    "translation": "고양이 서비스 암호 초기화 메일입니다."
+  },
+  {
+    "id": "reset_password_content",
+    "translation": "암호를 변경하시려면 아래 링크를 클릭하세요."
+  }
+]

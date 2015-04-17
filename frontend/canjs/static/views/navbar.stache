@@ -1,0 +1,140 @@
+<nav class="uk-navbar uk-navbar-attached">
+    <div class="uk-container uk-container-center">
+        <a href="/" title="{{i18n 'service.name'}}" class="uk-navbar-brand uk-hidden-small">
+            <i class="uk-icon-home"></i>&nbsp; {{i18n 'service.name'}}
+        </a>
+        <div class="uk-navbar-flip uk-hidden-small">
+            <ul class="uk-navbar-nav">
+                {{#data}}
+                    {{^user}}
+                        <li class="uk-active"><a href="/login">{{i18n 'navbar.login'}}</a></li>
+                    {{/user}}
+                    {{#user}}
+                        <li class="uk-parent" data-uk-dropdown>
+                            <a href="#">
+                                {{ username }}
+                                <i class="uk-icon-caret-down"></i>
+                            </a>
+                            <div class="uk-dropdown uk-dropdown-navbar">
+                                <ul class="uk-nav uk-nav-navbar">
+                                    <li class="uk-nav-header">{{i18n 'navbar.myAccount'}}</li>
+                                    {{#hasAdmin}}
+                                        <li><a href="/admin/role">{{i18n 'navbar.admin'}}</a></li>
+                                    {{/hasAdmin}}
+                                    <li><a href="/profile/{{ id }}">{{i18n 'navbar.profile'}}</a></li>
+                                    <li><a href="/setting/basic">{{i18n 'navbar.setting'}}</a></li>
+                                    <li class="uk-nav-divider"></li>
+                                    <li><a href="/logout">{{i18n 'navbar.logout'}}</a></li>
+                                </ul>
+                            </div>
+                        </li>
+
+                    {{/user}}
+                {{/data}}
+                <li class="uk-parent" data-uk-dropdown>
+                  <a href="#">
+                    {{i18n 'navbar.examples.title'}}
+                    <i class="uk-icon-caret-down"></i>
+                  </a>
+                  <div class="uk-dropdown uk-dropdown-navbar">
+                    <ul class="uk-nav uk-nav-navbar">
+                      <li class="uk-active"><a href="/general">{{i18n 'navbar.examples.articles'}}</a></li>
+                      <li class="uk-nav-divider"></li>
+                      <li class="uk-active"><a href="/locations">{{i18n 'navbar.examples.locations'}}</a></li>
+                      <li class="uk-active"><a href="/locations/search">{{i18n 'navbar.examples.locationSearch'}}</a></li>
+                      <li class="uk-nav-divider"></li>
+                      <li class="uk-active"><a href="/upload">{{i18n 'navbar.examples.upload'}}</a></li>
+                    </ul>
+                  </div>
+              </li>
+                <li class="uk-parent" data-uk-dropdown>
+                    <a href="#">
+                        {{i18n 'navbar.aboutUs'}}
+                        <i class="uk-icon-caret-down"></i>
+                    </a>
+                    <div class="uk-dropdown uk-dropdown-navbar">
+                        <ul class="uk-nav uk-nav-navbar">
+                            <li><a href="/how-it-works">{{i18n 'navbar.howItWorks'}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="uk-parent" data-uk-dropdown>
+                    <a href="#">
+                        {{i18n 'navbar.languages'}}
+                        <i class="uk-icon-caret-down"></i>
+                    </a>
+                    <div class="uk-dropdown uk-dropdown-navbar">
+                        <ul class="uk-nav uk-nav-navbar">
+                            <li><a href="/locales/en">{{i18n 'navbar.english'}}</a>
+                            </li>
+                            <li><a href="/locales/ko">{{i18n 'navbar.korean'}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <a href="#offcanvasNavbar" class="uk-navbar-toggle uk-visible-small" data-uk-offcanvas="{target:'#offcanvasNavbar'}"></a>
+        <div class="uk-navbar-brand uk-navbar-center uk-visible-small uk-text-nowrap">
+            <a href="/" title="{{i18n 'service.name'}}">
+                <i class="uk-icon-home"></i>&nbsp; {{i18n 'service.name'}}
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div id="offcanvasNavbar" class="uk-offcanvas">
+    <div class="uk-offcanvas-bar">
+        <ul class="uk-nav uk-nav-offcanvas uk-nav-parent-icon" data-uk-nav="{ multiple: true }">
+        <!--<ul class="uk-nav uk-nav-offcanvas uk-nav-parent-icon" data-uk-nav="{multiple:true}">-->
+            {{#data}}
+                {{^user}}
+                    <li class="uk-active"><a href="/login" class="internal">{{i18n 'navbar.login'}}</a></li>
+                {{/user}}
+                {{#user}}
+                    <li class="uk-parent">
+                        <a href="#">
+                            {{ email }}
+                        </a>
+                            <ul class="uk-nav-sub">
+                                &lt;!&ndash;<li class="uk-nav-header">{{i18n 'navbar.myAccount'}}</li>&ndash;&gt;
+                                <li>{{i18n 'navbar.myAccount'}}</li>
+                                {{#hasAdmin}}
+                                    <li><a href="/admin/role" class="internal">{{i18n 'navbar.admin'}}</a></li>
+                                {{/hasAdmin}}
+                                <li><a href="/profile/{{ id }}" class="internal">{{i18n 'navbar.profile'}}</a></li>
+                                <li><a href="/setting/basic" class="internal">{{i18n 'navbar.setting'}}</a></li>
+                                &lt;!&ndash;<li class="uk-nav-divider"></li>&ndash;&gt;
+                                <li><a href="/logout" class="internal">{{i18n 'navbar.logout'}}</a></li>
+                            </ul>
+                    </li>
+                {{/user}}
+            {{/data}}
+            <li class="uk-parent" data-uk-dropdown>
+              <a href="#">
+                {{i18n 'navbar.aboutUs'}}
+                <i class="uk-icon-caret-down"></i>
+              </a>
+              <div class="uk-dropdown uk-dropdown-navbar">
+                <ul class="uk-nav uk-nav-navbar">
+                  <li><a href="/how-it-works">{{i18n 'navbar.howItWorks'}}</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+
+            <li class="uk-parent">
+                <a href="#">
+                    {{i18n 'navbar.languages'}}
+                </a>
+                    <ul class="uk-nav-sub">
+                        <li><a href="/locales/en">{{i18n 'navbar.english'}}</a>
+                        </li>
+                        <li><a href="/locales/ko">{{i18n 'navbar.korean'}}</a>
+                        </li>
+                    </ul>
+            </li>
+        </ul>
+    </div>
+</div>

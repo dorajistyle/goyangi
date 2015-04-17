@@ -1,0 +1,11 @@
+<div>
+    <div id="index" class="uk-panel">
+        <div class="uk-panel-badge uk-badge">{{i18n 'main.new'}}</div>
+        <h1 id="pageTitle" class="uk-panel-title">{{i18n 'main.title'}}</h1>
+
+        <p>{{i18n 'main.description'}}</p>
+    </div>
+        {{> views_partial_user-list}}
+</div>
+
+

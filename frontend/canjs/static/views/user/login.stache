@@ -1,0 +1,22 @@
+<div class="uk-grid uk-text-center uk-margin-top">
+    <div class="login-text uk-width-medium-7-10 uk-width-large-7-10 uk-margin-large-bottom">
+        <div class="uk-vertical-align uk-text-center">
+            <div class="uk-vertical-align-middle">
+            <h1 id="pageTitle" class="uk-heading-large">{{i18n 'welcome.login.title'}}</h1>
+            <p class="uk-text-large">{{i18n 'welcome.login.content'}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="uk-width-medium-3-10 uk-width-large-3-10">
+        <div class="uk-panel">
+            {{#unless registrationMessage}}
+                <div class="login-wrapper uk-panel uk-panel-box uk-width-medium-1-1 uk-width-large-1-1">
+                    {{> views_user_login-form}}
+                </div>
+            {{/unless}}
+            <div class="register-wrapper uk-panel uk-panel-box uk-width-medium-1-1 uk-width-large-1-1 uk-margin-top">
+                {{> views_user_registration-form}}
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,24 @@
+{{define "app"}}
+<div id="navbar" data-uk-observe>
+    <div class="uk-container uk-container-center uk-text-center uk-margin-top">
+        {{.staticPath}}
+    </div>
+</div>
+
+<div class="uk-container uk-container-center uk-margin-top uk-margin-large-bottom app-main">
+    <div id="appWrapper" data-uk-observe>
+      <div id="app">
+        <div id="messageContainer">
+          <div id="ajaxProgress">
+            <i class="uk-icon-spinner uk-icon-spin"></i>&nbsp;
+            Now loading...
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="popup"></div>
+</div>
+
+<div id="footer" data-uk-observe>
+</div>
+{{end}}

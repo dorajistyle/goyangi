@@ -1,0 +1,7 @@
+    <tr class="basic-list uk-width-medium-1-1 uk-width-large-1-1">
+        <td class="ml4px">
+        	<a href="/location/{{safeTitle name}}/{{id}}" title="{{truncate name}}">
+                	{{truncate name}}
+        	</a>
+        </td>
+    </tr>

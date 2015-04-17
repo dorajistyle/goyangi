@@ -1,0 +1,119 @@
+<h2>{{i18n 'admin.user.title'}}</h2>
+    <form class="uk-form uk-form-horizontal">
+        <div class="uk-form-row">
+            <input id="searchUser" name="searchUser" type="text"
+                   class="uk-form-small uk-form-width-medium search-user uk-width-medium-1-2 uk-width-large-1-2" tabindex="1"/>
+        </div>
+    </form>
+<hr/>
+<div class="uk-overflow-container">
+    <table class='uk-table uk-table-hover uk-table-striped uk-table-condensed'>
+        <thead>
+        <tr>
+            <th class="uk-width-medium-1-10 uk-width-large-1-10"></th>
+            <th class="uk-width-medium-5-10 uk-width-large-5-10">{{i18n 'admin.user.email'}}</th>
+            <th class="uk-width-medium-2-10 uk-width-large-2-10 uk-text-center">{{i18n 'admin.user.roles'}}</th>
+            <th class="uk-width-medium-1-10 uk-width-large-1-10 uk-text-center">{{i18n 'admin.user.active'}}</th>
+            <th class="uk-width-medium-1-10 uk-width-large-1-10 uk-text-center"></th>
+        </tr>
+        </thead>
+        <!--<tfoot>-->
+        <!--<tr>-->
+            <!--<td>count</td>-->
+            <!--<td>1</td>-->
+        <!--</tr>-->
+        <!--</tfoot>-->
+        <tbody>
+        {{#users}}
+        <tr>
+            <td class="uk-width-medium-1-10 uk-width-large-1-10"><input name='selectUser' type="radio" class="select-user" value="{{active}}" data-id="{{id}}"></td>
+            <td class="uk-width-medium-5-10 uk-width-large-5-10">{{email}}</td>
+            <td class="uk-width-medium-2-10 uk-width-large-2-10 uk-text-center" id="roleItems{{id}}" data-id="{{id}}">
+                {{#if Roles}}
+                <ul class="uk-list uk-list-line">
+                    {{#Roles}}
+                        <li>
+                             <span class='role-name'>{{name}}</span>&nbsp;<i data-id="{{id}}" class="uk-icon-times-circle delete-role-from-user-confirm"></i></li>
+                    {{/Roles}}
+                </ul>
+                {{/if}}
+                {{^Roles}}
+                    -
+                {{/Roles}}
+            </td>
+            <td class="uk-width-medium-1-10 uk-width-large-1-10 uk-text-center"><label><input type="checkbox" class="toggle-activation" data-id="{{id}}"
+                    {{#activation}}
+                        checked
+                    {{/activation}}
+                    /></label></td>
+            <td class="uk-width-medium-1-10 uk-width-large-1-10 uk-text-center">
+                    <i class="delete-user-confirm uk-icon-times uk-icon-medium" data-id='{{id}}'></i>
+            </td>
+        </tr>
+        {{/users}}
+        </tbody>
+    </table>
+</div>
+<ul class="uk-pagination">
+  {{#hasPrev}}
+    <li class="previous"><a href="/admin/user/{{prevPage}}">&larr; {{i18n 'page.previous'}}</a></li>
+  {{/hasPrev}}
+  {{#hasNext}}
+    <li class="next"><a href="/admin/user/{{nextPage}}">{{i18n 'page.next'}} &rarr;</a></li>
+  {{/hasNext}}
+</ul>
+
+<form id="adminUserForm" name="adminUserForm" method="put" class="uk-form uk-hidden uk-form-horizontal">
+    <h4>{{i18n 'admin.user.formTitle'}}</h4>
+    {{#currentUser}}
+        <input id="userId" name="userId" type="hidden" value="{{id}}"/>
+        <div class="user-email-wrapper uk-form-row">
+            <label for="adminUserEmail" class="uk-form-label">{{i18n 'admin.user.email'}}</label>
+            <input id="adminUserEmail" name="adminUserEmail" type="text"
+                   class="user-email uk-form-width-medium" tabindex="2" disabled="disabled" value="{{email}}"/>
+        </div>
+        <div class="user-roles-wrapper uk-form-row">
+            <label for="adminUserRoles" class="uk-form-label">{{i18n 'admin.user.roles'}}</label>
+            <select id="adminUserRoles" name="adminUserRoles"
+                   class="user-roles uk-form-width-medium">
+                     {{#if currentUser.Roles}}
+                        <option>{{i18n 'admin.user.hasRole' count=currentUser.Roles.length}}</option>
+                        {{#currentUser.Roles}}
+                            <option> {{name}} - {{description}}</option>
+                        {{/currentUser.Roles}}
+                     {{ else }}
+                     <option>{{i18n 'admin.user.hasRole' count=0}}</option>
+                     {{/if}}
+           </select>
+        </div>
+    {{/currentUser}}
+    <div class="role-name-label-wrapper uk-form-row">
+        <label for="roleName" class="uk-form-label">{{i18n 'admin.user.searchRole'}}</label>
+
+    </div>
+    <div class="add-role-wrapper uk-form-row">
+        <input id="roleId" name="roleId" type="hidden"/>
+        <input id="roleName" name="roleName" type="text"
+               class="role-name uk-form-small uk-form-width-medium" tabindex="3"/>
+        <button type="submit" class="uk-form-small uk-button uk-button-primary add-role-to-user" tabindex="4">
+            {{i18n 'admin.user.submit'}}
+        </button>
+    </div>
+</form>
+{{> views_partial_modal-destroy}}
+
+<div class="uk-modal" id="deleteRoleFromUserConfirm">
+        <div class="uk-modal-dialog">
+          <a class="uk-modal-close uk-close cancel-confirm"></a>
+          <div class="uk-modal-header">
+            <h4 class="modal-title">{{i18n 'admin.user.role.confirmDelete.title'}}</h4>
+          </div>
+          {{i18n 'admin.user.role.confirmDelete.content'}}
+          <div class="uk-modal-footer uk-text-right">
+            <button type="button" data-dismiss="modal"
+                    class="uk-modal-close uk-button cancel-confirm">{{i18n 'admin.user.role.confirmDelete.close'}}</button>
+            <button type="button"
+                    class="uk-button delete-role-from-user-final uk-button-inverse">{{i18n 'admin.user.role.confirmDelete.submit'}}</button>
+          </div>
+        </div>
+</div>

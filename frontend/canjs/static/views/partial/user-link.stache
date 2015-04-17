@@ -1,0 +1,6 @@
+    <div class="user-profile-img uk-text-center">
+        <a href="/profile/{{id}}" title="{{username}}">
+          {{> views_partial_user-image}}
+          <span class="user-title uk-text-center">{{username}}</span>
+        </a>
+    </div>

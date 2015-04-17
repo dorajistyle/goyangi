@@ -1,0 +1,4 @@
+<div class="uk-width-medium-1-1 uk-width-large-1-1 item-top-margin">
+  <h2>{{title}}</h2>
+  <pre>{{content}}</pre>
+</div>

@@ -1,0 +1,40 @@
+{{#unless oauthStatus.google}}
+<button type="buttion" class="uk-button uk-width-1-1 uk-margin-top oauth-google" tabindex="100"><i class="uk-icon-google uk-icon-small uk-margin-small-right uk-margin-small-top uk-margin-small-bottom"></i>{{i18n 'user.view.oauth.connect.prefix'}} {{i18n 'user.view.oauth.provider.google'}} {{i18n 'user.view.oauth.connect.postfix'}}</button>
+{{else}}
+  <button type="buttion" class="uk-button uk-width-1-1 uk-margin-top revoke-oauth-google" tabindex="100"><i class="uk-icon-google uk-icon-small uk-margin-small-right uk-margin-small-top uk-margin-small-bottom"></i>{{i18n 'user.view.oauth.revoke.prefix'}} {{i18n 'user.view.oauth.provider.google'}} {{i18n 'user.view.oauth.revoke.postfix'}}<i class="uk-icon-times uk-icon-small uk-margin-small-left uk-margin-small-top uk-margin-small-bottom uk-float-right"></button>
+{{/unless}}
+{{#unless oauthStatus.github}}
+  <button type="buttion" class="uk-button uk-width-1-1 uk-margin-top oauth-github" tabindex="5"><i class="uk-icon-github uk-icon-small uk-margin-small-right uk-margin-small-top uk-margin-small-bottom"></i>{{i18n 'user.view.oauth.connect.prefix'}} {{i18n 'user.view.oauth.provider.github'}} {{i18n 'user.view.oauth.connect.postfix'}}</button>
+{{else}}
+  <button type="buttion" class="uk-button uk-width-1-1 uk-margin-top revoke-oauth-github" tabindex="5"><i class="uk-icon-github uk-icon-small uk-margin-small-right uk-margin-small-top uk-margin-small-bottom"></i>{{i18n 'user.view.oauth.revoke.prefix'}} {{i18n 'user.view.oauth.provider.github'}} {{i18n 'user.view.oauth.revoke.postfix'}}<i class="uk-icon-times uk-icon-small uk-margin-small-left uk-margin-small-top uk-margin-small-bottom uk-float-right"></button>
+{{/unless}}
+<!-- {{#unless oauthStatus.yahoo}} -->
+<!-- <button type="buttion" class="uk-button uk-width-1-1 uk-margin-top oauth-yahoo" tabindex="5"><i class="uk-icon-yahoo uk-icon-small uk-margin-small-right uk-margin-small-top uk-margin-small-bottom"></i>{{i18n 'user.view.oauth.connect.prefix'}} {{i18n 'user.view.oauth.provider.yahoo'}} {{i18n 'user.view.oauth.connect.postfix'}}</button> -->
+<!-- {{else}} -->
+  <!-- <button type="buttion" class="uk-button uk-width-1-1 uk-margin-top revoke-oauth-yahoo" tabindex="5"><i class="uk-icon-yahoo uk-icon-small uk-margin-small-right uk-margin-small-top uk-margin-small-bottom"></i>{{i18n 'user.view.oauth.revoke.prefix'}} {{i18n 'user.view.oauth.provider.yahoo'}} {{i18n 'user.view.oauth.revoke.postfix'}}<i class="uk-icon-times uk-icon-small uk-margin-small-left uk-margin-small-top uk-margin-small-bottom uk-float-right"></button> -->
+<!-- {{/unless}} -->
+{{#unless oauthStatus.facebook}}
+  <button type="buttion" class="uk-button uk-width-1-1 uk-margin-top oauth-facebook" tabindex="5"><i class="uk-icon-facebook uk-icon-small uk-margin-small-right uk-margin-small-top uk-margin-small-bottom"></i>{{i18n 'user.view.oauth.connect.prefix'}} {{i18n 'user.view.oauth.provider.facebook'}} {{i18n 'user.view.oauth.connect.postfix'}}</button>
+{{else}}
+  <button type="buttion" class="uk-button uk-width-1-1 uk-margin-top revoke-oauth-facebook" tabindex="5"><i class="uk-icon-facebook uk-icon-small uk-margin-small-right uk-margin-small-top uk-margin-small-bottom"></i>{{i18n 'user.view.oauth.revoke.prefix'}} {{i18n 'user.view.oauth.provider.facebook'}} {{i18n 'user.view.oauth.revoke.postfix'}}<i class="uk-icon-times uk-icon-small uk-margin-small-left uk-margin-small-top uk-margin-small-bottom uk-float-right"></button>
+{{/unless}}
+<!-- {{#unless oauthStatus.twitter}} -->
+<!-- <button type="buttion" class="uk-button uk-width-1-1 uk-margin-top oauth-twitter" tabindex="5"><i class="uk-icon-twitter uk-icon-small uk-margin-small-right uk-margin-small-top uk-margin-small-bottom"></i>{{i18n 'user.view.oauth.connect.prefix'}} {{i18n 'user.view.oauth.provider.twitter'}} {{i18n 'user.view.oauth.connect.postfix'}}</button> -->
+<!-- {{else}}
+  <button type="buttion" class="uk-button uk-width-1-1 uk-margin-top revoke-oauth-twitter" tabindex="5"><i class="uk-icon-twitter uk-icon-small uk-margin-small-right uk-margin-small-top uk-margin-small-bottom"></i>{{i18n 'user.view.oauth.revoke.prefix'}} {{i18n 'user.view.oauth.provider.twitter'}} {{i18n 'user.view.oauth.revoke.postfix'}}<i class="uk-icon-times uk-icon-small uk-margin-small-left uk-margin-small-top uk-margin-small-bottom uk-float-right"></button>
+{{/unless}} -->
+{{#unless oauthStatus.linkedin}}
+  <button type="buttion" class="uk-button uk-width-1-1 uk-margin-top oauth-linkedin" tabindex="5"><i class="uk-icon-linkedin uk-icon-small uk-margin-small-right uk-margin-small-top uk-margin-small-bottom"></i>{{i18n 'user.view.oauth.connect.prefix'}} {{i18n 'user.view.oauth.provider.linkedin'}} {{i18n 'user.view.oauth.connect.postfix'}}</button>
+{{else}}
+  <button type="buttion" class="uk-button uk-width-1-1 uk-margin-top revoke-oauth-linkedin" tabindex="5"><i class="uk-icon-linkedin uk-icon-small uk-margin-small-right uk-margin-small-top uk-margin-small-bottom"></i>{{i18n 'user.view.oauth.revoke.prefix'}} {{i18n 'user.view.oauth.provider.linkedin'}} {{i18n 'user.view.oauth.revoke.postfix'}}<i class="uk-icon-times uk-icon-small uk-margin-small-left uk-margin-small-top uk-margin-small-bottom uk-float-right"></button>
+{{/unless}}
+<!-- {{#unless oauthStatus.kakao}}
+<button type="buttion" class="uk-button uk-width-1-1 uk-margin-top oauth-kakao" tabindex="5"><i class="uk-icon-comment-o uk-icon-small uk-margin-small-right uk-margin-small-top uk-margin-small-bottom"></i>{{i18n 'user.view.oauth.connect.prefix'}} {{i18n 'user.view.oauth.provider.kakao'}} {{i18n 'user.view.oauth.connect.postfix'}}</button>
+{{else}}
+  <button type="buttion" class="uk-button uk-width-1-1 uk-margin-top revoke-oauth-kakao" tabindex="5"><i class="uk-icon-kakao uk-icon-small uk-margin-small-right uk-margin-small-top uk-margin-small-bottom"></i>{{i18n 'user.view.oauth.revoke.prefix'}} {{i18n 'user.view.oauth.provider.kakao'}} {{i18n 'user.view.oauth.revoke.postfix'}}<i class="uk-icon-times uk-icon-small uk-margin-small-left uk-margin-small-top uk-margin-small-bottom uk-float-right"></button>
+{{/unless}}
+{{#unless oauthStatus.naver}}
+  <button type="buttion" class="uk-button uk-width-1-1 uk-margin-top oauth-naver" tabindex="5"><b>N</b>&nbsp;{{i18n 'user.view.oauth.connect.prefix'}} {{i18n 'user.view.oauth.provider.naver'}} {{i18n 'user.view.oauth.connect.postfix'}}</button>
+{{else}}
+  <button type="buttion" class="uk-button uk-width-1-1 uk-margin-top revoke-oauth-naver" tabindex="5"><b>N</b>&nbsp;{{i18n 'user.view.oauth.revoke.prefix'}} {{i18n 'user.view.oauth.provider.naver'}} {{i18n 'user.view.oauth.revoke.postfix'}}<i class="uk-icon-times uk-icon-small uk-margin-small-left uk-margin-small-top uk-margin-small-bottom uk-float-right"></button>
+{{/unless}} -->

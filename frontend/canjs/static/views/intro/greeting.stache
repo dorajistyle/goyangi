@@ -1,0 +1,7 @@
+<div class="uk-panel uk-panel-box uk-width-medium-1-1 uk-width-large-1-1">
+  <div class="uk-panel-teaser">
+    <img src="{{mainImage}}" class="uk-border-rounded"/>
+  </div>
+  <h1 id="pageTitle" class="uk-panel-title">{{i18n 'main.title'}}</h1>
+  {{i18n 'main.description'}}
+</div>

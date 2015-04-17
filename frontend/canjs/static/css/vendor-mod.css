@@ -1,0 +1,75 @@
+.trumbowyg-box, .editor {
+  width: 100%; }
+
+.uk-table td .border-none {
+  border: none; }
+
+.uk-icon-5x {
+  font-size: 500%; }
+
+rt-uploader {
+  display: block; }
+  rt-uploader .drop-files-body {
+    text-align: center;
+    padding: 20px;
+    font-size: 120%; }
+  rt-uploader .btn-group {
+    float: right;
+    margin-right: -6px; }
+    rt-uploader .btn-group button {
+      padding: 1px 10px; }
+      rt-uploader .btn-group button:hover {
+        color: white; }
+  rt-uploader .fileinput-button {
+    position: relative;
+    overflow: hidden; }
+  rt-uploader .fileinput-button input {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    opacity: 0;
+    -ms-filter: 'alpha(opacity=0)';
+    font-size: 200px;
+    direction: ltr;
+    cursor: pointer; }
+  rt-uploader .progress {
+    height: 5px;
+    float: left;
+    margin: 12px 8px 0 0;
+    width: 100px; }
+  rt-uploader .hidden-progress {
+    width: 0px;
+    margin-right: 0px; }
+  rt-uploader .table tbody tr td {
+    line-height: 26px; }
+  rt-uploader .table tbody tr td.progress-row {
+    border-top: none;
+    padding-top: 0; }
+  rt-uploader .actions-col {
+    width: 31px;
+    text-align: right; }
+  rt-uploader .word-count-col {
+    width: 125px;
+    text-align: right; }
+    rt-uploader .word-count-col .form-control {
+      padding: 0 5px;
+      height: 26px;
+      text-align: right; }
+    rt-uploader .word-count-col .sum {
+      display: inline-block;
+      padding-right: 6px; }
+  rt-uploader .from-url-body {
+    padding: 10px 9px; }
+    rt-uploader .from-url-body input {
+      float: left;
+      width: 580px; }
+    rt-uploader .from-url-body button {
+      float: left;
+      width: 109px;
+      margin-left: 12px; }
+    rt-uploader .from-url-body .action-link {
+      float: right;
+      margin-top: 4px; }
+  rt-uploader .action-link {
+    font-size: 120%; }

@@ -1,0 +1,66 @@
+<h2>{{i18n 'admin.role.title'}}</h2>
+<hr/>
+<div class="uk-overflow-container">
+    <table class='uk-table uk-table-hover uk-table-striped uk-table-condensed'>
+        <thead>
+        <tr>
+            <th class="uk-width-medium-1-10 uk-width-large-1-10"></th>
+            <th class="uk-width-medium-3-10 uk-width-large-3-10">{{i18n 'admin.role.name'}}</th>
+            <th class="uk-width-medium-5-10 uk-width-large-5-10">{{i18n 'admin.role.description'}}</th>
+            <th class="uk-width-medium-1-10 uk-width-large-1-10 uk-text-center"></th>
+        </tr>
+        </thead>
+        <!--<tfoot>-->
+        <!--<tr>-->
+            <!--<td>count</td>-->
+            <!--<td>1</td>-->
+        <!--</tr>-->
+        <!--</tfoot>-->
+        <tbody>
+        {{#roles}}
+        <tr>
+            <td class="uk-width-medium-1-10 uk-width-large-1-10"><input name='selectRole' type="radio" class="select-role" data-id="{{id}}"></td>
+            <td class="uk-width-medium-3-10 uk-width-large-3-10">{{name}}</td>
+            <td class="uk-width-medium-5-10 uk-width-large-5-10">{{description}}</td>
+            <td class="uk-width-medium-1-10 uk-width-large-1-10 uk-text-center">
+                    <i class="delete-role-confirm uk-icon-times uk-icon-medium" data-id='{{id}}'></i>
+            </td>
+        </tr>
+        {{/roles}}
+        </tbody>
+    </table>
+</div>
+<ul class="uk-pagination">
+  {{#hasPrev}}
+    <li class="previous"><a href="/admin/role/{{prevPage}}">&larr; {{i18n 'page.previous'}}</a></li>
+  {{/hasPrev}}
+  {{#hasNext}}
+    <li class="next"><a href="/admin/role/{{nextPage}}">{{i18n 'page.next'}} &rarr;</a></li>
+  {{/hasNext}}
+</ul>
+<button type="button" class="uk-button uk-button-primary create-new-role-form">
+            {{i18n 'admin.role.showNewForm'}}
+        </button>
+<hr/>
+<form id="adminRoleForm" name="adminRoleForm" method="put" class="uk-form uk-form-horizontal">
+    <h4>{{i18n 'admin.role.formTitle'}}</h4>
+    <div class="role-name-wrapper uk-form-row">
+        <label for="name" class="uk-form-label">{{i18n 'admin.role.name'}}</label>
+        <input id="name" name="name" type="text"
+               placeholder="{{i18n 'admin.role.enterName'}}" class="role-name" tabindex="1"/>
+    </div>
+    <div class="role-description-wrapper uk-form-row">
+        <label for="description" class="uk-form-label">{{i18n 'admin.role.description'}}</label>
+        <input id="description" name="description" type="text"
+               placeholder="{{i18n 'admin.role.enterDescription'}}" class="role-description" tabindex="2"/>
+    </div>
+    <div class="create-role-wrapper uk-form-row">
+        <button type="submit" class="uk-button uk-button-primary update-role uk-hidden uk-float-right" tabindex="3">
+            {{i18n 'admin.role.update.title'}}
+        </button>
+        <button type="submit" class="uk-button uk-button-primary create-role uk-float-right" tabindex="4">
+            {{i18n 'admin.role.submit'}}
+        </button>
+    </div>
+</form>
+{{> views_partial_modal-destroy}}

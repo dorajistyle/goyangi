@@ -1,0 +1,16 @@
+{
+  "categories": [
+    {
+    "id": "100",
+    "name": "notice"
+  },
+  {
+    "id": "200",
+    "name": "general"
+  },
+  {
+    "id": "300",
+    "name": "etc"
+  }
+  ]
+}

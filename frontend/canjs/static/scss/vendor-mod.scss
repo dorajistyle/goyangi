@@ -1,0 +1,102 @@
+.trumbowyg-box, .editor {
+  width: 100%;
+}
+
+.uk-table td .border-none {
+    border: none;
+}
+
+.uk-icon-5x {
+  font-size: 500%;
+//  font-size: 5em;
+}
+
+rt-uploader {
+	display: block;
+	.drop-files-body {
+		text-align: center;
+		padding: 20px;
+		font-size: 120%;
+	}
+	.btn-group {
+		float: right;
+		margin-right: -6px;
+		button {
+
+			padding: 1px 10px;
+			&:hover {
+				color: white;
+			}
+		}
+	}
+	.fileinput-button {
+		position: relative;
+		overflow: hidden;
+	}
+	.fileinput-button input {
+		position: absolute;
+		top: 0;
+		right: 0;
+		margin: 0;
+		opacity: 0;
+		-ms-filter: 'alpha(opacity=0)';
+		font-size: 200px;
+		direction: ltr;
+		cursor: pointer;
+	}
+	.progress {
+		height: 5px;
+		float: left;
+		margin: 12px 8px 0 0;
+		width: 100px;
+	}
+	.hidden-progress {
+		width: 0px;
+		margin-right: 0px;
+	}
+	.table tbody tr {
+		td {
+			line-height: 26px;
+		}
+		td.progress-row {
+			border-top: none;
+			padding-top: 0;
+		}
+	}
+	.actions-col {
+		width: 31px;
+		text-align: right;
+	}
+	.word-count-col {
+		width: 125px;
+		text-align: right;
+		.form-control {
+			padding: 0 5px;
+			height: 26px;
+			text-align: right;
+		}
+		.sum {
+			display: inline-block;
+			padding-right: 6px;
+		}
+	}
+	.from-url-body {
+		padding: 10px 9px;
+		input {
+			float: left;
+			width: 580px;
+		}
+		button {
+			float: left;
+			width: 109px;
+			margin-left: 12px;
+		}
+		.action-link {
+			float: right;
+			margin-top: 4px;
+		}
+	}
+	.action-link {
+		font-size: 120%;
+	}
+}

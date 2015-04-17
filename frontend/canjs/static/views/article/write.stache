@@ -1,0 +1,47 @@
+<div>
+    <!-- title -->
+    <div class="top-title uk-text-center">
+        <div id="titleWrite">
+            {{i18n 'article.view.write.title'}}<br>
+        </div>
+    </div>
+    <div class="form-box">
+        <form id="articleWriteForm" name="articleWriteForm" enctype="multipart/form-data" method="post" class="uk-form">
+            <fieldset>
+                    <input type="hidden" id="id" name="id" value="{{article.id}}"/>
+                    <input type="hidden" id="categoryId" name="categoryId" value="{{#if article}}{{article.categoryId}}{{else}}{{categoryId}}{{/if}}"/>
+                    <!--<div class="uk-form-row">-->
+                        <!--<label>{{i18n 'article.view.write.category'}}</label>-->
+                        <!--<select id="categoryId" name="categoryId" class="">-->
+                            <!--{{#categories}}-->
+                                <!--{{> views_article_category-options}}-->
+                            <!--{{/categories}}-->
+                        <!--</select>-->
+                    <!--</div>-->
+
+                    <div class="uk-form-row">
+                        <label for="title">{{i18n 'article.title'}}</label>
+                        <input id="articleTitle" name="title" type="text"
+                               placeholder="{{i18n 'article.view.write.placeholder.title'}}" class="uk-width-1-1" value="{{article.title}}"/>
+                    </div>
+                    <div class="uk-form-row form-margin-bottom">
+                        <label for="content">{{i18n 'article.content'}}</label>
+                    </div>
+                    <div class="uk-form-row">
+                        <textarea id="articleContent" name="content" rows="10" cols="50" class=""
+                                  placeholder="{{i18n 'article.view.write.placeholder.content'}}">{{article.content}}</textarea>
+                    </div>
+                    <!--<div class="uk-form-row">-->
+                        <!--<label for="tags">{{i18n 'article.view.tags'}}</label>-->
+                        <!--<input id="tags" name="tags" type="text"-->
+                               <!--placeholder="{{i18n 'article.view.write.placeholder.tags'}}" class="" value="{{article.tagNames}}"/>-->
+                    <!--</div>-->
+                    <div class="uk-form-row uk-text-center">
+                        <button type="submit" class="uk-button uk-button-danger write-article" tabindex="7">
+                            {{i18n 'article.view.write.submit'}}
+                        </button>
+                    </div>
+            </fieldset>
+        </form>
+    </div>
+</div>

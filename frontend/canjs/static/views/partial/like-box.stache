@@ -1,0 +1,36 @@
+<form id="likingsForm" name="likingsForm" class="uk-form uk-form-horizontal no-padding">
+  <input type="hidden" id="userId" name="userId" value="{{currentUserId}}"/>
+  <input type="hidden" id="parentId" name="parentId" value="{{parentId}}"/>
+
+  <!-- like & unlike button -->
+  <div class="uk-button-group uk-button-margin">
+    {{#unless isAuthor}}
+    {{#if likingList.isLiked}}
+    <button type="button" class="uk-button perform-unlike uk-button-small" tabindex="1">
+      <i class="uk-icon-heart uk-icon-small"></i>
+    </button>
+    {{else}}
+    <button type="button" class="uk-button perform-like uk-button-small" tabindex="1">
+      <i class="uk-icon-heart-o uk-icon-small"></i>
+    </button>
+    {{/if}}
+    {{/unless}}
+    <button type="button" class="uk-button show-liked-users uk-button-small" data-count="{{likingList.count}}">{{likingList.count}}</button>
+  </div>
+</form>
+<!-- uk-modal -->
+<div class="uk-modal" tabindex="-1" aria-hidden="true" id="likedUsersWrapper">
+  <div class="uk-modal-dialog">
+    <a type="button" class="uk-modal-close uk-close cancel-confirm"></a>
+    <div class="uk-modal-header">
+      <h4 class="uk-modal-title">{{i18n 'liking.fan.title'}}</h4>
+    </div>
+    <p class="uk-text-center">
+      <div id="likedUsers" class="uk-overflow-container"></div>
+      <button type="button" class="uk-button show-more-liked-users uk-hidden">
+        {{i18n 'liking.fan.more'}}
+      </button>
+    </p>
+  </div>
+  <!-- /.uk-modal-dialog -->
+</div>

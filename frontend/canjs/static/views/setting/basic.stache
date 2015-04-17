@@ -1,0 +1,12 @@
+{{#user}}
+   <form id="updateBasicForm" name="updateBasicForm" method="put" class="uk-form uk-form-horizontal">
+        <h4>{{i18n 'setting.basic.title'}}</h4>
+        <hr/>
+        <input type="hidden" id="id" name="id" value="{{user.id}}"/>
+
+        <div class="email uk-form-row">
+            <label for="email" class="uk-form-label">{{i18n 'user.email'}}</label>
+            <input id="email" name="email" readonly type="email" class="email uk-form-width-large" value="{{user.email}}"/>
+        </div>
+    </form>
+{{/user}}

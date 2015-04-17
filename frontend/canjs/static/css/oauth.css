@@ -1,0 +1,111 @@
+.uk-button.oauth-google, .uk-button.revoke-oauth-google {
+  background-color: #C63D2D;
+  color: #ffffff; }
+
+/* Hover */
+.uk-button.oauth-google:hover, .uk-button.oauth-google:focus, .uk-button.revoke-oauth-google:hover, .uk-button.revoke-oauth-google:focus {
+  background-color: #D16457;
+  color: #ffffff; }
+
+/* Active */
+.uk-button.oauth-google:active, .uk-button.oauth-google.uk-active, .uk-button.revoke-oauth-google:active, .uk-button.revoke-oauth-google.uk-active {
+  background-color: #b62D1D;
+  color: #ffffff; }
+
+.uk-button.oauth-github, .uk-button.revoke-oauth-github {
+  background-color: #f5f5f5;
+  color: #000000; }
+
+/* Hover */
+.uk-button.oauth-github:hover, .uk-button.oauth-github:focus, .uk-button.revoke-oauth-github:hover, .uk-button.revoke-oauth-github:focus {
+  background-color: #C4C4C4;
+  color: #000000; }
+
+/* Active */
+.uk-button.oauth-github:active, .uk-button.oauth-github.uk-active, .uk-button.revoke-oauth-github:active, .uk-button.revoke-oauth-github.uk-active {
+  background-color: #e5e5e5;
+  color: #000000; }
+
+.uk-button.oauth-yahoo, .uk-button.revoke-oauth-yahoo {
+  background-color: #2d1152;
+  color: #ffffff; }
+
+/* Hover */
+.uk-button.oauth-yahoo:hover, .uk-button.oauth-yahoo:focus, .uk-button.revoke-oauth-yahoo:hover, .uk-button.revoke-oauth-yahoo:focus {
+  background-color: #574175;
+  color: #ffffff; }
+
+/* Active */
+.uk-button.oauth-yahoo:active, .uk-button.oauth-yahoo.uk-active, .uk-button.revoke-oauth-yahoo:active, .uk-button.revoke-oauth-yahoo.uk-active {
+  background-color: #1d0142;
+  color: #ffffff; }
+
+.uk-button.oauth-facebook, .uk-button.revoke-oauth-facebook {
+  background-color: #3b5998;
+  color: #ffffff; }
+
+/* Hover */
+.uk-button.oauth-facebook:hover, .uk-button.oauth-facebook:focus, .uk-button.revoke-oauth-facebook:hover, .uk-button.revoke-oauth-facebook:focus {
+  background-color: #627AAD;
+  color: #ffffff; }
+
+/* Active */
+.uk-button.oauth-facebook:active, .uk-button.oauth-facebook.uk-active, .uk-button.revoke-oauth-facebook:active, .uk-button.revoke-oauth-facebook.uk-active {
+  background-color: #2b4988;
+  color: #ffffff; }
+
+.uk-button.oauth-twitter, .uk-button.revoke-oauth-twitter {
+  background-color: #00aced;
+  color: #ffffff; }
+
+/* Hover */
+.uk-button.oauth-twitter:hover, .uk-button.oauth-twitter:focus, .uk-button.revoke-oauth-twitter:hover, .uk-button.revoke-oauth-twitter:focus {
+  background-color: #33BDF1;
+  color: #ffffff; }
+
+/* Active */
+.uk-button.oauth-twitter:active, .uk-button.oauth-twitter.uk-active, .uk-button.revoke-oauth-twitter:active, .uk-button.revoke-oauth-twitter.uk-active {
+  background-color: #009cdd;
+  color: #ffffff; }
+
+.uk-button.oauth-linkedin, .uk-button.revoke-oauth-linkedin {
+  background-color: #007bb6;
+  color: #ffffff; }
+
+/* Hover */
+.uk-button.oauth-linkedin:hover, .uk-button.oauth-linkedin:focus, .uk-button.revoke-oauth-linkedin:hover, .uk-button.revoke-oauth-linkedin:focus {
+  background-color: #3395C5;
+  color: #ffffff; }
+
+/* Active */
+.uk-button.oauth-linkedin:active, .uk-button.oauth-linkedin.uk-active, .uk-button.revoke-oauth-linkedin:active, .uk-button.revoke-oauth-linkedin.uk-active {
+  background-color: #006ba6;
+  color: #ffffff; }
+
+.uk-button.oauth-kakao, .uk-button.revoke-oauth-kakao {
+  background-color: #f9e90d;
+  color: #000000; }
+
+/* Hover */
+.uk-button.oauth-kakao:hover, .uk-button.oauth-kakao:focus, .uk-button.revoke-oauth-kakao:hover, .uk-button.revoke-oauth-kakao:focus {
+  background-color: #FAED3D;
+  color: #000000; }
+
+/* Active */
+.uk-button.oauth-kakao:active, .uk-button.oauth-kakao.uk-active, .uk-button.revoke-oauth-kakao:active, .uk-button.revoke-oauth-kakao.uk-active {
+  background-color: #e9d90d;
+  color: #000000; }
+
+.uk-button.oauth-naver, .uk-button.revoke-oauth-naver {
+  background-color: #23b300;
+  color: #ffffff; }
+
+/* Hover */
+.uk-button.oauth-naver:hover, .uk-button.oauth-naver:focus, .uk-button.revoke-oauth-naver:hover, .uk-button.revoke-oauth-naver:focus {
+  background-color: #4FC233;
+  color: #ffffff; }
+
+/* Active */
+.uk-button.oauth-naver:active, .uk-button.oauth-naver.uk-active, .uk-button.revoke-oauth-naver:active, .uk-button.revoke-oauth-naver.uk-active {
+  background-color: #13a300;
+  color: #ffffff; }

@@ -1,0 +1,22 @@
+<div id="articleHeader" class="uk-width-medium-1-1 uk-width-large-1-1">
+  <div class="uk-float-left">
+    {{> views_partial_like-box}}
+  </div>
+  <div class="uk-float-right">
+    {{#if isAuthor}}
+    <!-- author - edit & delete button -->
+    <button type="button" class="uk-button delete-article-confirm uk-float-right uk-button-margin uk-button-mini"
+    data-id="{{article.id}}">
+    <i class="delete-article-confirm uk-icon-times uk-icon-large" data-id="{{article.id}}"></i>
+  </button>
+  <button type="button" class="uk-button update-article uk-float-right uk-button-margin uk-button-mini"
+  data-id="{{article.id}}">
+    <i class="edit-article uk-icon-edit uk-icon-large" data-id="{{article.id}}"></i>
+</button>
+  <!-- <a class="uk-button edit-article uk-float-right uk-button-margin uk-button-mini" data-id="{{article.id}}" href="/articles/write/{{article.id}}">
+    <i class="edit-article uk-icon-edit uk-icon-large"></i>
+  </a> -->
+  {{/if}}
+</div>
+{{> views_partial_modal-destroy}}
+</div>

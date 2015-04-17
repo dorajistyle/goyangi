@@ -1,0 +1,30 @@
+<div id="locationWrapper" class="uk-width-medium-1-1 uk-width-large-1-1 post-top-margin">
+  {{> views_location_header}}
+  <div class="br clearfix"></div>
+      <location class="uk-text-center">
+          <h1 id="pageTitle" class="mb3">{{location.name}}</h1>
+          <!--<button type="button" class="uk-button uk-button-facebook uk-float-right uk-button-margin uk-button-to-xs fb-like">{{i18n 'location.view.item.facebook.like'}}</button>-->
+          <div class="hr"></div>
+          <!--<ul>-->
+              <!--<li>{{location.address}}</li>-->
+          <!--</ul>-->
+          <div id="pageDescription" class="pre basic-content">{{{location.content}}}</div>
+      </location>
+  <div class="clearfix"></div>
+  {{> views_location_footer}}
+  <div class="clearfix"></div>
+  {{#if location.prev}}
+  <a href="/list/{{safeTitle location.prev.title}}/{{location.prev.id}}" title="{{truncate location.prev.title}}" class="uk-float-left linked-location">
+    <i class="uk-icon-angle-double-left"></i>&nbsp;{{truncate location.prev.title}}
+  </a>
+  {{/if}}
+  {{#if location.next}}
+  <a href="/location/{{safeTitle location.next.title}}/{{location.next.id}}" title="{{truncate location.next.title}}" class="uk-float-right linked-location">
+    {{truncate location.next.title}}&nbsp;<i class="uk-icon-angle-double-right"></i>
+  </a>
+  {{/if}}
+  <div class="clearfix"></div>
+  <div class="uk-text-center pt10">
+    <a href="/locations" class="uk-button">{{i18n 'location.view.item.list'}}</a>
+  </div>
+</div>
