@@ -1,4 +1,4 @@
-# Goyangi
+# [Goyangi](http://dorajistyle.net/goyangi)
 
 Goyangi is a web foundation to help you getting started with a new web project based on Golang. It suits for you who want to develop SPA or mobile application.
 It also good example how to develop large web application that combined fancy golang packages. [Goyangi](http://en.wikipedia.org/wiki/goyangi) means cat in Korean.
@@ -9,23 +9,20 @@ Some of developers prefer to using micro frameworks and lightweight packages for
 It's not easy to select and combine packages though.  
 So, Goyangi carefully chosen packages and combined.
 
-### The emphasis of decision
-* Performance
-* Productivity
-
 ## The goal
 Develop foundation codes that commonly used in web development.  
 Keep it simple and DRY.  
 Help creative lazybones.
 
-## Stack
-![Goyangi Stack](./document/images/goyangi-stack.png "Goyangi Stack")
-
 ## How it works?
 ![Goyangi How it works](./document/images/goyangi-howitworks.png "Goyangi How it works")
 
+## Stack
+![Goyangi Stack](./document/images/goyangi-stack.png "Goyangi Stack")
+
+
 ## Demo
-[Demo Server](http://168.235.151.141:60660/)
+[Demo Server](http://168.235.151.141:6060/)
 
 ## Installation
 
@@ -202,6 +199,12 @@ Goyangi uses great open source packages. You can check that which packages used 
 Just fork it, and enhance it.  
 When the Goyangi become more stable, developers become lazybones.  
 And then lazybones become creative.
+
+
+### Donation
+<a href="https://gratipay.com/dorajistyle" rel="gratipay" target="_blank">![tips](https://img.shields.io/badge/tips-%248%2Fweek-orange.svg]</a>
+<a href="https://flattr.com/submit/auto?user_id=dorajistyle&url=http%3A%2F%2Fgithub.com%2Fdorajistyle%2Fgoyangi" rel="flattr" target="_blank">![flattr](https://img.shields.io/badge/flattr-donate-orange.svg]</a>
+<a href="https://www.coinbase.com/checkouts/1c63131e72d91188898e5104dc540f63" rel="bitcoin" target="_blank">![bitcoin](https://img.shields.io/badge/bitcoin-donate-orange.svg]</a>
 
 
 ________________________
