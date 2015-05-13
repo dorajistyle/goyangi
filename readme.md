@@ -202,9 +202,9 @@ And then lazybones become creative.
 
 
 ### Donation
-<a href="https://gratipay.com/dorajistyle" rel="gratipay" target="_blank">![tips](https://img.shields.io/badge/tips-%248%2Fweek-orange.svg]</a>
-<a href="https://flattr.com/submit/auto?user_id=dorajistyle&url=http%3A%2F%2Fgithub.com%2Fdorajistyle%2Fgoyangi" rel="flattr" target="_blank">![flattr](https://img.shields.io/badge/flattr-donate-orange.svg]</a>
-<a href="https://www.coinbase.com/checkouts/1c63131e72d91188898e5104dc540f63" rel="bitcoin" target="_blank">![bitcoin](https://img.shields.io/badge/bitcoin-donate-orange.svg]</a>
+<a href="https://gratipay.com/dorajistyle" rel="gratipay" target="_blank">![tips](https://img.shields.io/badge/tips-%248%2Fweek-orange.svg)</a>
+<a href="https://flattr.com/submit/auto?user_id=dorajistyle&url=http%3A%2F%2Fgithub.com%2Fdorajistyle%2Fgoyangi" rel="flattr" target="_blank">![flattr](https://img.shields.io/badge/flattr-donate-orange.svg)</a>
+<a href="https://www.coinbase.com/checkouts/1c63131e72d91188898e5104dc540f63" rel="bitcoin" target="_blank">![bitcoin](https://img.shields.io/badge/bitcoin-donate-orange.svg)</a>
 
 
 ________________________
