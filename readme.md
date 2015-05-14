@@ -1,4 +1,4 @@
-# [Goyangi](http://dorajistyle.net/goyangi)
+# [Goyangi](http://goyangi.dorajistyle.net)
 
 Goyangi is a web foundation to help you getting started with a new web project based on Golang. It suits for you who want to develop SPA or mobile application.
 It also good example how to develop large web application that combined fancy golang packages. [Goyangi](http://en.wikipedia.org/wiki/goyangi) means cat in Korean.
