@@ -1,84 +1,118 @@
 /*!
- * CanJS - 2.1.3
- * http://canjs.us/
- * Copyright (c) 2014 Bitovi
- * Mon, 25 Aug 2014 21:51:38 GMT
+ * CanJS - 2.2.5
+ * http://canjs.com/
+ * Copyright (c) 2015 Bitovi
+ * Wed, 22 Apr 2015 15:03:29 GMT
  * Licensed MIT
- * Includes: can/map/setter
- * Download from: http://canjs.com
  */
-(function(undefined) {
 
-    // ## map/setter/setter.js
-    var __m1 = (function(can) {
+/*[global-shim-start]*/
+(function (exports, global){
+	var origDefine = global.define;
 
-        can.classize = function(s, join) {
-            // this can be moved out ..
-            // used for getter setter
-            var parts = s.split(can.undHash),
-                i = 0;
-            for (; i < parts.length; i++) {
-                parts[i] = can.capitalize(parts[i]);
-            }
-            return parts.join(join || '');
-        };
-        var classize = can.classize,
-            proto = can.Map.prototype,
-            old = proto.__set;
-        proto.__set = function(prop, value, current, success, error) {
+	var get = function(name){
+		var parts = name.split("."),
+			cur = global,
+			i;
+		for(i = 0 ; i < parts.length; i++){
+			if(!cur) {
+				break;
+			}
+			cur = cur[parts[i]];
+		}
+		return cur;
+	};
+	var modules = (global.define && global.define.modules) ||
+		(global._define && global._define.modules) || {};
+	var ourDefine = global.define = function(moduleName, deps, callback){
+		var module;
+		if(typeof deps === "function") {
+			callback = deps;
+			deps = [];
+		}
+		var args = [],
+			i;
+		for(i =0; i < deps.length; i++) {
+			args.push( exports[deps[i]] ? get(exports[deps[i]]) : ( modules[deps[i]] || get(deps[i]) )  );
+		}
+		// CJS has no dependencies but 3 callback arguments
+		if(!deps.length && callback.length) {
+			module = { exports: {} };
+			var require = function(name) {
+				return exports[name] ? get(exports[name]) : modules[name];
+			};
+			args.push(require, module.exports, module);
+		}
+		// Babel uses only the exports objet
+		else if(!args[0] && deps[0] === "exports") {
+			module = { exports: {} };
+			args[0] = module.exports;
+		}
 
+		global.define = origDefine;
+		var result = callback ? callback.apply(null, args) : undefined;
+		global.define = ourDefine;
 
-            // check if there's a setter
-            var cap = classize(prop),
-                setName = 'set' + cap,
-                errorCallback = function(errors) {
-
-
-                    var stub = error && error.call(self, errors);
-                    // if 'validations' is on the page it will trigger
-                    // the error itself and we dont want to trigger
-                    // the event twice. :)
-                    if (stub !== false) {
-                        can.trigger(self, 'error', [
-                                prop,
-                                errors
-                            ], true);
-                    }
-                    return false;
-                }, self = this;
-
-
-
-            // if we have a setter
-            if (this[setName]) {
-                // call the setter, if returned value is undefined,
-                // this means the setter is async so we
-                // do not call update property and return right away
-                can.batch.start();
-
-                value = this[setName](value, function(value) {
-                    old.call(self, prop, value, current, success, errorCallback);
-
-                }, errorCallback);
-
-
-                if (value === undefined) {
-
-                    can.batch.stop();
-                    return;
-                } else {
-                    old.call(self, prop, value, current, success, errorCallback);
-                    can.batch.stop();
-                    return this;
+		// Favor CJS module.exports over the return value
+		modules[moduleName] = module && module.exports ? module.exports : result;
+	};
+	global.define.orig = origDefine;
+	global.define.modules = modules;
+	global.define.amd = true;
+	global.System = {
+		define: function(__name, __code){
+			global.define = origDefine;
+			eval("(function() { " + __code + " \n }).call(global);");
+			global.define = ourDefine;
+		}
+	};
+})({},window)
+/*can@2.2.5#map/setter/setter*/
+define('can/map/setter/setter', [
+    'can/util/util',
+    'can/map/map'
+], function (can) {
+    can.classize = function (s, join) {
+        var parts = s.split(can.undHash), i = 0;
+        for (; i < parts.length; i++) {
+            parts[i] = can.capitalize(parts[i]);
+        }
+        return parts.join(join || '');
+    };
+    var classize = can.classize, proto = can.Map.prototype, old = proto.__set;
+    proto.__set = function (prop, value, current, success, error) {
+        var cap = classize(prop), setName = 'set' + cap, errorCallback = function (errors) {
+                var stub = error && error.call(self, errors);
+                if (stub !== false) {
+                    can.trigger(self, 'error', [
+                        prop,
+                        errors
+                    ], true);
                 }
-
+                return false;
+            }, self = this;
+        if (this[setName]) {
+            can.batch.start();
+            value = this[setName](value, function (value) {
+                old.call(self, prop, value, current, success, errorCallback);
+            }, errorCallback);
+            if (value === undefined) {
+                can.batch.stop();
+                return;
             } else {
                 old.call(self, prop, value, current, success, errorCallback);
+                can.batch.stop();
+                return this;
             }
-
-            return this;
-        };
-        return can.Map;
-    })(window.can, undefined);
-
+        } else {
+            old.call(self, prop, value, current, success, errorCallback);
+        }
+        return this;
+    };
+    return can.Map;
+});
+/*[global-shim-end]*/
+(function (){
+	window._define = window.define;
+	window.define = window.define.orig;
 })();

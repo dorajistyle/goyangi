@@ -18,7 +18,7 @@ func Articles(parentRoute *gin.RouterGroup) {
 	})
 
 	route = parentRoute.Group("/articles")
-	route.GET("/", func(c *gin.Context) {
+	route.GET("", func(c *gin.Context) {
 		sPARoute(c, "/articles")
 	})
 	route.GET("user/:username", func(c *gin.Context) {

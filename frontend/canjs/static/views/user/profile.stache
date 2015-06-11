@@ -5,12 +5,12 @@
     <ul class="uk-list uk-text-center">
         {{#user}}
         <li class="uk-text-large uk-h3 uk-text-bold uk-margin-bottom">{{username}}</li>
-            <li class="uk-margin">{{> views_partial_user-image-large}} </li>
+            <li class="uk-margin">{{> views_partial_user-image-large_stache }} </li>
             {{#if likingList}}
               <li>
                 <dl class="uk-description-list-line">
                   <dt>{{i18n 'profile.following.title'}}</dt>
-                  <dd> {{> views_user_following }} </dd>
+                  <dd> {{> views_user_following_stache }} </dd>
                 </dl>
               </li>
             {{/if}}
@@ -18,7 +18,7 @@
             <li>
               <dl class="uk-description-list-line">
                 <dt>{{i18n 'profile.followers.title'}}</dt>
-                <dd> {{> views_user_followers }} </dd>
+                <dd> {{> views_user_followers_stache }} </dd>
               </dl>
             </li>
 
@@ -43,7 +43,7 @@
                 </li>
             {{/followersFlag.hasNext}}
         </ul>
-          {{> views_user_liking-button }}
+          {{> views_user_liking-button_stache }}
         {{/user}}
         {{^user}}
             :(

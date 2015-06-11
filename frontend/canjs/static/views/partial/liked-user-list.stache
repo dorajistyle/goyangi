@@ -2,7 +2,7 @@
     {{#likings}}
         <li class="uk-float-left">
           <a href="/profile/{{id}}">
-            {{> views_partial_user-link }}
+            {{> views_partial_user-link_stache }}
           </a>
         </li>
     {{/likings}}

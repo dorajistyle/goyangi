@@ -63,4 +63,4 @@
         </button>
     </div>
 </form>
-{{> views_partial_modal-destroy}}
+{{> views_partial_modal-destroy_stache }}

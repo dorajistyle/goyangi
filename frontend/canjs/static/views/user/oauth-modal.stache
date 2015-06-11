@@ -5,7 +5,7 @@
       <div class="uk-modal-header">
         <h4 class="modal-title">{{i18n 'user.view.oauth.connect.title'}}</h4>
       </div>
-      {{> views_partial_oauth }}        
+      {{> views_partial_oauth_stache }}        
       <div class="uk-modal-footer uk-text-right uk-margin-large-top">
         <button type="button" data-dismiss="modal" class="uk-button uk-modal-close close-oauth-modal">{{i18n 'user.view.oauth.connect.close'}}</button>
       </div>

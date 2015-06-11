@@ -11,7 +11,7 @@ import (
 func Experiments(parentRoute *gin.RouterGroup) {
 
 	route := parentRoute.Group("/experiments")
-	route.GET("/", test)
+	route.GET("", test)
 }
 
 // @Title test

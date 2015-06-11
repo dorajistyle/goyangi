@@ -1,5 +1,5 @@
 <div id="locationWrapper" class="uk-width-medium-1-1 uk-width-large-1-1 post-top-margin">
-  {{> views_location_header}}
+  {{> views_location_header_stache }}
   <div class="br clearfix"></div>
       <location class="uk-text-center">
           <h1 id="pageTitle" class="mb3">{{location.name}}</h1>
@@ -11,7 +11,7 @@
           <div id="pageDescription" class="pre basic-content">{{{location.content}}}</div>
       </location>
   <div class="clearfix"></div>
-  {{> views_location_footer}}
+  {{> views_location_footer_stache }}
   <div class="clearfix"></div>
   {{#if location.prev}}
   <a href="/list/{{safeTitle location.prev.title}}/{{location.prev.id}}" title="{{truncate location.prev.title}}" class="uk-float-left linked-location">

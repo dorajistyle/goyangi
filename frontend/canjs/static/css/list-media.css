@@ -5,6 +5,7 @@
   max-width: 100%;
   height: auto;
   border-radius: 6px; }
+
 @media \0screen {
   .article-content img {
     width: auto;
@@ -12,12 +13,14 @@
 
 .article-list td {
   padding: 0; }
+
 .article-list a {
   color: #666666;
   text-decoration: none;
   font-size: 2em;
   display: block;
   padding: 8px; }
+
 .article-list a:hover {
   color: #777; }
 
@@ -35,7 +38,9 @@ a.linked-item:hover {
   height: 0;
   overflow: hidden; }
 
-.video iframe, .video object, .video embed {
+.video iframe,
+.video object,
+.video embed {
   position: absolute;
   top: 0;
   left: 0;

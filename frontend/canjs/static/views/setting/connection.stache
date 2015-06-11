@@ -1,7 +1,7 @@
 <h4>{{i18n 'user.view.oauth.connect.title'}}</h4>
 <hr/>
 <div id="oauthWrapper">
-  {{> views_partial_oauth }}
+  {{> views_partial_oauth_stache }}
   <div class="uk-modal" id="revokeOauth">
     <div class="uk-modal-dialog">
       <a type="button" class="uk-modal-close uk-close cancel-confirm"></a>

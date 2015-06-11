@@ -1,98 +1,143 @@
 /*!
- * CanJS - 2.1.3
- * http://canjs.us/
- * Copyright (c) 2014 Bitovi
- * Mon, 25 Aug 2014 21:51:38 GMT
+ * CanJS - 2.2.5
+ * http://canjs.com/
+ * Copyright (c) 2015 Bitovi
+ * Wed, 22 Apr 2015 15:03:29 GMT
  * Licensed MIT
- * Includes: can/map/list
- * Download from: http://canjs.com
  */
-(function(undefined) {
 
-    // ## map/list/list.js
-    var __m1 = (function(can) {
-        can.extend(can.List.prototype, {
-                filter: function(callback) {
-                    // The filtered list
-                    var filtered = new this.constructor();
-                    var self = this;
-                    // Creates the binder for a single element at a given index
-                    var generator = function(element, index) {
-                        // The event handler that updates the filtered list
-                        var binder = function(ev, val) {
-                            var index = filtered.indexOf(element);
-                            // Remove it from the list if it exists but the new value is false
-                            if (!val && index !== -1) {
-                                filtered.splice(index, 1);
-                            }
-                            // Add it to the list if it isn't in there and the new value is true
-                            if (val && index === -1) {
-                                filtered.push(element);
-                            }
-                        };
-                        // a can.compute that executes the callback
-                        var compute = can.compute(function() {
-                            return callback(element, self.indexOf(element), self);
-                        });
-                        // Update the filtered list on any compute change
-                        compute.bind('change', binder);
-                        // Call binder explicitly for the initial list
-                        binder(null, compute());
-                    };
-                    // We also want to know when something gets added to our original list
-                    this.bind('add', function(ev, data, index) {
-                        can.each(data, function(element, i) {
-                            // Call the generator for each newly added element
-                            // The index is the start index + the loop index
-                            generator(element, index + i);
-                        });
-                    });
-                    // Removed items should be removed from both lists
-                    this.bind('remove', function(ev, data, index) {
-                        can.each(data, function(element, i) {
-                            var index = filtered.indexOf(element);
-                            if (index !== -1) {
-                                filtered.splice(index, 1);
-                            }
-                        });
-                    });
-                    // Run the generator for each list element
-                    this.forEach(generator);
-                    return filtered;
-                },
-                map: function(callback) {
-                    var mapped = new can.List();
-                    var self = this;
-                    // Again, lets run a generator function
-                    var generator = function(element, index) {
-                        // The can.compute for the mapping
-                        var compute = can.compute(function() {
-                            return callback(element, index, self);
-                        });
-                        compute.bind('change', function(ev, val) {
-                            // On change, replace the current value with the new one
-                            mapped.splice(index, 1, val);
-                        });
-                        mapped.splice(index, 0, compute());
-                    };
-                    this.forEach(generator);
-                    // We also want to know when something gets added to our original list
-                    this.bind('add', function(ev, data, index) {
-                        can.each(data, function(element, i) {
-                            // Call the generator for each newly added element
-                            // The index is the start index + the loop index
-                            generator(element, index + i);
-                        });
-                    });
-                    this.bind('remove', function(ev, data, index) {
-                        // The indices in the mapped list are the same so lets just splice it out
-                        mapped.splice(index, data.length);
-                    });
-                    return mapped;
-                }
+/*[global-shim-start]*/
+(function (exports, global){
+	var origDefine = global.define;
 
+	var get = function(name){
+		var parts = name.split("."),
+			cur = global,
+			i;
+		for(i = 0 ; i < parts.length; i++){
+			if(!cur) {
+				break;
+			}
+			cur = cur[parts[i]];
+		}
+		return cur;
+	};
+	var modules = (global.define && global.define.modules) ||
+		(global._define && global._define.modules) || {};
+	var ourDefine = global.define = function(moduleName, deps, callback){
+		var module;
+		if(typeof deps === "function") {
+			callback = deps;
+			deps = [];
+		}
+		var args = [],
+			i;
+		for(i =0; i < deps.length; i++) {
+			args.push( exports[deps[i]] ? get(exports[deps[i]]) : ( modules[deps[i]] || get(deps[i]) )  );
+		}
+		// CJS has no dependencies but 3 callback arguments
+		if(!deps.length && callback.length) {
+			module = { exports: {} };
+			var require = function(name) {
+				return exports[name] ? get(exports[name]) : modules[name];
+			};
+			args.push(require, module.exports, module);
+		}
+		// Babel uses only the exports objet
+		else if(!args[0] && deps[0] === "exports") {
+			module = { exports: {} };
+			args[0] = module.exports;
+		}
+
+		global.define = origDefine;
+		var result = callback ? callback.apply(null, args) : undefined;
+		global.define = ourDefine;
+
+		// Favor CJS module.exports over the return value
+		modules[moduleName] = module && module.exports ? module.exports : result;
+	};
+	global.define.orig = origDefine;
+	global.define.modules = modules;
+	global.define.amd = true;
+	global.System = {
+		define: function(__name, __code){
+			global.define = origDefine;
+			eval("(function() { " + __code + " \n }).call(global);");
+			global.define = ourDefine;
+		}
+	};
+})({},window)
+/*can@2.2.5#map/list/list*/
+define('can/map/list/list', [
+    'can/util/util',
+    'can/map/map',
+    'can/list/list',
+    'can/compute/compute'
+], function (can) {
+    can.extend(can.List.prototype, {
+        filter: function (callback) {
+            var filtered = new this.constructor();
+            var self = this;
+            var generator = function (element, index) {
+                var binder = function (ev, val) {
+                    var index = filtered.indexOf(element);
+                    if (!val && index !== -1) {
+                        filtered.splice(index, 1);
+                    }
+                    if (val && index === -1) {
+                        filtered.push(element);
+                    }
+                };
+                var compute = can.compute(function () {
+                        return callback(element, self.indexOf(element), self);
+                    });
+                compute.bind('change', binder);
+                binder(null, compute());
+            };
+            this.bind('add', function (ev, data, index) {
+                can.each(data, function (element, i) {
+                    generator(element, index + i);
+                });
             });
-        return can.List;
-    })(window.can, undefined, undefined, undefined);
-
+            this.bind('remove', function (ev, data, index) {
+                can.each(data, function (element, i) {
+                    var index = filtered.indexOf(element);
+                    if (index !== -1) {
+                        filtered.splice(index, 1);
+                    }
+                });
+            });
+            this.forEach(generator);
+            return filtered;
+        },
+        map: function (callback) {
+            var mapped = new can.List();
+            var self = this;
+            var generator = function (element, index) {
+                var compute = can.compute(function () {
+                        return callback(element, index, self);
+                    });
+                compute.bind('change', function (ev, val) {
+                    mapped.splice(index, 1, val);
+                });
+                mapped.splice(index, 0, compute());
+            };
+            this.forEach(generator);
+            this.bind('add', function (ev, data, index) {
+                can.each(data, function (element, i) {
+                    generator(element, index + i);
+                });
+            });
+            this.bind('remove', function (ev, data, index) {
+                mapped.splice(index, data.length);
+            });
+            return mapped;
+        }
+    });
+    return can.List;
+});
+/*[global-shim-end]*/
+(function (){
+	window._define = window.define;
+	window.define = window.define.orig;
 })();

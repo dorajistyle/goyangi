@@ -1,80 +1,124 @@
 /*!
- * CanJS - 2.1.3
- * http://canjs.us/
- * Copyright (c) 2014 Bitovi
- * Mon, 25 Aug 2014 21:51:38 GMT
+ * CanJS - 2.2.5
+ * http://canjs.com/
+ * Copyright (c) 2015 Bitovi
+ * Wed, 22 Apr 2015 15:03:29 GMT
  * Licensed MIT
- * Includes: can/list/promise
- * Download from: http://canjs.com
  */
-(function(undefined) {
 
-    // ## list/promise/promise.js
-    var __m1 = (function(list) {
+/*[global-shim-start]*/
+(function (exports, global){
+	var origDefine = global.define;
 
-        var oldReplace = can.List.prototype.replace;
+	var get = function(name){
+		var parts = name.split("."),
+			cur = global,
+			i;
+		for(i = 0 ; i < parts.length; i++){
+			if(!cur) {
+				break;
+			}
+			cur = cur[parts[i]];
+		}
+		return cur;
+	};
+	var modules = (global.define && global.define.modules) ||
+		(global._define && global._define.modules) || {};
+	var ourDefine = global.define = function(moduleName, deps, callback){
+		var module;
+		if(typeof deps === "function") {
+			callback = deps;
+			deps = [];
+		}
+		var args = [],
+			i;
+		for(i =0; i < deps.length; i++) {
+			args.push( exports[deps[i]] ? get(exports[deps[i]]) : ( modules[deps[i]] || get(deps[i]) )  );
+		}
+		// CJS has no dependencies but 3 callback arguments
+		if(!deps.length && callback.length) {
+			module = { exports: {} };
+			var require = function(name) {
+				return exports[name] ? get(exports[name]) : modules[name];
+			};
+			args.push(require, module.exports, module);
+		}
+		// Babel uses only the exports objet
+		else if(!args[0] && deps[0] === "exports") {
+			module = { exports: {} };
+			args[0] = module.exports;
+		}
 
-        can.List.prototype.replace = function(data) {
-            // First call the old replace so its
-            // deferred callbacks will be called first
-            var result = oldReplace.apply(this, arguments);
+		global.define = origDefine;
+		var result = callback ? callback.apply(null, args) : undefined;
+		global.define = ourDefine;
 
-            // If there is a deferred:
-            if (can.isDeferred(data)) {
-                // Set up its state.  Must call this way
-                // because we are working on an array.
+		// Favor CJS module.exports over the return value
+		modules[moduleName] = module && module.exports ? module.exports : result;
+	};
+	global.define.orig = origDefine;
+	global.define.modules = modules;
+	global.define.amd = true;
+	global.System = {
+		define: function(__name, __code){
+			global.define = origDefine;
+			eval("(function() { " + __code + " \n }).call(global);");
+			global.define = ourDefine;
+		}
+	};
+})({},window)
+/*can@2.2.5#list/promise/promise*/
+define('can/list/promise/promise', ['can/list/list'], function (list) {
+    var oldReplace = can.List.prototype.replace;
+    can.List.prototype.replace = function (data) {
+        var result = oldReplace.apply(this, arguments);
+        if (can.isDeferred(data)) {
+            can.batch.start();
+            this.attr('state', data.state());
+            this.removeAttr('reason');
+            can.batch.stop();
+            var self = this;
+            var deferred = this._deferred = new can.Deferred();
+            data.then(function () {
+                self.attr('state', data.state());
+                deferred.resolve(self);
+            }, function (reason) {
                 can.batch.start();
-                this.attr("state", data.state());
-                this.removeAttr("reason");
+                self.attr('state', data.state());
+                self.attr('reason', reason);
                 can.batch.stop();
-
-                var self = this;
-                // update its state when it changes
-                var deferred = this._deferred = new can.Deferred();
-
-                data.then(function() {
-                    self.attr("state", data.state());
-                    // The deferred methods will always return this object
-                    deferred.resolve(self);
-                }, function(reason) {
-                    can.batch.start();
-                    self.attr("state", data.state());
-                    self.attr("reason", reason);
-                    can.batch.stop();
-                    deferred.reject(reason);
-                });
-            }
-            return result;
+                deferred.reject(reason);
+            });
+        }
+        return result;
+    };
+    can.each({
+        isResolved: 'resolved',
+        isPending: 'pending',
+        isRejected: 'rejected'
+    }, function (value, method) {
+        can.List.prototype[method] = function () {
+            return this.attr('state') === value;
         };
-
-        can.each({
-                isResolved: "resolved",
-                isPending: "pending",
-                isRejected: "rejected"
-            }, function(value, method) {
-                can.List.prototype[method] = function() {
-                    return this.attr("state") === value;
-                };
-            });
-
-        can.each([
-                "then",
-                "done",
-                "fail",
-                "always",
-                "promise"
-            ], function(name) {
-                can.List.prototype[name] = function() {
-                    // it's possible a list is created manually and returned as the result
-                    // of .then.  It should not break.
-                    if (!this._deferred) {
-                        this._deferred = new can.Deferred();
-                        this._deferred.resolve(this);
-                    }
-
-                    return this._deferred[name].apply(this._deferred, arguments);
-                };
-            });
-    })(undefined);
-
+    });
+    can.each([
+        'then',
+        'done',
+        'fail',
+        'always',
+        'promise'
+    ], function (name) {
+        can.List.prototype[name] = function () {
+            if (!this._deferred) {
+                this._deferred = new can.Deferred();
+                this._deferred.resolve(this);
+            }
+            return this._deferred[name].apply(this._deferred, arguments);
+        };
+    });
+});
+/*[global-shim-end]*/
+(function (){
+	window._define = window.define;
+	window.define = window.define.orig;
 })();

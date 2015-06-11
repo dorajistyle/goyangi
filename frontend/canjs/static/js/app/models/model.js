@@ -14,11 +14,16 @@ define(['can', 'can/model'], function (can, Model) {
      * @name model#Model
      */
     var Model = Model({
-
-        models: function(data){
-            this.data = data;
-            this.data.data = {};
-            return can.Model.models.call(this,this.data);}
+        // models deprecated. When you want to use canJS 2.1.3, 
+        // you can uncommenting models section below.
+        // models: function(data){
+        //     this.data = data;
+        //     this.data.data = {};
+        //     return can.Model.models.call(this,this.data);
+        //   },
+        parseModels: function(data){
+                  return data;
+                }
     }, {
     });
     return Model;

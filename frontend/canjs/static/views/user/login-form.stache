@@ -27,7 +27,7 @@
         </div>
     </fieldset>
 </form>
-{{> views_user_oauth-modal }}
+{{> views_user_oauth-modal_stache }}
 <!-- <form action="/oauth/login/facebook" method="POST" class="uk-form oauth-login-form">
     <div class="uk-form-row">
         <button type="submit" class="uk-button uk-button-primary uk-float-right uk-margin-top" tabindex="5"><i class="uk-icon-facebook-square"></i>{{i18n 'user.view.oauth.login.prefix'}} {{i18n 'user.view.oauth.facebook'}} {{i18n 'user.view.oauth.login.postfix'}}</button>

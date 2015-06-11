@@ -1,121 +1,145 @@
 /*!
- * CanJS - 2.1.3
- * http://canjs.us/
- * Copyright (c) 2014 Bitovi
- * Mon, 25 Aug 2014 21:51:38 GMT
+ * CanJS - 2.2.5
+ * http://canjs.com/
+ * Copyright (c) 2015 Bitovi
+ * Wed, 22 Apr 2015 15:03:29 GMT
  * Licensed MIT
- * Includes: can/route/pushstate
- * Download from: http://canjs.com
  */
-(function(undefined) {
 
-    // ## route/pushstate/pushstate.js
-    var __m1 = (function(can) {
-        "use strict";
+/*[global-shim-start]*/
+(function (exports, global){
+	var origDefine = global.define;
 
-        // Initialize plugin only if browser supports pushstate.
-        if (window.history && history.pushState) {
+	var get = function(name){
+		var parts = name.split("."),
+			cur = global,
+			i;
+		for(i = 0 ; i < parts.length; i++){
+			if(!cur) {
+				break;
+			}
+			cur = cur[parts[i]];
+		}
+		return cur;
+	};
+	var modules = (global.define && global.define.modules) ||
+		(global._define && global._define.modules) || {};
+	var ourDefine = global.define = function(moduleName, deps, callback){
+		var module;
+		if(typeof deps === "function") {
+			callback = deps;
+			deps = [];
+		}
+		var args = [],
+			i;
+		for(i =0; i < deps.length; i++) {
+			args.push( exports[deps[i]] ? get(exports[deps[i]]) : ( modules[deps[i]] || get(deps[i]) )  );
+		}
+		// CJS has no dependencies but 3 callback arguments
+		if(!deps.length && callback.length) {
+			module = { exports: {} };
+			var require = function(name) {
+				return exports[name] ? get(exports[name]) : modules[name];
+			};
+			args.push(require, module.exports, module);
+		}
+		// Babel uses only the exports objet
+		else if(!args[0] && deps[0] === "exports") {
+			module = { exports: {} };
+			args[0] = module.exports;
+		}
 
-            // Registers itself within `can.route.bindings`.
-            can.route.bindings.pushstate = {
+		global.define = origDefine;
+		var result = callback ? callback.apply(null, args) : undefined;
+		global.define = ourDefine;
 
-
-                // Start of `location.pathname` is the root.
-                // (Can be configured via `can.route.bindings.pushstate.root`)
-                root: "/",
-                // don't greedily match slashes in routing rules
-                matchSlashes: false,
-                paramsMatcher: /^\?(?:[^=]+=[^&]*&)*[^=]+=[^&]*/,
-                querySeparator: '?',
-
-                // ## bind
-
-                // Intercepts clicks on `<a>` elements and rewrites original `history` methods.
-                bind: function() {
-                    // Intercept routable links.
-                    can.delegate.call(can.$(document.documentElement), 'a', 'click', anchorClickHandler);
-
-                    // Rewrites original `pushState`/`replaceState` methods on `history` and keeps pointer to original methods
-                    can.each(methodsToOverwrite, function(method) {
-                        originalMethods[method] = window.history[method];
-                        window.history[method] = function(state, title, url) {
-                            // Avoid doubled history states (with pushState).
-                            var absolute = url.indexOf("http") === 0;
-                            var searchHash = window.location.search + window.location.hash;
-                            // If url differs from current call original histoy method and update `can.route` state.
-                            if ((!absolute && url !== window.location.pathname + searchHash) || (absolute && url !== window.location.href + searchHash)) {
-                                originalMethods[method].apply(window.history, arguments);
-                                can.route.setState();
-                            }
-                        };
-                    });
-
-                    // Bind to `popstate` event, fires on back/forward.
-                    can.bind.call(window, 'popstate', can.route.setState);
-                },
-
-                // ## unbind
-
-                // Unbinds and restores original `history` methods
-                unbind: function() {
-                    can.undelegate.call(can.$(document.documentElement), 'click', 'a', anchorClickHandler);
-
-                    can.each(methodsToOverwrite, function(method) {
-                        window.history[method] = originalMethods[method];
-                    });
-                    can.unbind.call(window, 'popstate', can.route.setState);
-                },
-
-                // ## matchingPartOfURL
-
-                // Returns matching part of url without root.
-                matchingPartOfURL: function() {
-                    var root = cleanRoot(),
-                        loc = (location.pathname + location.search),
-                        index = loc.indexOf(root);
-
-                    return loc.substr(index + root.length);
-                },
-
-                // ## setURL
-
-                // Updates URL by calling `pushState`.
-                setURL: function(path) {
-                    // Keeps hash if not in path.
-                    if (includeHash && path.indexOf("#") === -1 && window.location.hash) {
-                        path += window.location.hash;
-                    }
-                    window.history.pushState(null, null, can.route._call("root") + path);
+		// Favor CJS module.exports over the return value
+		modules[moduleName] = module && module.exports ? module.exports : result;
+	};
+	global.define.orig = origDefine;
+	global.define.modules = modules;
+	global.define.amd = true;
+	global.System = {
+		define: function(__name, __code){
+			global.define = origDefine;
+			eval("(function() { " + __code + " \n }).call(global);");
+			global.define = ourDefine;
+		}
+	};
+})({},window)
+/*can@2.2.5#route/pushstate/pushstate*/
+define('can/route/pushstate/pushstate', [
+    'can/util/util',
+    'can/route/route'
+], function (can) {
+    'use strict';
+    if (window.history && history.pushState) {
+        can.route.bindings.pushstate = {
+            root: '/',
+            matchSlashes: false,
+            paramsMatcher: /^\?(?:[^=]+=[^&]*&)*[^=]+=[^&]*/,
+            querySeparator: '?',
+            bind: function () {
+                can.delegate.call(can.$(document.documentElement), 'a', 'click', anchorClickHandler);
+                can.each(methodsToOverwrite, function (method) {
+                    originalMethods[method] = window.history[method];
+                    window.history[method] = function (state, title, url) {
+                        var absolute = url.indexOf('http') === 0;
+                        var searchHash = window.location.search + window.location.hash;
+                        if (!absolute && url !== window.location.pathname + searchHash || absolute && url !== window.location.href + searchHash) {
+                            originalMethods[method].apply(window.history, arguments);
+                            can.route.setState();
+                        }
+                    };
+                });
+                can.bind.call(window, 'popstate', can.route.setState);
+            },
+            unbind: function () {
+                can.undelegate.call(can.$(document.documentElement), 'click', 'a', anchorClickHandler);
+                can.each(methodsToOverwrite, function (method) {
+                    window.history[method] = originalMethods[method];
+                });
+                can.unbind.call(window, 'popstate', can.route.setState);
+            },
+            matchingPartOfURL: function () {
+                var root = cleanRoot(), loc = location.pathname + location.search, index = loc.indexOf(root);
+                return loc.substr(index + root.length);
+            },
+            setURL: function (path, changed) {
+                var method = 'pushState';
+                if (includeHash && path.indexOf('#') === -1 && window.location.hash) {
+                    path += window.location.hash;
                 }
-            };
-
-            // ## anchorClickHandler
-
-            // Handler function for `click` events.
-            var anchorClickHandler = function(e) {
+                if (replaceStateAttrs.length > 0) {
+                    var toRemove = [];
+                    for (var i = 0, l = changed.length; i < l; i++) {
+                        if (can.inArray(changed[i], replaceStateAttrs) !== -1) {
+                            method = 'replaceState';
+                        }
+                        if (can.inArray(changed[i], replaceStateAttrs.once) !== -1) {
+                            toRemove.push(changed[i]);
+                        }
+                    }
+                    if (toRemove.length > 0) {
+                        removeAttrs(replaceStateAttrs, toRemove);
+                        removeAttrs(replaceStateAttrs.once, toRemove);
+                    }
+                }
+                window.history[method](null, null, can.route._call('root') + path);
+            }
+        };
+        var anchorClickHandler = function (e) {
                 if (!(e.isDefaultPrevented ? e.isDefaultPrevented() : e.defaultPrevented === true)) {
-                    // YUI calls back events triggered with this as a wrapped object.
                     var node = this._node || this;
-                    // Fix for IE showing blank host, but blank host means current host.
                     var linksHost = node.host || window.location.host;
-
-                    // If link is within the same domain and descendant of `root`
                     if (window.location.host === linksHost) {
                         var root = cleanRoot();
                         if (node.pathname.indexOf(root) === 0) {
-
-                            // Removes root from url.
                             var url = (node.pathname + node.search).substr(root.length);
-                            // If a route matches update the data.
                             var curParams = can.route.deparam(url);
                             if (curParams.hasOwnProperty('route')) {
-                                // Makes it possible to have a link with a hash.
                                 includeHash = true;
                                 window.history.pushState(null, null, node.href);
-
-                                // Test if you can preventDefault
-                                // our tests can't call .click() b/c this
-                                // freezes phantom.
                                 if (e.preventDefault) {
                                     e.preventDefault();
                                 }
@@ -123,32 +147,45 @@
                         }
                     }
                 }
-            },
-
-                // ## cleanRoot
-
-                // Always returns clean root, without domain.
-                cleanRoot = function() {
-                    var domain = location.protocol + "//" + location.host,
-                        root = can.route._call("root"),
-                        index = root.indexOf(domain);
-                    if (index === 0) {
-                        return root.substr(domain.length);
+            }, cleanRoot = function () {
+                var domain = location.protocol + '//' + location.host, root = can.route._call('root'), index = root.indexOf(domain);
+                if (index === 0) {
+                    return root.substr(domain.length);
+                }
+                return root;
+            }, removeAttrs = function (arr, attrs) {
+                var index;
+                for (var i = attrs.length - 1; i >= 0; i--) {
+                    if ((index = can.inArray(attrs[i], arr)) !== -1) {
+                        arr.splice(index, 1);
                     }
-                    return root;
-                },
-                // Original methods on `history` that will be overwritten
-                methodsToOverwrite = ['pushState', 'replaceState'],
-                // A place to store pointers to original `history` methods.
-                originalMethods = {},
-                // Used to tell setURL to include the hash because we clicked on a link.
-                includeHash = false;
-
-            // Enables plugin, by default `hashchange` binding is used.
-            can.route.defaultBinding = "pushstate";
-        }
-
-        return can;
-    })(window.can, undefined);
-
+                }
+            }, methodsToOverwrite = [
+                'pushState',
+                'replaceState'
+            ], originalMethods = {}, includeHash = false, replaceStateAttrs = [];
+        can.route.defaultBinding = 'pushstate';
+        can.extend(can.route, {
+            replaceStateOn: function () {
+                var attrs = can.makeArray(arguments);
+                Array.prototype.push.apply(replaceStateAttrs, attrs);
+            },
+            replaceStateOnce: function () {
+                var attrs = can.makeArray(arguments);
+                replaceStateAttrs.once = can.makeArray(replaceStateAttrs.once);
+                Array.prototype.push.apply(replaceStateAttrs.once, attrs);
+                can.route.replaceStateOn.apply(this, arguments);
+            },
+            replaceStateOff: function () {
+                var attrs = can.makeArray(arguments);
+                removeAttrs(replaceStateAttrs, attrs);
+            }
+        });
+    }
+    return can;
+});
+/*[global-shim-end]*/
+(function (){
+	window._define = window.define;
+	window.define = window.define.orig;
 })();

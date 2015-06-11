@@ -12,7 +12,7 @@
             <table id="locationsWrapper" class="uk-table uk-table-hover uk-table-striped">
                 <tbody>
                     {{#locations}}
-                        {{> views_location_list-item}}
+                        {{> views_location_list-item_stache }}
                     {{/locations}}
                 </tbody>
             </table>

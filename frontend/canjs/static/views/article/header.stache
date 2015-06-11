@@ -1,6 +1,6 @@
 <div id="articleHeader" class="uk-width-medium-1-1 uk-width-large-1-1">
   <div class="uk-float-left">
-    {{> views_partial_like-box}}
+    {{> views_partial_like-box_stache }}
   </div>
   <div class="uk-float-right">
     {{#if isAuthor}}
@@ -18,5 +18,5 @@
   </a> -->
   {{/if}}
 </div>
-{{> views_partial_modal-destroy}}
+{{> views_partial_modal-destroy_stache }}
 </div>

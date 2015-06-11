@@ -1,25 +1,78 @@
 /*!
- * CanJS - 2.1.3
- * http://canjs.us/
- * Copyright (c) 2014 Bitovi
- * Mon, 25 Aug 2014 21:51:38 GMT
+ * CanJS - 2.2.5
+ * http://canjs.com/
+ * Copyright (c) 2015 Bitovi
+ * Wed, 22 Apr 2015 15:03:29 GMT
  * Licensed MIT
- * Includes: can/model/queue
- * Download from: http://canjs.com
  */
-(function(undefined) {
 
-    // ## util/object/object.js
-    var __m18 = (function(can) {
-        var isArray = can.isArray;
+/*[global-shim-start]*/
+(function (exports, global){
+	var origDefine = global.define;
 
-        can.Object = {};
+	var get = function(name){
+		var parts = name.split("."),
+			cur = global,
+			i;
+		for(i = 0 ; i < parts.length; i++){
+			if(!cur) {
+				break;
+			}
+			cur = cur[parts[i]];
+		}
+		return cur;
+	};
+	var modules = (global.define && global.define.modules) ||
+		(global._define && global._define.modules) || {};
+	var ourDefine = global.define = function(moduleName, deps, callback){
+		var module;
+		if(typeof deps === "function") {
+			callback = deps;
+			deps = [];
+		}
+		var args = [],
+			i;
+		for(i =0; i < deps.length; i++) {
+			args.push( exports[deps[i]] ? get(exports[deps[i]]) : ( modules[deps[i]] || get(deps[i]) )  );
+		}
+		// CJS has no dependencies but 3 callback arguments
+		if(!deps.length && callback.length) {
+			module = { exports: {} };
+			var require = function(name) {
+				return exports[name] ? get(exports[name]) : modules[name];
+			};
+			args.push(require, module.exports, module);
+		}
+		// Babel uses only the exports objet
+		else if(!args[0] && deps[0] === "exports") {
+			module = { exports: {} };
+			args[0] = module.exports;
+		}
 
-        var same = can.Object.same = function(a, b, compares, aParent, bParent, deep) {
-            var aType = typeof a,
-                aArray = isArray(a),
-                comparesType = typeof compares,
-                compare;
+		global.define = origDefine;
+		var result = callback ? callback.apply(null, args) : undefined;
+		global.define = ourDefine;
+
+		// Favor CJS module.exports over the return value
+		modules[moduleName] = module && module.exports ? module.exports : result;
+	};
+	global.define.orig = origDefine;
+	global.define.modules = modules;
+	global.define.amd = true;
+	global.System = {
+		define: function(__name, __code){
+			global.define = origDefine;
+			eval("(function() { " + __code + " \n }).call(global);");
+			global.define = ourDefine;
+		}
+	};
+})({},window)
+/*can@2.2.5#util/object/object*/
+define('can/util/object/object', ['can/util/util'], function (can) {
+    var isArray = can.isArray;
+    can.Object = {};
+    var same = can.Object.same = function (a, b, compares, aParent, bParent, deep) {
+            var aType = typeof a, aArray = isArray(a), comparesType = typeof compares, compare;
             if (comparesType === 'string' || compares === null) {
                 compares = compareMethods[compares];
                 comparesType = 'function';
@@ -63,7 +116,6 @@
                     }
                     delete bCopy[prop];
                 }
-                // go through bCopy props ... if there is no compare .. return false
                 for (prop in bCopy) {
                     if (compares[prop] === undefined || !same(undefined, b[prop], compares[prop], a, b, deep === false ? -1 : undefined)) {
                         return false;
@@ -73,97 +125,92 @@
             }
             return false;
         };
-
-        can.Object.subsets = function(checkSet, sets, compares) {
-            var len = sets.length,
-                subsets = [];
-            for (var i = 0; i < len; i++) {
-                //check this subset
-                var set = sets[i];
-                if (can.Object.subset(checkSet, set, compares)) {
-                    subsets.push(set);
-                }
+    can.Object.subsets = function (checkSet, sets, compares) {
+        var len = sets.length, subsets = [];
+        for (var i = 0; i < len; i++) {
+            var set = sets[i];
+            if (can.Object.subset(checkSet, set, compares)) {
+                subsets.push(set);
             }
-            return subsets;
-        };
-
-        can.Object.subset = function(subset, set, compares) {
-            // go through set {type: 'folder'} and make sure every property
-            // is in subset {type: 'folder', parentId :5}
-            // then make sure that set has fewer properties
-            // make sure we are only checking 'important' properties
-            // in subset (ones that have to have a value)
-            compares = compares || {};
-            for (var prop in set) {
-                if (!same(subset[prop], set[prop], compares[prop], subset, set)) {
-                    return false;
-                }
+        }
+        return subsets;
+    };
+    can.Object.subset = function (subset, set, compares) {
+        compares = compares || {};
+        for (var prop in set) {
+            if (!same(subset[prop], set[prop], compares[prop], subset, set)) {
+                return false;
             }
-            return true;
-        };
-        var compareMethods = {
-            'null': function() {
+        }
+        return true;
+    };
+    var compareMethods = {
+            'null': function () {
                 return true;
             },
-            i: function(a, b) {
-                return ('' + a)
-                    .toLowerCase() === ('' + b)
-                    .toLowerCase();
+            i: function (a, b) {
+                return ('' + a).toLowerCase() === ('' + b).toLowerCase();
             },
-            eq: function(a, b) {
+            eq: function (a, b) {
                 return a === b;
             },
-            similar: function(a, b) {
-
+            similar: function (a, b) {
                 return a == b;
             }
         };
-        compareMethods.eqeq = compareMethods.similar;
-        return can.Object;
-    })(window.can);
-
-    // ## map/backup/backup.js
-    var __m17 = (function(can) {
-        var flatProps = function(a, cur) {
-            var obj = {};
-            for (var prop in a) {
-                if (typeof a[prop] !== 'object' || a[prop] === null || a[prop] instanceof Date) {
-                    obj[prop] = a[prop];
-                } else {
-                    obj[prop] = cur.attr(prop);
-                }
+    compareMethods.eqeq = compareMethods.similar;
+    return can.Object;
+});
+/*can@2.2.5#map/backup/backup*/
+define('can/map/backup/backup', [
+    'can/util/util',
+    'can/compute/compute',
+    'can/map/map',
+    'can/util/object/object'
+], function (can) {
+    var flatProps = function (a, cur) {
+        var obj = {};
+        for (var prop in a) {
+            if (typeof a[prop] !== 'object' || a[prop] === null || a[prop] instanceof Date) {
+                obj[prop] = a[prop];
+            } else {
+                obj[prop] = cur.attr(prop);
             }
-            return obj;
-        };
-        can.extend(can.Map.prototype, {
-
-                backup: function() {
-                    this._backupStore = this._attrs();
-                    return this;
-                },
-                isDirty: function(checkAssociations) {
-                    return this._backupStore && !can.Object.same(this._attrs(), this._backupStore, undefined, undefined, undefined, !! checkAssociations);
-                },
-                restore: function(restoreAssociations) {
-                    var props = restoreAssociations ? this._backupStore : flatProps(this._backupStore, this);
-                    if (this.isDirty(restoreAssociations)) {
-                        this._attrs(props, true);
-                    }
-                    return this;
-                }
-            });
-        return can.Map;
-    })(window.can, undefined, __m18);
-
-    // ## model/queue/queue.js
-    var __m1 = (function(can) {
-        var cleanAttrs = function(changedAttrs, attrs) {
-            var newAttrs = can.extend(true, {}, attrs),
-                current, path;
+        }
+        return obj;
+    };
+    var oldSetup = can.Map.prototype.setup;
+    can.extend(can.Map.prototype, {
+        setup: function () {
+            this._backupStore = can.compute();
+            return oldSetup.apply(this, arguments);
+        },
+        backup: function () {
+            this._backupStore(this.attr());
+            return this;
+        },
+        isDirty: function (checkAssociations) {
+            return this._backupStore() && !can.Object.same(this.attr(), this._backupStore(), undefined, undefined, undefined, !!checkAssociations);
+        },
+        restore: function (restoreAssociations) {
+            var props = restoreAssociations ? this._backupStore() : flatProps(this._backupStore(), this);
+            if (this.isDirty(restoreAssociations)) {
+                this.attr(props, true);
+            }
+            return this;
+        }
+    });
+    return can.Map;
+});
+/*can@2.2.5#model/queue/queue*/
+define('can/model/queue/queue', [
+    'can/util/util',
+    'can/model/model',
+    'can/map/backup/backup'
+], function (can) {
+    var cleanAttrs = function (changedAttrs, attrs) {
+            var newAttrs = can.extend(true, {}, attrs), current, path;
             if (changedAttrs) {
-                // go through the attributes returned from the server
-                // and remove those that were changed during the current
-                // request batch
                 for (var i = 0; i < changedAttrs.length; i++) {
                     current = newAttrs;
                     path = changedAttrs[i].split('.');
@@ -176,125 +223,88 @@
                 }
             }
             return newAttrs;
-        }, queueRequests = function(success, error, method, callback) {
-                this._changedAttrs = this._changedAttrs || [];
-                var def = new can.Deferred(),
-                    self = this,
-                    attrs = this.serialize(),
-                    queue = this._requestQueue,
-                    changedAttrs = this._changedAttrs,
-                    reqFn, index;
-                reqFn = function(self, type, success, error) {
-                    // Function that performs actual request
-                    return function() {
-                        // pass already serialized attributes because we want to 
-                        // save model in state it was when request was queued, not
-                        // when request is ran
-                        return self.constructor._makeRequest([
-                                self,
-                                attrs
-                            ], type || (self.isNew() ? 'create' : 'update'), success, error, callback);
-                    };
-                }(this, method, function() {
-                    // resolve deferred with results from the request
-                    def.resolveWith(self, arguments);
-                    // remove current deferred from the queue 
-                    queue.splice(0, 1);
-                    if (queue.length > 0) {
-                        // replace queued wrapper function with deferred
-                        // returned from the makeRequest function so we 
-                        // can access it's `abort` function
-                        queue[0] = queue[0]();
-                    } else {
-                        // clean up changed attrs since there is no more requests in the queue
-                        changedAttrs.splice(0);
-                    }
-                }, function() {
-                    // reject deferred with results from the request
-                    def.rejectWith(self, arguments);
-                    // since we failed remove all pending requests from the queue
-                    queue.splice(0);
-                    // clean up changed attrs since there is no more requests in the queue
-                    changedAttrs.splice(0);
-                });
-                // Add our fn to the queue
-                index = queue.push(reqFn) - 1;
-                // If there is only one request in the queue, run
-                // it immediately.
-                if (queue.length === 1) {
-                    // replace queued wrapper function with deferred
-                    // returned from the makeRequest function so we 
-                    // can access it's `abort` function
+        }, queueRequests = function (success, error, method, callback) {
+            this._changedAttrs = this._changedAttrs || [];
+            var def = new can.Deferred(), self = this, attrs = this.serialize(), queue = this._requestQueue, changedAttrs = this._changedAttrs, reqFn, index;
+            reqFn = function (self, type, success, error) {
+                return function () {
+                    return self.constructor._makeRequest([
+                        self,
+                        attrs
+                    ], type || (self.isNew() ? 'create' : 'update'), success, error, callback);
+                };
+            }(this, method, function () {
+                def.resolveWith(self, arguments);
+                queue.splice(0, 1);
+                if (queue.length > 0) {
                     queue[0] = queue[0]();
+                } else {
+                    changedAttrs.splice(0);
                 }
-                def.abort = function() {
-                    var abort;
-                    // check if this request is running, if it's not
-                    // just remove it from the queue
-                    // also all subsequent requests should be removed too
-                    abort = queue[index].abort && queue[index].abort();
-                    // remove aborted request and any requests after it
-                    queue.splice(index);
-                    // if there is no more requests in the queue clean up
-                    // the changed attributes array
-                    if (queue.length === 0) {
-                        changedAttrs.splice(0);
-                    }
-                    return abort;
-                };
-                // deferred will be resolved with original success and
-                // error functions
-                def.then(success, error);
-                return def;
-            }, _triggerChange = can.Model.prototype._triggerChange,
-            destroyFn = can.Model.prototype.destroy,
-            setupFn = can.Model.prototype.setup;
-        can.each([
-                'created',
-                'updated',
-                'destroyed'
-            ], function(fn) {
-                var prototypeFn = can.Model.prototype[fn];
-                can.Model.prototype[fn] = function(attrs) {
-                    if (attrs && typeof attrs === 'object') {
-                        attrs = attrs.attr ? attrs.attr() : attrs;
-                        // Create backup of last good known state returned
-                        // from the server. This allows users to restore it
-                        // if API returns error
-                        this._backupStore = attrs;
-                        attrs = cleanAttrs(this._changedAttrs || [], attrs);
-                    }
-                    // call the original function with the cleaned up attributes
-                    prototypeFn.call(this, attrs);
-                };
+            }, function () {
+                def.rejectWith(self, arguments);
+                queue.splice(0);
+                changedAttrs.splice(0);
             });
-        can.extend(can.Model.prototype, {
-                setup: function() {
-                    setupFn.apply(this, arguments);
-                    this._requestQueue = new can.List();
-                },
-                _triggerChange: function(attr, how, newVal, oldVal) {
-                    // record changes if there is a request running
-                    if (this._changedAttrs) {
-                        this._changedAttrs.push(attr);
-                    }
-                    _triggerChange.apply(this, arguments);
-                },
-                hasQueuedRequests: function() {
-                    return this._requestQueue.attr('length') > 1;
-                },
-                save: function() {
-                    return queueRequests.apply(this, arguments);
-                },
-                destroy: function(success, error) {
-                    if (this.isNew()) {
-                        // if it's a new instance, call default destroy method
-                        return destroyFn.call(this, success, error);
-                    }
-                    return queueRequests.call(this, success, error, 'destroy', 'destroyed');
+            index = queue.push(reqFn) - 1;
+            if (queue.length === 1) {
+                queue[0] = queue[0]();
+            }
+            def.abort = function () {
+                var abort;
+                abort = queue[index].abort && queue[index].abort();
+                queue.splice(index);
+                if (queue.length === 0) {
+                    changedAttrs.splice(0);
                 }
-            });
-        return can;
-    })(window.can, undefined, __m17);
-
+                return abort;
+            };
+            def.then(success, error);
+            return def;
+        }, _triggerChange = can.Model.prototype._triggerChange, destroyFn = can.Model.prototype.destroy, setupFn = can.Model.prototype.setup;
+    can.each([
+        'created',
+        'updated',
+        'destroyed'
+    ], function (fn) {
+        var prototypeFn = can.Model.prototype[fn];
+        can.Model.prototype[fn] = function (attrs) {
+            if (attrs && typeof attrs === 'object') {
+                attrs = attrs.attr ? attrs.attr() : attrs;
+                this._backupStore(attrs);
+                attrs = cleanAttrs(this._changedAttrs || [], attrs);
+            }
+            prototypeFn.call(this, attrs);
+        };
+    });
+    can.extend(can.Model.prototype, {
+        setup: function () {
+            setupFn.apply(this, arguments);
+            this._requestQueue = new can.List();
+        },
+        _triggerChange: function (attr, how, newVal, oldVal) {
+            if (this._changedAttrs) {
+                this._changedAttrs.push(attr);
+            }
+            _triggerChange.apply(this, arguments);
+        },
+        hasQueuedRequests: function () {
+            return this._requestQueue.attr('length') > 1;
+        },
+        save: function () {
+            return queueRequests.apply(this, arguments);
+        },
+        destroy: function (success, error) {
+            if (this.isNew()) {
+                return destroyFn.call(this, success, error);
+            }
+            return queueRequests.call(this, success, error, 'destroy', 'destroyed');
+        }
+    });
+    return can;
+});
+/*[global-shim-end]*/
+(function (){
+	window._define = window.define;
+	window.define = window.define.orig;
 })();

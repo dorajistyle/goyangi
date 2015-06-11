@@ -15,7 +15,7 @@
 <div id="article-sub" class="uk-width-medium-1-1 uk-width-large-1-1 sub-wrapper no-padding">
   {{#article.author}}
   <div id="article-author">
-    {{> views_partial_user-box}}
+    {{> views_partial_user-box_stache }}
   </div>
   {{/article.author}}
 </div>
@@ -31,8 +31,8 @@
 <!--<i class="uk-icon-thumbs-o-up uk-icon-large fb"></i>-->
 <!--<span id="fbCount">0</span>-->
 <!--</button>-->
-{{> views_partial_sharing}}
+{{> views_partial_sharing_stache }}
 <div class="hr"></div>
 <div class="bottom uk-width-medium-1-1 uk-width-large-1-1">
-  {{> views_partial_comments}}
+  {{> views_partial_comments_stache }}
 </div>

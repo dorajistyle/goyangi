@@ -5,7 +5,5 @@
 
         <p>{{i18n 'main.description'}}</p>
     </div>
-        {{> views_partial_user-list}}
+        {{> views_partial_user-list_stache }}
 </div>
-
-

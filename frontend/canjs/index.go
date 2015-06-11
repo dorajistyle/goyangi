@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"html/template"
-	"net/http"
+	//"net/http"
 
 	"github.com/dorajistyle/goyangi/config"
 	"github.com/dorajistyle/goyangi/frontend/canjs/route"
@@ -26,7 +26,9 @@ func LoadPage(parentRoute *gin.Engine) {
 	log.Debug("url : " + config.StaticUrl)
 	log.Debug("guid : " + config.Guid)
 	log.Debug("path : " + staticPath)
-	parentRoute.ServeFiles(config.StaticUrl+"/"+config.Guid+"/*filepath", http.Dir(staticPath))
+	parentRoute.Static(config.StaticUrl+"/"+config.Guid, staticPath)
+	// route.ServeFiles doesn't exist in the current version of gin. If you want to use this, use the 59d949d35080b83864dbeafadecef112d46aaeee.
+	//parentRoute.ServeFiles(config.StaticUrl+"/"+config.Guid+"/*filepath", http.Dir(staticPath))
 	parentRoute.NoRoute(func(c *gin.Context) {
 		c.HTML(404, "404.html", map[string]string{"language": config.DefaultLanguage, "title": config.Title})
 	})

@@ -1,154 +1,264 @@
 /*!
- * CanJS - 2.1.3
- * http://canjs.us/
- * Copyright (c) 2014 Bitovi
- * Mon, 25 Aug 2014 21:51:38 GMT
+ * CanJS - 2.2.5
+ * http://canjs.com/
+ * Copyright (c) 2015 Bitovi
+ * Wed, 22 Apr 2015 15:03:29 GMT
  * Licensed MIT
- * Includes: can/map/sort
- * Download from: http://canjs.com
  */
-(function(undefined) {
 
-    // ## map/sort/sort.js
-    var __m1 = (function(can) {
+/*[global-shim-start]*/
+(function (exports, global){
+	var origDefine = global.define;
 
-        // Change bubble rule to bubble on change if their is a comparator
-        var oldBubbleRule = can.List._bubbleRule;
-        can.List._bubbleRule = function(eventName, list) {
-            if (list.comparator) {
-                return "change";
-            }
-            return oldBubbleRule.apply(this, arguments);
-        };
-        if (can.Model) {
-            var oldModelListBubble = can.Model.List._bubbleRule;
-            can.Model.List._bubbleRule = function(eventName, list) {
-                if (list.comparator) {
-                    return "change";
-                }
-                return oldModelListBubble.apply(this, arguments);
-            };
+	var get = function(name){
+		var parts = name.split("."),
+			cur = global,
+			i;
+		for(i = 0 ; i < parts.length; i++){
+			if(!cur) {
+				break;
+			}
+			cur = cur[parts[i]];
+		}
+		return cur;
+	};
+	var modules = (global.define && global.define.modules) ||
+		(global._define && global._define.modules) || {};
+	var ourDefine = global.define = function(moduleName, deps, callback){
+		var module;
+		if(typeof deps === "function") {
+			callback = deps;
+			deps = [];
+		}
+		var args = [],
+			i;
+		for(i =0; i < deps.length; i++) {
+			args.push( exports[deps[i]] ? get(exports[deps[i]]) : ( modules[deps[i]] || get(deps[i]) )  );
+		}
+		// CJS has no dependencies but 3 callback arguments
+		if(!deps.length && callback.length) {
+			module = { exports: {} };
+			var require = function(name) {
+				return exports[name] ? get(exports[name]) : modules[name];
+			};
+			args.push(require, module.exports, module);
+		}
+		// Babel uses only the exports objet
+		else if(!args[0] && deps[0] === "exports") {
+			module = { exports: {} };
+			args[0] = module.exports;
+		}
+
+		global.define = origDefine;
+		var result = callback ? callback.apply(null, args) : undefined;
+		global.define = ourDefine;
+
+		// Favor CJS module.exports over the return value
+		modules[moduleName] = module && module.exports ? module.exports : result;
+	};
+	global.define.orig = origDefine;
+	global.define.modules = modules;
+	global.define.amd = true;
+	global.System = {
+		define: function(__name, __code){
+			global.define = origDefine;
+			eval("(function() { " + __code + " \n }).call(global);");
+			global.define = ourDefine;
+		}
+	};
+})({},window)
+/*can@2.2.5#list/sort/sort*/
+define('can/list/sort/sort', [
+    'can/util/util',
+    'can/list/list'
+], function () {
+    var oldBubbleRule = can.List._bubbleRule;
+    can.List._bubbleRule = function (eventName, list) {
+        var oldBubble = oldBubbleRule.apply(this, arguments);
+        if (list.comparator && can.inArray('change', oldBubble) === -1) {
+            oldBubble.push('change');
         }
-
-        var proto = can.List.prototype,
-            _changes = proto._changes,
-            setup = proto.setup;
-
-        //Add `move` as an event that lazy-bubbles
-
-        // extend the list for sorting support
-
-        can.extend(proto, {
-                comparator: undefined,
-                sortIndexes: [],
-
-
-                sortedIndex: function(item) {
-                    var itemCompare = item.attr(this.comparator),
-                        equaled = 0;
-                    for (var i = 0, length = this.length; i < length; i++) {
-                        if (item === this[i]) {
-                            equaled = -1;
-                            continue;
-                        }
-                        if (itemCompare <= this[i].attr(this.comparator)) {
-                            return i + equaled;
-                        }
-                    }
-                    return i + equaled;
-                },
-
-
-                sort: function(method, silent) {
-                    var comparator = this.comparator,
-                        args = comparator ? [
-
-                            function(a, b) {
-                                a = typeof a[comparator] === 'function' ? a[comparator]() : a[comparator];
-                                b = typeof b[comparator] === 'function' ? b[comparator]() : b[comparator];
-                                return a === b ? 0 : a < b ? -1 : 1;
-                            }
-                        ] : [method];
-                    if (!silent) {
-                        can.trigger(this, 'reset');
-                    }
-                    return Array.prototype.sort.apply(this, args);
+        return oldBubble;
+    };
+    var proto = can.List.prototype, _changes = proto._changes, setup = proto.setup, unbind = proto.unbind;
+    can.extend(proto, {
+        setup: function (instances, options) {
+            setup.apply(this, arguments);
+            this._comparatorBound = false;
+            this._init = 1;
+            this.bind('comparator', can.proxy(this._comparatorUpdated, this));
+            delete this._init;
+            if (this.comparator) {
+                this.sort();
+            }
+        },
+        _comparatorUpdated: function (ev, newValue) {
+            if (newValue || newValue === 0) {
+                this.sort();
+                if (this._bindings > 0 && !this._comparatorBound) {
+                    this.bind('change', this._comparatorBound = function () {
+                    });
                 }
-            });
-        // create push, pop, shift, and unshift
-        // converts to an array of arguments
-        var getArgs = function(args) {
-            return args[0] && can.isArray(args[0]) ? args[0] : can.makeArray(args);
-        };
-        can.each({
-
-                push: "length",
-
-                unshift: 0
-            },
-
-            function(where, name) {
-                var proto = can.List.prototype,
-                    old = proto[name];
-                proto[name] = function() {
-                    // get the items being added
-                    var args = getArgs(arguments),
-                        // where we are going to add items
-                        len = where ? this.length : 0;
-                    // call the original method
-                    var res = old.apply(this, arguments);
-                    // cause the change where the args are:
-                    // len - where the additions happened
-                    // add - items added
-                    // args - the items added
-                    // undefined - the old value
-                    if (this.comparator && args.length) {
-                        this.sort(null, true);
-                        can.batch.trigger(this, 'reset', [args]);
-                        this._triggerChange('' + len, 'add', args, undefined);
-                    }
-                    return res;
-                };
-            });
-        //- override changes for sorting
-        proto._changes = function(ev, attr, how, newVal, oldVal) {
-            if (this.comparator && /^\d+./.test(attr)) {
-                // get the index
-                var index = +/^\d+/.exec(attr)[0],
-                    // and item
-                    item = this[index];
+            } else if (this._comparatorBound) {
+                unbind.call(this, 'change', this._comparatorBound);
+                this._comparatorBound = false;
+            }
+        },
+        unbind: function (ev, handler) {
+            var res = unbind.apply(this, arguments);
+            if (this._comparatorBound && this._bindings === 1) {
+                unbind.call(this, 'change', this._comparatorBound);
+                this._comparatorBound = false;
+            }
+            return res;
+        },
+        _comparator: function (a, b) {
+            var comparator = this.comparator;
+            if (comparator && typeof comparator === 'function') {
+                return comparator(a, b);
+            }
+            return a === b ? 0 : a < b ? -1 : 1;
+        },
+        _changes: function (ev, attr, how, newVal, oldVal) {
+            if (this.comparator && /^\d+/.test(attr)) {
+                if (ev.batchNum && ev.batchNum !== this._lastBatchNum) {
+                    this.sort();
+                    this._lastBatchNum = ev.batchNum;
+                    return;
+                }
+                var currentIndex = +/^\d+/.exec(attr)[0], item = this[currentIndex];
                 if (typeof item !== 'undefined') {
-                    // and the new item
-                    var newIndex = this.sortedIndex(item);
-                    if (newIndex !== index) {
-                        // move ...
-                        [].splice.call(this, index, 1);
-                        [].splice.call(this, newIndex, 0, item);
-                        can.trigger(this, 'move', [
-                                item,
-                                newIndex,
-                                index
-                            ]);
-                        can.trigger(this, 'change', [
-                                attr.replace(/^\d+/, newIndex),
-                                how,
-                                newVal,
-                                oldVal
-                            ]);
-                        return;
+                    var newIndex = this._getInsertIndex(item, currentIndex);
+                    if (newIndex !== currentIndex) {
+                        this._swapItems(currentIndex, newIndex);
+                        can.trigger(this, 'length', [this.length]);
                     }
                 }
             }
             _changes.apply(this, arguments);
-        };
-        //- override setup for sorting
-        proto.setup = function(instances, options) {
-            setup.apply(this, arguments);
-            if (this.comparator) {
-                this.sort();
+        },
+        _getInsertIndex: function (item, currentIndex) {
+            var a = this._getComparatorValue(item), b, offset = 0;
+            for (var i = 0; i < this.length; i++) {
+                b = this._getComparatorValue(this[i]);
+                if (typeof currentIndex !== 'undefined' && i === currentIndex) {
+                    offset = -1;
+                    continue;
+                }
+                if (this._comparator(a, b) < 0) {
+                    return i + offset;
+                }
+            }
+            return i + offset;
+        },
+        _getComparatorValue: function (item, overwrittenComparator) {
+            var comparator = typeof overwrittenComparator === 'string' ? overwrittenComparator : this.comparator;
+            if (item && comparator && typeof comparator === 'string') {
+                item = typeof item[comparator] === 'function' ? item[comparator]() : item.attr(comparator);
+            }
+            return item;
+        },
+        _getComparatorValues: function () {
+            var self = this;
+            var a = [];
+            this.each(function (item, index) {
+                a.push(self._getComparatorValue(item));
+            });
+            return a;
+        },
+        sort: function (comparator, silent) {
+            var a, b, c, isSorted;
+            var comparatorFn = can.isFunction(comparator) ? comparator : this._comparator;
+            for (var i, iMin, j = 0, n = this.length; j < n - 1; j++) {
+                iMin = j;
+                isSorted = true;
+                c = undefined;
+                for (i = j + 1; i < n; i++) {
+                    a = this._getComparatorValue(this.attr(i), comparator);
+                    b = this._getComparatorValue(this.attr(iMin), comparator);
+                    if (comparatorFn.call(this, a, b) < 0) {
+                        isSorted = false;
+                        iMin = i;
+                    }
+                    if (c && comparatorFn.call(this, a, c) < 0) {
+                        isSorted = false;
+                    }
+                    c = a;
+                }
+                if (isSorted) {
+                    break;
+                }
+                if (iMin !== j) {
+                    this._swapItems(iMin, j, silent);
+                }
+            }
+            if (!silent) {
+                can.trigger(this, 'length', [this.length]);
+            }
+            return this;
+        },
+        _swapItems: function (oldIndex, newIndex, silent) {
+            var temporaryItemReference = this[oldIndex];
+            [].splice.call(this, oldIndex, 1);
+            [].splice.call(this, newIndex, 0, temporaryItemReference);
+            if (!silent) {
+                can.trigger(this, 'move', [
+                    temporaryItemReference,
+                    newIndex,
+                    oldIndex
+                ]);
+            }
+        }
+    });
+    var getArgs = function (args) {
+        return args[0] && can.isArray(args[0]) ? args[0] : can.makeArray(args);
+    };
+    can.each({
+        push: 'length',
+        unshift: 0
+    }, function (where, name) {
+        var proto = can.List.prototype, old = proto[name];
+        proto[name] = function () {
+            if (this.comparator && arguments.length) {
+                var args = getArgs(arguments);
+                var i = args.length;
+                while (i--) {
+                    var val = can.bubble.set(this, i, this.__type(args[i], i));
+                    var newIndex = this._getInsertIndex(val);
+                    Array.prototype.splice.apply(this, [
+                        newIndex,
+                        0,
+                        val
+                    ]);
+                    this._triggerChange('' + newIndex, 'add', [val], undefined);
+                }
+                can.batch.trigger(this, 'reset', [args]);
+                return this;
+            } else {
+                return old.apply(this, arguments);
             }
         };
-        return can.Map;
-    })(window.can, undefined);
-
+    });
+    (function () {
+        var proto = can.List.prototype;
+        var oldSplice = proto.splice;
+        proto.splice = function (index, howMany) {
+            var args = can.makeArray(arguments), newElements = [], i, len;
+            if (!this.comparator) {
+                return oldSplice.apply(this, args);
+            }
+            for (i = 2, len = args.length; i < len; i++) {
+                args[i] = this.__type(args[i], i);
+                newElements.push(args[i]);
+            }
+            oldSplice.call(this, index, howMany);
+            proto.push.apply(this, newElements);
+        };
+    }());
+    return can.Map;
+});
+/*[global-shim-end]*/
+(function (){
+	window._define = window.define;
+	window.define = window.define.orig;
 })();

@@ -11,8 +11,8 @@ import (
 // @Description Authentications's router group.
 func Authentications(parentRoute *gin.RouterGroup) {
 	route := parentRoute.Group("/authentications")
-	route.POST("/", createUserAuthentication)
-	route.DELETE("/", deleteUserAuthentication)
+	route.POST("", createUserAuthentication)
+	route.DELETE("", deleteUserAuthentication)
 }
 
 // @Title createUserAuthentication

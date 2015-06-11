@@ -5,7 +5,7 @@
             <td class="td-width border-none">
               <div class="user-profile-img uk-text-center">
                 <a href="/profile/{{id}}" title="{{username}}">
-                  {{> views_partial_user-image-small}}
+                  {{> views_partial_user-image-small_stache }}
                   <span class="user-title uk-text-center">{{username}}</span>
                 </a>
               </div>

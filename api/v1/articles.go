@@ -17,10 +17,10 @@ var article model.Article
 func Articles(parentRoute *gin.RouterGroup) {
 
 	route := parentRoute.Group("/articles")
-	route.POST("/", userPermission.AuthRequired(createArticle))
+	route.POST("", userPermission.AuthRequired(createArticle))
 	route.POST("/all", userPermission.AuthRequired(createArticles))
 	route.GET("/:id", retrieveArticle)
-	route.GET("/", retrieveArticles)
+	route.GET("", retrieveArticles)
 	route.PUT("/:id", userPermission.AuthRequired(updateArticle))
 	route.DELETE("/:id", userPermission.AuthRequired(deleteArticle))
 

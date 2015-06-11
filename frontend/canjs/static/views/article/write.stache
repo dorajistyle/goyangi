@@ -14,7 +14,7 @@
                         <!--<label>{{i18n 'article.view.write.category'}}</label>-->
                         <!--<select id="categoryId" name="categoryId" class="">-->
                             <!--{{#categories}}-->
-                                <!--{{> views_article_category-options}}-->
+                                <!--{{> views_article_category-options_stache }}-->
                             <!--{{/categories}}-->
                         <!--</select>-->
                     <!--</div>-->

@@ -1,50 +1,111 @@
 /*!
- * CanJS - 2.1.3
- * http://canjs.us/
- * Copyright (c) 2014 Bitovi
- * Mon, 25 Aug 2014 21:51:38 GMT
+ * CanJS - 2.2.5
+ * http://canjs.com/
+ * Copyright (c) 2015 Bitovi
+ * Wed, 22 Apr 2015 15:03:29 GMT
  * Licensed MIT
- * Includes: can/construct/super
- * Download from: http://canjs.com
  */
-(function(undefined) {
 
-    // ## construct/super/super.js
-    var __m1 = (function(can, Construct) {
-        // tests if we can get super in .toString()
-        var isFunction = can.isFunction,
-            fnTest = /xyz/.test(function() {
-                return this.xyz;
-            }) ? /\b_super\b/ : /.*/;
-        // overwrites a single property so it can still call super
-        can.Construct._overwrite = function(addTo, base, name, val) {
-            // Check if we're overwriting an existing function
-            addTo[name] = isFunction(val) && isFunction(base[name]) && fnTest.test(val) ? function(name, fn) {
-                return function() {
-                    var tmp = this._super,
-                        ret;
-                    // Add a new ._super() method that is the same method
-                    // but on the super-class
-                    this._super = base[name];
-                    // The method only need to be bound temporarily, so we
-                    // remove it when we're done executing
-                    ret = fn.apply(this, arguments);
-                    this._super = tmp;
-                    return ret;
-                };
-            }(name, val) : val;
-        };
-        // overwrites an object with methods, sets up _super
-        //   newProps - new properties
-        //   oldProps - where the old properties might be
-        //   addTo - what we are adding to
-        can.Construct._inherit = function(newProps, oldProps, addTo) {
-            addTo = addTo || newProps;
-            for (var name in newProps) {
-                can.Construct._overwrite(addTo, oldProps, name, newProps[name]);
-            }
-        };
-        return can;
-    })(window.can, undefined);
+/*[global-shim-start]*/
+(function (exports, global){
+	var origDefine = global.define;
 
+	var get = function(name){
+		var parts = name.split("."),
+			cur = global,
+			i;
+		for(i = 0 ; i < parts.length; i++){
+			if(!cur) {
+				break;
+			}
+			cur = cur[parts[i]];
+		}
+		return cur;
+	};
+	var modules = (global.define && global.define.modules) ||
+		(global._define && global._define.modules) || {};
+	var ourDefine = global.define = function(moduleName, deps, callback){
+		var module;
+		if(typeof deps === "function") {
+			callback = deps;
+			deps = [];
+		}
+		var args = [],
+			i;
+		for(i =0; i < deps.length; i++) {
+			args.push( exports[deps[i]] ? get(exports[deps[i]]) : ( modules[deps[i]] || get(deps[i]) )  );
+		}
+		// CJS has no dependencies but 3 callback arguments
+		if(!deps.length && callback.length) {
+			module = { exports: {} };
+			var require = function(name) {
+				return exports[name] ? get(exports[name]) : modules[name];
+			};
+			args.push(require, module.exports, module);
+		}
+		// Babel uses only the exports objet
+		else if(!args[0] && deps[0] === "exports") {
+			module = { exports: {} };
+			args[0] = module.exports;
+		}
+
+		global.define = origDefine;
+		var result = callback ? callback.apply(null, args) : undefined;
+		global.define = ourDefine;
+
+		// Favor CJS module.exports over the return value
+		modules[moduleName] = module && module.exports ? module.exports : result;
+	};
+	global.define.orig = origDefine;
+	global.define.modules = modules;
+	global.define.amd = true;
+	global.System = {
+		define: function(__name, __code){
+			global.define = origDefine;
+			eval("(function() { " + __code + " \n }).call(global);");
+			global.define = ourDefine;
+		}
+	};
+})({},window)
+/*can@2.2.5#construct/super/super*/
+define('can/construct/super/super', [
+    'can/util/util',
+    'can/construct/construct'
+], function (can, Construct) {
+    var isFunction = can.isFunction, fnTest = /xyz/.test(function () {
+            return this.xyz;
+        }) ? /\b_super\b/ : /.*/, getset = [
+            'get',
+            'set'
+        ], getSuper = function (base, name, fn) {
+            return function () {
+                var tmp = this._super, ret;
+                this._super = base[name];
+                ret = fn.apply(this, arguments);
+                this._super = tmp;
+                return ret;
+            };
+        };
+    can.Construct._defineProperty = function (addTo, base, name, descriptor) {
+        var _super = Object.getOwnPropertyDescriptor(base, name);
+        if (_super) {
+            can.each(getset, function (method) {
+                if (isFunction(_super[method]) && isFunction(descriptor[method])) {
+                    descriptor[method] = getSuper(_super, method, descriptor[method]);
+                } else if (!isFunction(descriptor[method])) {
+                    descriptor[method] = _super[method];
+                }
+            });
+        }
+        Object.defineProperty(addTo, name, descriptor);
+    };
+    can.Construct._overwrite = function (addTo, base, name, val) {
+        addTo[name] = isFunction(val) && isFunction(base[name]) && fnTest.test(val) ? getSuper(base, name, val) : val;
+    };
+    return can;
+});
+/*[global-shim-end]*/
+(function (){
+	window._define = window.define;
+	window.define = window.define.orig;
 })();

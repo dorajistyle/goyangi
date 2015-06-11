@@ -43,7 +43,7 @@ var canOptions = {
         src: [staticPath+'/views/**/*.stache'],
         out: staticPath+'/js/views.build.js',
         dest: staticPath+'/js/views.build.js',
-        version: '2.1.3',
+        version: '2.2.5',
         wrapper: 'define(["can", "can/view/stache"], function(can) { {{{content}}} });'
         //wrapper: 'define(["can/view/mustache"], function(can) { {{{content}}} });'
     };

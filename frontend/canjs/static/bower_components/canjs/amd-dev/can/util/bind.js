@@ -1,54 +1,40 @@
 /*!
- * CanJS - 2.1.3
- * http://canjs.us/
- * Copyright (c) 2014 Bitovi
- * Mon, 25 Aug 2014 21:51:29 GMT
+ * CanJS - 2.2.5
+ * http://canjs.com/
+ * Copyright (c) 2015 Bitovi
+ * Wed, 22 Apr 2015 15:03:29 GMT
  * Licensed MIT
- * Includes: CanJS default build
- * Download from: http://canjs.us/
  */
-define(["can/util/library"], function (can) {
-	/**
-	 * @typedef {{bind:function():*,unbind:function():*}} can.util.bind
-	 *
-	 * Provides mixin-able bind and unbind methods. `bind()` calls `this._bindsetup`
-	 * when the first bind happens and.  `unbind()` calls `this._bindteardown` when there
-	 * are no more event handlers.
-	 *
-	 */
-	// ## Bind helpers
-	can.bindAndSetup = function () {
-		// Add the event to this object
-		can.addEvent.apply(this, arguments);
-		// If not initializing, and the first binding
-		// call bindsetup if the function exists.
-		if (!this._init) {
-			if (!this._bindings) {
-				this._bindings = 1;
-				// setup live-binding
-				if (this._bindsetup) {
-					this._bindsetup();
-				}
-			} else {
-				this._bindings++;
-			}
-		}
-		return this;
-	};
-	can.unbindAndTeardown = function (ev, handler) {
-		// Remove the event handler
-		can.removeEvent.apply(this, arguments);
-		if (this._bindings === null) {
-			this._bindings = 0;
-		} else {
-			this._bindings--;
-		}
-		// If there are no longer any bindings and
-		// there is a bindteardown method, call it.
-		if (!this._bindings && this._bindteardown) {
-			this._bindteardown();
-		}
-		return this;
-	};
-	return can;
+
+/*can@2.2.5#util/bind/bind*/
+define(['can/util/library'], function (can) {
+    can.bindAndSetup = function () {
+        can.addEvent.apply(this, arguments);
+        if (!this._init) {
+            if (!this._bindings) {
+                this._bindings = 1;
+                if (this._bindsetup) {
+                    this._bindsetup();
+                }
+            } else {
+                this._bindings++;
+            }
+        }
+        return this;
+    };
+    can.unbindAndTeardown = function (event, handler) {
+        var handlers = this.__bindEvents[event] || [];
+        var handlerCount = handlers.length;
+        can.removeEvent.apply(this, arguments);
+        if (this._bindings === null) {
+            this._bindings = 0;
+        } else {
+            this._bindings = this._bindings - (handlerCount - handlers.length);
+        }
+        if (!this._bindings && this._bindteardown) {
+            this._bindteardown();
+        }
+        return this;
+    };
+    return can;
 });

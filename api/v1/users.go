@@ -15,9 +15,9 @@ import (
 // @Description Users's router group.
 func Users(parentRoute *gin.RouterGroup) {
 	route := parentRoute.Group("/users")
-	route.POST("/", createUser)
+	route.POST("", createUser)
 	route.GET("/:id", retrieveUser)
-	route.GET("/", retrieveUsers)
+	route.GET("", retrieveUsers)
 	route.PUT("/:id", userPermission.AuthRequired(updateUser))
 	route.DELETE("/:id", userPermission.AuthRequired(deleteUser))
 

@@ -5,7 +5,7 @@ import "github.com/gin-gonic/gin"
 func Locations(parentRoute *gin.RouterGroup) {
 
 	route := parentRoute.Group("/locations")
-	route.GET("/", func(c *gin.Context) {
+	route.GET("", func(c *gin.Context) {
 		sPARoute(c, "/locations")
 	})
 	route.GET("user/:username", func(c *gin.Context) {

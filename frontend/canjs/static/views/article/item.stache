@@ -1,5 +1,5 @@
 <div id="articleWrapper" class="uk-width-medium-1-1 uk-width-large-1-1 item-top-margin">
-  {{> views_article_header}}
+  {{> views_article_header_stache }}
   <div class="br clearfix"></div>
   <article class="uk-text-center">
     <h1 id="pageTitle" class="mb3">{{article.title}}</h1>
@@ -9,7 +9,7 @@
     <div id="pageDescription" class="pre basic-content">{{{article.content}}}</div>
   </article>
   <div class="clearfix"></div>
-    {{> views_article_footer}}
+    {{> views_article_footer_stache }}
   <div class="clearfix"></div>
   {{#if article.prev}}
       <a href="/article/{{safeTitle article.prev.title}}/{{article.prev.id}}" title="{{truncate article.prev.title}}" class="uk-float-left linked-article">

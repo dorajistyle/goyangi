@@ -1,0 +1,8 @@
+code.google.com/p/snappy-go #12e4b4183793ac4b061921e7980845e750679fd0
+github.com/fatih/color #f19a133fbf02ea4974db468b07328745a8840da7
+github.com/go-sql-driver/mysql #cebeb3599d51814753350e87cd21f24b3ddaa66e
+github.com/gocql/gocql #fbad3bab5a1044b1eeb586d79e5f06df39861e2a
+github.com/golang/groupcache #86ced4a88341076f89d57b6937a5c91ec1762ee3
+github.com/lib/pq #3e3efe51a0c4b23e817075438703cb15bd58c1a8
+github.com/mattes/migrate #2cf4b2c33e35ec3476613d2ce09a87a34446b388
+speter.net/go/exp/math/dec/inf #42ca6cd68aa922bc3f32f1e056e61b65945d9ad7

@@ -1,6 +1,6 @@
 <div id="locationHeader" class="uk-width-medium-1-1 uk-width-large-1-1">
   <div class="uk-float-left">
-    {{> views_partial_like-box}}
+    {{> views_partial_like-box_stache }}
   </div>
   <div class="uk-float-right">
       <a href="/locations/search/{{location.id}}" class="uk-button uk-button-mini"><i class="uk-icon-search uk-icon-large"></i></a>
@@ -19,5 +19,5 @@
   </a> -->
   {{/if}}
 </div>
-{{> views_partial_modal-destroy}}
+{{> views_partial_modal-destroy_stache }}
 </div>

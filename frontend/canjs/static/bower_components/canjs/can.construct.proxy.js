@@ -1,73 +1,115 @@
 /*!
- * CanJS - 2.1.3
- * http://canjs.us/
- * Copyright (c) 2014 Bitovi
- * Mon, 25 Aug 2014 21:51:38 GMT
+ * CanJS - 2.2.5
+ * http://canjs.com/
+ * Copyright (c) 2015 Bitovi
+ * Wed, 22 Apr 2015 15:03:29 GMT
  * Licensed MIT
- * Includes: can/construct/proxy
- * Download from: http://canjs.com
  */
-(function(undefined) {
 
-    // ## construct/proxy/proxy.js
-    var __m1 = (function(can, Construct) {
-        var isFunction = can.isFunction,
-            isArray = can.isArray,
-            makeArray = can.makeArray,
-            proxy = function(funcs) {
-                //args that should be curried
-                var args = makeArray(arguments),
-                    self;
-                // get the functions to callback
-                funcs = args.shift();
-                // if there is only one function, make funcs into an array
-                if (!isArray(funcs)) {
-                    funcs = [funcs];
-                }
-                // keep a reference to us in self
-                self = this;
+/*[global-shim-start]*/
+(function (exports, global){
+	var origDefine = global.define;
 
+	var get = function(name){
+		var parts = name.split("."),
+			cur = global,
+			i;
+		for(i = 0 ; i < parts.length; i++){
+			if(!cur) {
+				break;
+			}
+			cur = cur[parts[i]];
+		}
+		return cur;
+	};
+	var modules = (global.define && global.define.modules) ||
+		(global._define && global._define.modules) || {};
+	var ourDefine = global.define = function(moduleName, deps, callback){
+		var module;
+		if(typeof deps === "function") {
+			callback = deps;
+			deps = [];
+		}
+		var args = [],
+			i;
+		for(i =0; i < deps.length; i++) {
+			args.push( exports[deps[i]] ? get(exports[deps[i]]) : ( modules[deps[i]] || get(deps[i]) )  );
+		}
+		// CJS has no dependencies but 3 callback arguments
+		if(!deps.length && callback.length) {
+			module = { exports: {} };
+			var require = function(name) {
+				return exports[name] ? get(exports[name]) : modules[name];
+			};
+			args.push(require, module.exports, module);
+		}
+		// Babel uses only the exports objet
+		else if(!args[0] && deps[0] === "exports") {
+			module = { exports: {} };
+			args[0] = module.exports;
+		}
 
+		global.define = origDefine;
+		var result = callback ? callback.apply(null, args) : undefined;
+		global.define = ourDefine;
 
-                return function class_cb() {
-                    // add the arguments after the curried args
-                    var cur = args.concat(makeArray(arguments)),
-                        isString, length = funcs.length,
-                        f = 0,
-                        func;
-                    // go through each function to call back
-                    for (; f < length; f++) {
-                        func = funcs[f];
-                        if (!func) {
-                            continue;
-                        }
-                        // set called with the name of the function on self (this is how this.view works)
-                        isString = typeof func === 'string';
-                        // call the function
-                        cur = (isString ? self[func] : func)
-                            .apply(self, cur || []);
-                        // pass the result to the next function (if there is a next function)
-                        if (f < length - 1) {
-                            cur = !isArray(cur) || cur._use_call ? [cur] : cur;
-                        }
+		// Favor CJS module.exports over the return value
+		modules[moduleName] = module && module.exports ? module.exports : result;
+	};
+	global.define.orig = origDefine;
+	global.define.modules = modules;
+	global.define.amd = true;
+	global.System = {
+		define: function(__name, __code){
+			global.define = origDefine;
+			eval("(function() { " + __code + " \n }).call(global);");
+			global.define = ourDefine;
+		}
+	};
+})({},window)
+/*can@2.2.5#construct/proxy/proxy*/
+define('can/construct/proxy/proxy', [
+    'can/util/util',
+    'can/construct/construct'
+], function (can, Construct) {
+    var isFunction = can.isFunction, isArray = can.isArray, makeArray = can.makeArray, proxy = function (funcs) {
+            var args = makeArray(arguments), self;
+            funcs = args.shift();
+            if (!isArray(funcs)) {
+                funcs = [funcs];
+            }
+            self = this;
+            return function class_cb() {
+                var cur = args.concat(makeArray(arguments)), isString, length = funcs.length, f = 0, func;
+                for (; f < length; f++) {
+                    func = funcs[f];
+                    if (!func) {
+                        continue;
                     }
-                    return cur;
-                };
+                    isString = typeof func === 'string';
+                    cur = (isString ? self[func] : func).apply(self, cur || []);
+                    if (f < length - 1) {
+                        cur = !isArray(cur) || cur._use_call ? [cur] : cur;
+                    }
+                }
+                return cur;
             };
-        can.Construct.proxy = can.Construct.prototype.proxy = proxy;
-        // this corrects the case where can/control loads after can/construct/proxy, so static props don't have proxy
-        var correctedClasses = [
+        };
+    can.Construct.proxy = can.Construct.prototype.proxy = proxy;
+    var correctedClasses = [
             can.Map,
             can.Control,
             can.Model
-        ],
-            i = 0;
-        for (; i < correctedClasses.length; i++) {
-            if (correctedClasses[i]) {
-                correctedClasses[i].proxy = proxy;
-            }
+        ], i = 0;
+    for (; i < correctedClasses.length; i++) {
+        if (correctedClasses[i]) {
+            correctedClasses[i].proxy = proxy;
         }
-        return can;
-    })(window.can, undefined);
-
+    }
+    return can;
+});
+/*[global-shim-end]*/
+(function (){
+	window._define = window.define;
+	window.define = window.define.orig;
 })();

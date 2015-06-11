@@ -11,9 +11,9 @@ import (
 // @Description Locations's router group.
 func Locations(parentRoute *gin.RouterGroup) {
 	route := parentRoute.Group("/locations")
-	route.POST("/", userPermission.AuthRequired(createLocation))
+	route.POST("", userPermission.AuthRequired(createLocation))
 	route.GET("/:id", retrieveLocation)
-	route.GET("/", retrieveLocations)
+	route.GET("", retrieveLocations)
 	route.PUT("/:id", userPermission.AuthRequired(updateLocation))
 	route.DELETE("/:id", userPermission.AuthRequired(deleteLocation))
 

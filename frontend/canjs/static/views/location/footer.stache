@@ -2,15 +2,15 @@
 <div id="location-sub" class="uk-width-medium-1-1 uk-width-large-1-1 sub-wrapper no-padding">
   {{#location.author}}
   <div id="location-author">
-    {{> views_partial_user-box}}
+    {{> views_partial_user-box_stache }}
   </div>
   {{/location.author}}
 </div>
 <div class="br"></div>
-{{> views_partial_sharing}}
+{{> views_partial_sharing_stache }}
 <div class="hr"></div>
 <div class="bottom uk-width-medium-1-1 uk-width-large-1-1">
   <div class="comment-wrapper">
-    {{> views_partial_comments}}
+    {{> views_partial_comments_stache }}
   </div>
 </div>

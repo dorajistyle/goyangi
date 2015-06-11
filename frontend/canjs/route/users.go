@@ -38,7 +38,7 @@ func Users(parentRoute *gin.RouterGroup) {
 	})
 
 	route = parentRoute.Group("/profile")
-	route.GET("/", func(c *gin.Context) {
+	route.GET("", func(c *gin.Context) {
 		sPARoute(c, "profile")
 	})
 	route.GET("/:id", func(c *gin.Context) {

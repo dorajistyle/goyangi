@@ -11,14 +11,15 @@ define(['can', 'app/models/article/item', 'util', 'i18n', 'jquery'],
         },
         load: function () {
              util.logDebug('*Article/List load Filter', 'Before load');
-             var list = this;
-             util.logDebug('*Article/List load Filter', 'Already loaded');
+             var list = this;             
              list.loadList();
+             util.logDebug('*Article/List load Filter', 'Already loaded wait.');
         },
         loadList: function () {
             var list = this;
             Article.findAll({'filter': util.stringify(list.filterList)},
                 function (articlesData) {
+                  util.logDebug('*Article/List', '> Article.findAll');
                     util.logJson('List',articlesData);
                     list.setListData(articlesData);
                 }
@@ -69,6 +70,7 @@ define(['can', 'app/models/article/item', 'util', 'i18n', 'jquery'],
          */
         show: function () {
             var list = this;
+            util.logInfo('*article/List articleData', list.articleData);
             list.element.html(can.view('views_article_list_stache', list.articleData));
         }
     });

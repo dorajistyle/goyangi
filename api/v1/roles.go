@@ -13,9 +13,9 @@ import (
 // @Description Roles's router group.
 func Roles(parentRoute *gin.RouterGroup) {
 	route := parentRoute.Group("/roles")
-	route.POST("/", userPermission.AdminRequired(createRole))
+	route.POST("", userPermission.AdminRequired(createRole))
 	route.GET("/:id", retrieveRole)
-	route.GET("/", retrieveRoles)
+	route.GET("", retrieveRoles)
 	route.PUT("/:id", userPermission.AdminRequired(updateRole))
 	route.DELETE("/:id", userPermission.AdminRequired(deleteRole))
 }

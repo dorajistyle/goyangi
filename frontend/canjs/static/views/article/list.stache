@@ -23,7 +23,7 @@
             <table id="articlesWrapper" class="uk-table uk-table-hover uk-table-striped">
                 <tbody>
                     {{#articles}}
-                        {{> views_article_list-item}}
+                        {{> views_article_list-item_stache }}
                     {{/articles}}
                 </tbody>
             </table>

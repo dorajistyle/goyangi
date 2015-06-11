@@ -1,25 +1,78 @@
 /*!
- * CanJS - 2.1.3
- * http://canjs.us/
- * Copyright (c) 2014 Bitovi
- * Mon, 25 Aug 2014 21:51:38 GMT
+ * CanJS - 2.2.5
+ * http://canjs.com/
+ * Copyright (c) 2015 Bitovi
+ * Wed, 22 Apr 2015 15:03:29 GMT
  * Licensed MIT
- * Includes: can/map/backup
- * Download from: http://canjs.com
  */
-(function(undefined) {
 
-    // ## util/object/object.js
-    var __m15 = (function(can) {
-        var isArray = can.isArray;
+/*[global-shim-start]*/
+(function (exports, global){
+	var origDefine = global.define;
 
-        can.Object = {};
+	var get = function(name){
+		var parts = name.split("."),
+			cur = global,
+			i;
+		for(i = 0 ; i < parts.length; i++){
+			if(!cur) {
+				break;
+			}
+			cur = cur[parts[i]];
+		}
+		return cur;
+	};
+	var modules = (global.define && global.define.modules) ||
+		(global._define && global._define.modules) || {};
+	var ourDefine = global.define = function(moduleName, deps, callback){
+		var module;
+		if(typeof deps === "function") {
+			callback = deps;
+			deps = [];
+		}
+		var args = [],
+			i;
+		for(i =0; i < deps.length; i++) {
+			args.push( exports[deps[i]] ? get(exports[deps[i]]) : ( modules[deps[i]] || get(deps[i]) )  );
+		}
+		// CJS has no dependencies but 3 callback arguments
+		if(!deps.length && callback.length) {
+			module = { exports: {} };
+			var require = function(name) {
+				return exports[name] ? get(exports[name]) : modules[name];
+			};
+			args.push(require, module.exports, module);
+		}
+		// Babel uses only the exports objet
+		else if(!args[0] && deps[0] === "exports") {
+			module = { exports: {} };
+			args[0] = module.exports;
+		}
 
-        var same = can.Object.same = function(a, b, compares, aParent, bParent, deep) {
-            var aType = typeof a,
-                aArray = isArray(a),
-                comparesType = typeof compares,
-                compare;
+		global.define = origDefine;
+		var result = callback ? callback.apply(null, args) : undefined;
+		global.define = ourDefine;
+
+		// Favor CJS module.exports over the return value
+		modules[moduleName] = module && module.exports ? module.exports : result;
+	};
+	global.define.orig = origDefine;
+	global.define.modules = modules;
+	global.define.amd = true;
+	global.System = {
+		define: function(__name, __code){
+			global.define = origDefine;
+			eval("(function() { " + __code + " \n }).call(global);");
+			global.define = ourDefine;
+		}
+	};
+})({},window)
+/*can@2.2.5#util/object/object*/
+define('can/util/object/object', ['can/util/util'], function (can) {
+    var isArray = can.isArray;
+    can.Object = {};
+    var same = can.Object.same = function (a, b, compares, aParent, bParent, deep) {
+            var aType = typeof a, aArray = isArray(a), comparesType = typeof compares, compare;
             if (comparesType === 'string' || compares === null) {
                 compares = compareMethods[compares];
                 comparesType = 'function';
@@ -63,7 +116,6 @@
                     }
                     delete bCopy[prop];
                 }
-                // go through bCopy props ... if there is no compare .. return false
                 for (prop in bCopy) {
                     if (compares[prop] === undefined || !same(undefined, b[prop], compares[prop], a, b, deep === false ? -1 : undefined)) {
                         return false;
@@ -73,86 +125,85 @@
             }
             return false;
         };
-
-        can.Object.subsets = function(checkSet, sets, compares) {
-            var len = sets.length,
-                subsets = [];
-            for (var i = 0; i < len; i++) {
-                //check this subset
-                var set = sets[i];
-                if (can.Object.subset(checkSet, set, compares)) {
-                    subsets.push(set);
-                }
+    can.Object.subsets = function (checkSet, sets, compares) {
+        var len = sets.length, subsets = [];
+        for (var i = 0; i < len; i++) {
+            var set = sets[i];
+            if (can.Object.subset(checkSet, set, compares)) {
+                subsets.push(set);
             }
-            return subsets;
-        };
-
-        can.Object.subset = function(subset, set, compares) {
-            // go through set {type: 'folder'} and make sure every property
-            // is in subset {type: 'folder', parentId :5}
-            // then make sure that set has fewer properties
-            // make sure we are only checking 'important' properties
-            // in subset (ones that have to have a value)
-            compares = compares || {};
-            for (var prop in set) {
-                if (!same(subset[prop], set[prop], compares[prop], subset, set)) {
-                    return false;
-                }
+        }
+        return subsets;
+    };
+    can.Object.subset = function (subset, set, compares) {
+        compares = compares || {};
+        for (var prop in set) {
+            if (!same(subset[prop], set[prop], compares[prop], subset, set)) {
+                return false;
             }
-            return true;
-        };
-        var compareMethods = {
-            'null': function() {
+        }
+        return true;
+    };
+    var compareMethods = {
+            'null': function () {
                 return true;
             },
-            i: function(a, b) {
-                return ('' + a)
-                    .toLowerCase() === ('' + b)
-                    .toLowerCase();
+            i: function (a, b) {
+                return ('' + a).toLowerCase() === ('' + b).toLowerCase();
             },
-            eq: function(a, b) {
+            eq: function (a, b) {
                 return a === b;
             },
-            similar: function(a, b) {
-
+            similar: function (a, b) {
                 return a == b;
             }
         };
-        compareMethods.eqeq = compareMethods.similar;
-        return can.Object;
-    })(window.can);
-
-    // ## map/backup/backup.js
-    var __m1 = (function(can) {
-        var flatProps = function(a, cur) {
-            var obj = {};
-            for (var prop in a) {
-                if (typeof a[prop] !== 'object' || a[prop] === null || a[prop] instanceof Date) {
-                    obj[prop] = a[prop];
-                } else {
-                    obj[prop] = cur.attr(prop);
-                }
+    compareMethods.eqeq = compareMethods.similar;
+    return can.Object;
+});
+/*can@2.2.5#map/backup/backup*/
+define('can/map/backup/backup', [
+    'can/util/util',
+    'can/compute/compute',
+    'can/map/map',
+    'can/util/object/object'
+], function (can) {
+    var flatProps = function (a, cur) {
+        var obj = {};
+        for (var prop in a) {
+            if (typeof a[prop] !== 'object' || a[prop] === null || a[prop] instanceof Date) {
+                obj[prop] = a[prop];
+            } else {
+                obj[prop] = cur.attr(prop);
             }
-            return obj;
-        };
-        can.extend(can.Map.prototype, {
-
-                backup: function() {
-                    this._backupStore = this._attrs();
-                    return this;
-                },
-                isDirty: function(checkAssociations) {
-                    return this._backupStore && !can.Object.same(this._attrs(), this._backupStore, undefined, undefined, undefined, !! checkAssociations);
-                },
-                restore: function(restoreAssociations) {
-                    var props = restoreAssociations ? this._backupStore : flatProps(this._backupStore, this);
-                    if (this.isDirty(restoreAssociations)) {
-                        this._attrs(props, true);
-                    }
-                    return this;
-                }
-            });
-        return can.Map;
-    })(window.can, undefined, __m15);
-
+        }
+        return obj;
+    };
+    var oldSetup = can.Map.prototype.setup;
+    can.extend(can.Map.prototype, {
+        setup: function () {
+            this._backupStore = can.compute();
+            return oldSetup.apply(this, arguments);
+        },
+        backup: function () {
+            this._backupStore(this.attr());
+            return this;
+        },
+        isDirty: function (checkAssociations) {
+            return this._backupStore() && !can.Object.same(this.attr(), this._backupStore(), undefined, undefined, undefined, !!checkAssociations);
+        },
+        restore: function (restoreAssociations) {
+            var props = restoreAssociations ? this._backupStore() : flatProps(this._backupStore(), this);
+            if (this.isDirty(restoreAssociations)) {
+                this.attr(props, true);
+            }
+            return this;
+        }
+    });
+    return can.Map;
+});
+/*[global-shim-end]*/
+(function (){
+	window._define = window.define;
+	window.define = window.define.orig;
 })();

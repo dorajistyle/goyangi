@@ -100,7 +100,7 @@
         </button>
     </div>
 </form>
-{{> views_partial_modal-destroy}}
+{{> views_partial_modal-destroy_stache }}
 
 <div class="uk-modal" id="deleteRoleFromUserConfirm">
         <div class="uk-modal-dialog">

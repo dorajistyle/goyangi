@@ -18,12 +18,12 @@
               <!-- profile image -->
               <td class="uk-width-large-1-6">
                 <div class="user-profile-img">
-                  <!--<a href="/#!profile/{{userId}}">{{> views_partial_user-image}}</a>-->
+                  <!--<a href="/#!profile/{{userId}}">{{> views_partial_user-image_stache }}</a>-->
                   {{#user}}
                     {{#if id}}
-                      <a href="/profile/{{id}}" title="{{username}}">{{> views_partial_user-image}}</a>
+                      <a href="/profile/{{id}}" title="{{username}}">{{> views_partial_user-image_stache }}</a>
                     {{ else }}
-                      {{> views_partial_user-image}}
+                      {{> views_partial_user-image_stache }}
                     {{/if}}
                   {{/user}}
                 </div>
