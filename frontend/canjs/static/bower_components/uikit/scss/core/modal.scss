@@ -5,8 +5,12 @@
 //
 // Sub-objects:     `uk-modal-dialog`
 //                  `uk-modal-close`
+//                  `uk-modal-header`
+//                  `uk-modal-footer`
+//                  `uk-modal-caption`
+//                  `uk-modal-spinner`
 //
-// Modifiers:       `uk-modal-dialog-frameless`
+// Modifiers:       `uk-modal-dialog-lightbox`
 //                  `uk-modal-dialog-large`
 //
 // States:          `uk-open`
@@ -41,6 +45,13 @@ $modal-dialog-background:                        #fff !default;
 $modal-dialog-large-width:                       930px !default;
 $modal-dialog-large-width-large:                 1130px !default;
 
+$modal-header-margin-bottom:                     15px !default;
+
+$modal-footer-margin-top:                        15px !default;
+
+$modal-caption-margin-bottom:                    -10px !default;
+$modal-caption-color:                            #fff !default;
+
 
 /* ========================================================================
    Component: Modal
@@ -53,6 +64,8 @@ $modal-dialog-large-width-large:                 1130px !default;
  * 3. Allow scrolling for the modal dialog
  * 4. Mask the background page
  * 5. Fade-in transition
+ * 6. Deactivate browser history navigation in IE11
+ * 7. force hardware acceleration to prevent browser rendering hiccups
  */
 
 .uk-modal {
@@ -74,6 +87,11 @@ $modal-dialog-large-width-large:                 1130px !default;
     opacity: 0;
     -webkit-transition: opacity 0.15s linear;
     transition: opacity 0.15s linear;
+    /* 6 */
+    touch-action: cross-slide-y pinch-zoom double-tap-zoom;
+    /* 7 */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
     @include hook-modal();
 }
 
@@ -95,7 +113,7 @@ $modal-dialog-large-width-large:                 1130px !default;
  ========================================================================== */
 
 /*
- * 1. Create position context for `uk-modal-dialog-frameless`
+ * 1. Create position context for caption, spinner and close button
  * 2. Set box sizing
  * 3. Set style
  * 4. Slide-in transition
@@ -132,7 +150,7 @@ $modal-dialog-large-width-large:                 1130px !default;
 
     .uk-modal-dialog {
         width: auto;
-        margin: 10px;
+        margin: 10px auto;
     }
 
 }
@@ -152,7 +170,7 @@ $modal-dialog-large-width-large:                 1130px !default;
  * Remove margin from the last-child
  */
 
-.uk-modal-dialog > :last-child { margin-bottom: 0; }
+.uk-modal-dialog > :not([class*='uk-modal-']):last-child { margin-bottom: 0; }
 
 
 /* Close in modal
@@ -167,19 +185,25 @@ $modal-dialog-large-width-large:                 1130px !default;
  * Remove margin from adjacent element
  */
 
- .uk-modal-dialog > .uk-close:first-child + * { margin-top: 0; }
+ .uk-modal-dialog > .uk-close:first-child + :not([class*='uk-modal-']) { margin-top: 0; }
 
 
-/* Modifier: `uk-modal-dialog-frameless`
+/* Modifier: `uk-modal-dialog-lightbox`
  ========================================================================== */
 
-.uk-modal-dialog-frameless { padding: 0; }
+.uk-modal-dialog-lightbox {
+    margin: 15px auto;
+    padding: 0;
+    max-width: 95%;
+    max-width: unquote("calc(100% - 30px)");
+    @include hook-modal-dialog-lightbox();
+}
 
 /*
- * Close in modal
+ * Close button
  */
 
-.uk-modal-dialog-frameless > .uk-close:first-child {
+.uk-modal-dialog-lightbox > .uk-close:first-child {
     position: absolute;
     top: -12px;
     right: -12px;
@@ -190,7 +214,7 @@ $modal-dialog-large-width-large:                 1130px !default;
 /* Phone landscape and smaller */
 @media (max-width: $breakpoint-small-max) {
 
-    .uk-modal-dialog-frameless > .uk-close:first-child {
+    .uk-modal-dialog-lightbox > .uk-close:first-child {
         top: -7px;
         right: -7px;
     }
@@ -216,6 +240,67 @@ $modal-dialog-large-width-large:                 1130px !default;
 }
 
 
+/* Sub-Object: `uk-modal-header` and `uk-modal-footer`
+ ========================================================================== */
+
+.uk-modal-header {
+    margin-bottom: $modal-header-margin-bottom;
+    @include hook-modal-header();
+}
+
+.uk-modal-footer {
+    margin-top: $modal-footer-margin-top;
+    @include hook-modal-footer();
+}
+
+/*
+ * Remove margin from the last-child
+ */
+
+.uk-modal-header  > :last-child,
+.uk-modal-footer  > :last-child { margin-bottom: 0; }
+
+
+/* Sub-Object: `uk-modal-caption`
+ ========================================================================== */
+
+.uk-modal-caption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: (-$modal-dialog-padding);
+    margin-bottom: $modal-caption-margin-bottom;
+    color: $modal-caption-color;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    @include hook-modal-caption();
+}
+
+
+/* Sub-Object: `uk-modal-spinner`
+ ========================================================================== */
+
+.uk-modal-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
+    font-size: 25px;
+    color: #ddd;
+    @include hook-modal-spinner();
+}
+
+.uk-modal-spinner:after {
+    content: "\f110";
+    font-family: FontAwesome;
+    -webkit-animation: uk-rotate 2s infinite linear;
+    animation: uk-rotate 2s infinite linear;
+}
+
+
 // Hooks
 // ========================================================================
 
@@ -223,4 +308,9 @@ $modal-dialog-large-width-large:                 1130px !default;
 
 // @mixin hook-modal(){}
 // @mixin hook-modal-dialog(){}
+// @mixin hook-modal-dialog-lightbox(){}
+// @mixin hook-modal-header(){}
+// @mixin hook-modal-footer(){}
+// @mixin hook-modal-caption(){}
+// @mixin hook-modal-spinner(){}
 // @mixin hook-modal-misc(){}

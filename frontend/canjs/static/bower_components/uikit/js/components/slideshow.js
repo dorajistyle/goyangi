@@ -1,57 +1,96 @@
-/*! UIkit 2.12.0 | http://www.getuikit.com | (c) 2014 YOOtheme | MIT License */
+/*! UIkit 2.21.0 | http://www.getuikit.com | (c) 2014 YOOtheme | MIT License */
 (function(addon) {
 
     var component;
 
-    if (jQuery && jQuery.UIkit) {
-        component = addon(jQuery, jQuery.UIkit);
+    if (window.UIkit) {
+        component = addon(UIkit);
     }
 
     if (typeof define == "function" && define.amd) {
         define("uikit-slideshow", ["uikit"], function() {
-            return component || addon(jQuery, jQuery.UIkit);
+            return component || addon(UIkit);
         });
     }
 
-})(function($, UI) {
+})(function(UI) {
 
     "use strict";
 
-    var Animations;
+    var Animations, playerId = 0;
 
     UI.component('slideshow', {
 
         defaults: {
-            animation        : "fade",
-            duration         : 500,
-            height           : "auto",
-            start            : 0,
-            autoplay         : false,
-            autoplayInterval : 7000,
-            videoautoplay    : true,
-            videomute        : true,
-            kenburns         : false,
-            slices           : 15
+            animation          : "fade",
+            duration           : 500,
+            height             : "auto",
+            start              : 0,
+            autoplay           : false,
+            autoplayInterval   : 7000,
+            videoautoplay      : true,
+            videomute          : true,
+            slices             : 15,
+            pauseOnHover       : true,
+            kenburns           : false,
+            kenburnsanimations : [
+                'uk-animation-middle-left',
+                'uk-animation-top-right',
+                'uk-animation-bottom-left',
+                'uk-animation-top-center',
+                '', // middle-center
+                'uk-animation-bottom-right'
+            ],
         },
 
         current  : false,
         interval : null,
         hovering : false,
 
+        boot: function() {
+
+            // init code
+            UI.ready(function(context) {
+
+                UI.$('[data-uk-slideshow]', context).each(function() {
+
+                    var slideshow = UI.$(this);
+
+                    if (!slideshow.data("slideshow")) {
+                        var obj = UI.slideshow(slideshow, UI.Utils.options(slideshow.attr("data-uk-slideshow")));
+                    }
+                });
+            });
+        },
+
         init: function() {
 
-            var $this = this, canvas;
+            var $this = this, canvas, kbanimduration;
 
-            this.container   = this.find('.uk-slideshow').andSelf().filter('.uk-slideshow'),
-            this.slides      = this.container.children(),
-            this.slidesCount = this.slides.length,
-            this.current     = this.options.start,
-            this.animating   = false,
-            this.triggers    = this.find('[data-uk-slideshow-item]');
+            this.container     = this.element.hasClass('uk-slideshow') ? this.element : UI.$(this.find('.uk-slideshow'));
+            this.slides        = this.container.children();
+            this.slidesCount   = this.slides.length;
+            this.current       = this.options.start;
+            this.animating     = false;
+            this.triggers      = this.find('[data-uk-slideshow-item]');
+            this.fixFullscreen = navigator.userAgent.match(/(iPad|iPhone|iPod)/g) && this.container.hasClass('uk-slideshow-fullscreen'); // viewport unit fix for height:100vh - should be fixed in iOS 8
+
+            if (this.options.kenburns) {
+
+                kbanimduration = this.options.kenburns === true ? '15s': this.options.kenburns;
+
+                if (!String(kbanimduration).match(/(ms|s)$/)) {
+                    kbanimduration += 'ms';
+                }
+
+                if (typeof(this.options.kenburnsanimations) == 'string') {
+                    this.options.kenburnsanimations = this.options.kenburnsanimations.split(',');
+                }
+            }
 
             this.slides.each(function(index) {
 
-                var slide = $(this),
+                var slide = UI.$(this),
                     media = slide.children('img,video,iframe').eq(0);
 
                 slide.data('media', media);
@@ -64,29 +103,43 @@
                     switch(media[0].nodeName) {
                         case 'IMG':
 
-                            var cover = $('<div class="uk-cover-background uk-position-cover"></div>').css({'background-image':'url('+ media.attr('src') + ')'});
+                            var cover = UI.$('<div class="uk-cover-background uk-position-cover"></div>').css({'background-image':'url('+ media.attr('src') + ')'});
 
                             media.css({'width': '100%','height': 'auto'});
                             slide.prepend(cover).data('cover', cover);
                             break;
+
                         case 'IFRAME':
 
-                            var src = media[0].src;
+                            var src = media[0].src, iframeId = 'sw-'+(++playerId);
 
-                            media.attr('src', '').on('load', function(){
+                            media
+                                .attr('src', '').on('load', function(){
 
-                                if (index !== $this.current || (index == $this.current && $this.options.videoautoplay)) {
-                                    $this.pausemedia(media);
-                                }
+                                    if (index !== $this.current || (index == $this.current && !$this.options.videoautoplay)) {
+                                        $this.pausemedia(media);
+                                    }
 
-                                if ($this.options.videomute) {
-                                    this.contentWindow.postMessage('{ "event": "command", "func": "mute", "method":"setVolume", "value":0}', '*');
-                                }
+                                    if ($this.options.videomute) {
 
-                            })
-                            .attr('src', [src, (src.indexOf('?') > -1 ? '&':'?'), 'enablejsapi=1&api=1'].join(''))
-                            .addClass('uk-position-absolute')
-                            .css('pointer-events', 'none');
+                                        $this.mutemedia(media);
+
+                                        var inv = setInterval((function(ic) {
+                                            return function() {
+                                                $this.mutemedia(media);
+                                                if (++ic >= 4) clearInterval(inv);
+                                            }
+                                        })(0), 250);
+                                    }
+
+                                })
+                                .data('slideshow', $this)  // add self-reference for the vimeo-ready listener
+                                .attr('data-player-id', iframeId)  // add frameId for the vimeo-ready listener
+                                .attr('src', [src, (src.indexOf('?') > -1 ? '&':'?'), 'enablejsapi=1&api=1&player_id='+iframeId].join(''))
+                                .addClass('uk-position-absolute');
+
+                            // disable pointer events
+                            if(!UI.support.touch) media.css('pointer-events', 'none');
 
                             placeholder = true;
 
@@ -96,15 +149,18 @@
                             }
 
                             break;
+
                         case 'VIDEO':
                             media.addClass('uk-cover-object uk-position-absolute');
                             placeholder = true;
+
+                            if ($this.options.videomute) $this.mutemedia(media);
                     }
 
                     if (placeholder) {
 
-                        canvas  = $('<canvas></canvas>').attr({'width': media[0].width, 'height': media[0].height});
-                        var img = $('<img style="width:100%;height:auto;">').attr('src', canvas[0].toDataURL());
+                        canvas  = UI.$('<canvas></canvas>').attr({'width': media[0].width, 'height': media[0].height});
+                        var img = UI.$('<img style="width:100%;height:auto;">').attr('src', canvas[0].toDataURL());
 
                         slide.prepend(img);
                         slide.data('sizer', img);
@@ -113,13 +169,21 @@
                 } else {
                     slide.data('sizer', slide);
                 }
+
+                if ($this.hasKenBurns(slide)) {
+
+                    slide.data('cover').css({
+                        '-webkit-animation-duration': kbanimduration,
+                        'animation-duration': kbanimduration
+                    });
+                }
             });
 
-            this.on("click", '[data-uk-slideshow-item]', function(e) {
+            this.on("click.uikit.slideshow", '[data-uk-slideshow-item]', function(e) {
 
                 e.preventDefault();
 
-                var slide = $(this).data('ukSlideshowItem');
+                var slide = UI.$(this).attr('data-uk-slideshow-item');
 
                 if ($this.current == slide) return;
 
@@ -129,19 +193,29 @@
                         $this[slide=='next' ? 'next':'previous']();
                         break;
                     default:
-                        $this.show(slide);
+                        $this.show(parseInt(slide, 10));
                 }
 
                 $this.stop();
             });
 
             // Set start slide
-            this.slides.eq(this.current).addClass('uk-active');
+            this.slides.attr('aria-hidden', 'true').eq(this.current).addClass('uk-active').attr('aria-hidden', 'false');
             this.triggers.filter('[data-uk-slideshow-item="'+this.current+'"]').addClass('uk-active');
 
-            UI.$win.on("resize load", UI.Utils.debounce(function() { $this.resize(); }, 100));
+            UI.$win.on("resize load", UI.Utils.debounce(function() {
+                $this.resize();
 
-            this.resize();
+                if ($this.fixFullscreen) {
+                    $this.container.css('height', window.innerHeight);
+                    $this.slides.css('height', window.innerHeight);
+                }
+            }, 100));
+
+            // chrome image load fix
+            setTimeout(function(){
+                $this.resize();
+            }, 80);
 
             // Set autoplay
             if (this.options.autoplay) {
@@ -157,12 +231,24 @@
             }
 
             this.container.on({
-                mouseenter: function() { $this.hovering = true;  },
+                mouseenter: function() { if ($this.options.pauseOnHover) $this.hovering = true;  },
                 mouseleave: function() { $this.hovering = false; }
             });
 
             this.on('swipeRight swipeLeft', function(e) {
                 $this[e.type=='swipeLeft' ? 'next' : 'previous']();
+            });
+
+            this.on('display.uk.check', function(){
+                if ($this.element.is(":visible")) {
+
+                    $this.resize();
+
+                    if ($this.fixFullscreen) {
+                        $this.container.css('height', window.innerHeight);
+                        $this.slides.css('height', window.innerHeight);
+                    }
+                }
             });
         },
 
@@ -178,7 +264,7 @@
                 height = 0;
 
                 this.slides.css('height', '').each(function() {
-                    height = Math.max(height, $(this).data('sizer').height());
+                    height = Math.max(height, UI.$(this).height());
                 });
             }
 
@@ -188,7 +274,7 @@
 
         show: function(index, direction) {
 
-            if (this.animating) return;
+            if (this.animating || this.current == index) return;
 
             this.animating = true;
 
@@ -201,25 +287,25 @@
                 nextmedia    = next.data('media'),
                 finalize     = function() {
 
-                    if(!$this.animating) return;
+                    if (!$this.animating) return;
 
-                    if(currentmedia.is('video,iframe')) {
+                    if (currentmedia && currentmedia.is('video,iframe')) {
                         $this.pausemedia(currentmedia);
                     }
 
-                    if(nextmedia.is('video,iframe')) {
+                    if (nextmedia && nextmedia.is('video,iframe')) {
                         $this.playmedia(nextmedia);
                     }
 
-                    next.addClass("uk-active");
-                    current.removeClass('uk-active');
+                    next.addClass("uk-active").attr('aria-hidden', 'false');
+                    current.removeClass("uk-active").attr('aria-hidden', 'true');
 
                     $this.animating = false;
                     $this.current   = index;
 
                     UI.Utils.checkDisplay(next, '[class*="uk-animation-"]:not(.uk-cover-background.uk-position-cover)');
 
-                    $this.trigger('uk.slideshow.show', [next]);
+                    $this.trigger('show.uk.slideshow', [next]);
                 };
 
             $this.applyKenBurns(next);
@@ -229,9 +315,13 @@
                 animation = 'none';
             }
 
+            current = UI.$(current);
+            next    = UI.$(next);
+
             Animations[animation].apply(this, [current, next, dir]).then(finalize);
 
-            $this.triggers.filter('[data-uk-slideshow-item="'+$this.current+'"]').removeClass('uk-active').end().filter('[data-uk-slideshow-item="'+index+'"]').addClass('uk-active');
+            $this.triggers.removeClass('uk-active');
+            $this.triggers.filter('[data-uk-slideshow-item="'+index+'"]').addClass('uk-active');
         },
 
         applyKenBurns: function(slide) {
@@ -240,19 +330,12 @@
                 return;
             }
 
-            var animations = [
-                    'uk-animation-middle-left',
-                    'uk-animation-top-right',
-                    'uk-animation-bottom-left',
-                    'uk-animation-top-center',
-                    '', // middle-center
-                    'uk-animation-bottom-right'
-                ],
-                index = this.kbindex || 0;
+            var animations = this.options.kenburnsanimations,
+                index      = this.kbindex || 0;
 
 
             slide.data('cover').attr('class', 'uk-cover-background uk-position-cover').width();
-            slide.data('cover').addClass(['uk-animation-scale', 'uk-animation-reverse', 'uk-animation-15', animations[index]].join(' '));
+            slide.data('cover').addClass(['uk-animation-scale', 'uk-animation-reverse', animations[index].trim()].join(' '));
 
             this.kbindex = animations[index + 1] ? (index+1):0;
         },
@@ -276,7 +359,7 @@
             var $this = this;
 
             this.interval = setInterval(function() {
-                if (!$this.hovering) $this.show($this.options.start, $this.next());
+                if (!$this.hovering) $this.next();
             }, this.options.autoplayInterval);
 
         },
@@ -289,12 +372,21 @@
 
             if (!(media && media[0])) return;
 
-
             switch(media[0].nodeName) {
                 case 'VIDEO':
+
+                    if (!this.options.videomute) {
+                        media[0].muted = false;
+                    }
+
                     media[0].play();
                     break;
                 case 'IFRAME':
+
+                    if (!this.options.videomute) {
+                        media[0].contentWindow.postMessage('{ "event": "command", "func": "unmute", "method":"setVolume", "value":1}', '*');
+                    }
+
                     media[0].contentWindow.postMessage('{ "event": "command", "func": "playVideo", "method":"play"}', '*');
                     break;
             }
@@ -310,6 +402,18 @@
                     media[0].contentWindow.postMessage('{ "event": "command", "func": "pauseVideo", "method":"pause"}', '*');
                     break;
             }
+        },
+
+        mutemedia: function(media) {
+
+            switch(media[0].nodeName) {
+                case 'VIDEO':
+                    media[0].muted = true;
+                    break;
+                case 'IFRAME':
+                    media[0].contentWindow.postMessage('{ "event": "command", "func": "mute", "method":"setVolume", "value":0}', '*');
+                    break;
+            }
         }
     });
 
@@ -317,14 +421,14 @@
 
         'none': function() {
 
-            var d = $.Deferred();
+            var d = UI.$.Deferred();
             d.resolve();
             return d.promise();
         },
 
         'scroll': function(current, next, dir) {
 
-            var d = $.Deferred();
+            var d = UI.$.Deferred();
 
             current.css('animation-duration', this.options.duration+'ms');
             next.css('animation-duration', this.options.duration+'ms');
@@ -346,7 +450,7 @@
 
         'swipe': function(current, next, dir) {
 
-            var d = $.Deferred();
+            var d = UI.$.Deferred();
 
             current.css('animation-duration', this.options.duration+'ms');
             next.css('animation-duration', this.options.duration+'ms');
@@ -368,7 +472,7 @@
 
         'scale': function(current, next, dir) {
 
-            var d = $.Deferred();
+            var d = UI.$.Deferred();
 
             current.css('animation-duration', this.options.duration+'ms');
             next.css('animation-duration', this.options.duration+'ms');
@@ -391,7 +495,7 @@
 
         'fade': function(current, next, dir) {
 
-            var d = $.Deferred();
+            var d = UI.$.Deferred();
 
             current.css('animation-duration', this.options.duration+'ms');
             next.css('animation-duration', this.options.duration+'ms');
@@ -415,17 +519,27 @@
 
     UI.slideshow.animations = Animations;
 
-    // init code
-    UI.ready(function(context) {
+    // Listen for messages from the vimeo player
+    window.addEventListener('message', function onMessageReceived(e) {
 
-        $('[data-uk-slideshow]', context).each(function() {
+        var data = e.data, iframe;
 
-            var slideshow = $(this);
+        if (typeof(data) == 'string') {
 
-            if (!slideshow.data("slideshow")) {
-                var obj = UI.slideshow(slideshow, UI.Utils.options(slideshow.attr("data-uk-slideshow")));
+            try {
+                data = JSON.parse(data);
+            } catch(err) {
+                data = {};
             }
-        });
-    });
+        }
+
+        if (e.origin && e.origin.indexOf('vimeo') > -1 && data.event == 'ready' && data.player_id) {
+            iframe = UI.$('[data-player-id="'+ data.player_id+'"]');
+
+            if (iframe.length) {
+                iframe.data('slideshow').mutemedia(iframe);
+            }
+        }
+    }, false);
 
 });

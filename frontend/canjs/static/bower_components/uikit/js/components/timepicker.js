@@ -1,60 +1,52 @@
-/*! UIkit 2.12.0 | http://www.getuikit.com | (c) 2014 YOOtheme | MIT License */
+/*! UIkit 2.21.0 | http://www.getuikit.com | (c) 2014 YOOtheme | MIT License */
 (function(addon) {
 
     var component;
 
-    if (jQuery && jQuery.UIkit) {
-        component = addon(jQuery, jQuery.UIkit);
+    if (window.UIkit) {
+        component = addon(UIkit);
     }
 
     if (typeof define == "function" && define.amd) {
         define("uikit-search", ["uikit"], function(){
-            return component || addon(jQuery, jQuery.UIkit);
+            return component || addon(UIkit);
         });
     }
 
-})(function($, UI){
+})(function(UI){
 
     "use strict";
-
-    var times = {'12h':[], '24h':[]};
-
-    for(var i = 0, h=''; i<24; i++) {
-
-        h = ''+i;
-
-        if(i<10)  h = '0'+h;
-
-        times['24h'].push({value: (h+':00')});
-        times['24h'].push({value: (h+':30')});
-
-        if (i > 0 && i<13) {
-            times['12h'].push({value: (h+':00 AM')});
-            times['12h'].push({value: (h+':30 AM')});
-        }
-
-        if (i > 12) {
-
-            h = h-12;
-
-            if (h < 10) h = '0'+String(h);
-
-            times['12h'].push({value: (h+':00 PM')});
-            times['12h'].push({value: (h+':30 PM')});
-        }
-    }
 
 
     UI.component('timepicker', {
 
         defaults: {
             format : '24h',
-            delay  : 0
+            delay  : 0,
+            start  : 0,
+            end    : 24
+        },
+
+        boot: function() {
+
+            // init code
+            UI.$html.on("focus.timepicker.uikit", "[data-uk-timepicker]", function(e) {
+
+                var ele = UI.$(this);
+
+                if (!ele.data("timepicker")) {
+                    var obj = UI.timepicker(ele, UI.Utils.options(ele.attr("data-uk-timepicker")));
+
+                    setTimeout(function(){
+                        obj.autocomplete.input.focus();
+                    }, 40);
+                }
+            });
         },
 
         init: function() {
 
-            var $this  = this;
+            var $this  = this, times = getTimeRange(this.options.start, this.options.end), container;
 
             this.options.minLength = 0;
             this.options.template  = '<ul class="uk-nav uk-nav-autocomplete uk-autocomplete-results">{{~items}}<li data-value="{{$item.value}}"><a>{{$item.value}}</a></li>{{/items}}</ul>';
@@ -63,12 +55,17 @@
                 release(times[$this.options.format] || times['12h']);
             };
 
-            this.element.wrap('<div class="uk-autocomplete"></div>');
+            if (this.element.is('input')) {
+                this.element.wrap('<div class="uk-autocomplete"></div>');
+                container = this.element.parent();
+            } else {
+                container = this.element.addClass('uk-autocomplete');
+            }
 
-            this.autocomplete = UI.autocomplete(this.element.parent(), this.options);
+            this.autocomplete = UI.autocomplete(container, this.options);
             this.autocomplete.dropdown.addClass('uk-dropdown-small uk-dropdown-scrollable');
 
-            this.autocomplete.on('uk.autocomplete.show', function() {
+            this.autocomplete.on('show.uk.autocomplete', function() {
 
                 var selected = $this.autocomplete.dropdown.find('[data-value="'+$this.autocomplete.input.val()+'"]');
 
@@ -149,16 +146,47 @@
         }
     });
 
-    // init code
-    UI.$html.on("focus.timepicker.uikit", "[data-uk-timepicker]", function(e) {
-        var ele = $(this);
+    // helper
 
-        if (!ele.data("timepicker")) {
-            var obj = UI.timepicker(ele, UI.Utils.options(ele.attr("data-uk-timepicker")));
+    function getTimeRange(start, end) {
 
-            setTimeout(function(){
-                obj.autocomplete.input.focus();
-            }, 20);
+        start = start || 0;
+        end   = end || 24;
+
+        var times = {'12h':[], '24h':[]}, i, h;
+
+        for (i = start, h=''; i<end; i++) {
+
+            h = ''+i;
+
+            if (i<10)  h = '0'+h;
+
+            times['24h'].push({value: (h+':00')});
+            times['24h'].push({value: (h+':30')});
+
+            if (i === 0) {
+                h = 12;
+                times['12h'].push({value: (h+':00 AM')});
+                times['12h'].push({value: (h+':30 AM')});
+            }
+
+            if (i > 0 && i<13 && i!==12) {
+                times['12h'].push({value: (h+':00 AM')});
+                times['12h'].push({value: (h+':30 AM')});
+            }
+
+            if (i >= 12) {
+
+                h = h-12;
+                if (h === 0) h = 12;
+                if (h < 10) h = '0'+String(h);
+
+                times['12h'].push({value: (h+':00 PM')});
+                times['12h'].push({value: (h+':30 PM')});
+            }
         }
-    });
+
+        return times;
+    }
+
 });

@@ -5,6 +5,7 @@
 //
 // Modifiers:       `uk-slidenav-previous`
 //                  `uk-slidenav-next`
+//                  `uk-slidenav-contrast`
 //
 // Sub-objects:     `uk-slidenav-position`
 //
@@ -12,11 +13,11 @@
 //
 // Markup:
 //
-// <!-- uk-slidenav addon -->
+// <!-- uk-slidenav -->
 // <a href="" class="uk-slidenav uk-slidenav-previous"></a>
 // <a href="" class="uk-slidenav uk-slidenav-next"></a>
 //
-// <!-- uk-slidenav-position addon -->
+// <!-- uk-slidenav-position -->
 // <div class="uk-slidenav-position">
 //     <img src="" alt="">
 //     <a href="" class="uk-slidenav uk-slidenav-previous"></a>
@@ -43,6 +44,10 @@
 
 @slidenav-position-previous:                    20px;
 @slidenav-position-next:                        @slidenav-position-previous;
+
+@slidenav-contrast-color:                       rgba(255,255,255,0.5);
+@slidenav-contrast-hover-color:                 rgba(255,255,255,0.7);
+@slidenav-contrast-active-color:                rgba(255,255,255,0.9);
 
 
 /* ========================================================================
@@ -139,14 +144,41 @@
 .uk-slidenav-position .uk-slidenav-next { right: @slidenav-position-next; }
 
 
+/* Modifier: `uk-slidenav-contrast`
+ ========================================================================== */
+
+.uk-slidenav-contrast {
+    color: @slidenav-contrast-color;
+    .hook-slidenav-contrast;
+}
+
+/*
+ * Hover
+ * 1. Apply hover style also to focus state
+ */
+
+.uk-slidenav-contrast:hover,
+.uk-slidenav-contrast:focus { // 1
+    color: @slidenav-contrast-hover-color;
+    .hook-slidenav-contrast-hover;
+}
+
+/* Active */
+.uk-slidenav-contrast:active {
+    color: @slidenav-contrast-active-color;
+    .hook-slidenav-contrast-active;
+}
+
+
 // Hooks
 // ========================================================================
 
 .hook-slidenav-misc;
 
 .hook-slidenav() {}
-.hook-slidenav-previous() {}
-.hook-slidenav-next() {}
 .hook-slidenav-hover() {}
 .hook-slidenav-active() {}
+.hook-slidenav-contrast() {}
+.hook-slidenav-contrast-hover() {}
+.hook-slidenav-contrast-active() {}
 .hook-slidenav-misc() {}

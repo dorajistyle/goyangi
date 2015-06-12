@@ -19,7 +19,7 @@
     "loglevel": "~1.2.0",
     "requirejs": "~2.1.15",
     "typeahead.js": "~0.10.5",
-    "uikit": "=2.12.0",
+    "uikit": "=2.21.0",
     "spin.js": "~2.0.1",
     "jquery-file-upload": "~9.8.1",
     "magnific-popup": "=1.0.0",

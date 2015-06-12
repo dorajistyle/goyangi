@@ -1,4 +1,4 @@
-/*! UIkit 2.12.0 | http://www.getuikit.com | (c) 2014 YOOtheme | MIT License */
+/*! UIkit 2.21.0 | http://www.getuikit.com | (c) 2014 YOOtheme | MIT License */
 /* ========================================================================
    Component: HTML editor
  ========================================================================== */
@@ -19,7 +19,7 @@
  */
 .uk-htmleditor-navbar:before,
 .uk-htmleditor-navbar:after {
-  content: " ";
+  content: "";
   display: table;
 }
 .uk-htmleditor-navbar:after {
@@ -121,7 +121,7 @@
  */
 .uk-htmleditor-content:before,
 .uk-htmleditor-content:after {
-  content: " ";
+  content: "";
   display: table;
 }
 .uk-htmleditor-content:after {

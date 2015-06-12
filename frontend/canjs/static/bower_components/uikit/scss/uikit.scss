@@ -7,8 +7,10 @@
 // Layout
 @import "core/grid.scss";
 @import "core/panel.scss";
+@import "core/block.scss";
 @import "core/article.scss";
 @import "core/comment.scss";
+@import "core/cover.scss";
 
 // Navs
 @import "core/nav.scss";
@@ -17,6 +19,7 @@
 @import "core/breadcrumb.scss";
 @import "core/pagination.scss";
 @import "core/tab.scss";
+@import "core/thumbnav.scss";
 
 // Elements
 @import "core/list.scss";
@@ -32,7 +35,6 @@
 @import "core/alert.scss";
 @import "core/thumbnail.scss";
 @import "core/overlay.scss";
-@import "core/progress.scss";
 @import "core/animation.scss";
 
 // JavaScript
@@ -40,9 +42,10 @@
 @import "core/modal.scss";
 @import "core/offcanvas.scss";
 @import "core/switcher.scss";
-@import "core/tooltip.scss";
 
 // Need to be loaded last
 @import "core/text.scss";
 @import "core/utility.scss";
+@import "core/flex.scss";
+@import "core/contrast.scss";
 @import "core/print.scss";

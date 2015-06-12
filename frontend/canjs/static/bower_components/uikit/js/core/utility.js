@@ -1,5 +1,5 @@
-/*! UIkit 2.12.0 | http://www.getuikit.com | (c) 2014 YOOtheme | MIT License */
-(function($, UI) {
+/*! UIkit 2.21.0 | http://www.getuikit.com | (c) 2014 YOOtheme | MIT License */
+(function(UI) {
 
     "use strict";
 
@@ -9,6 +9,22 @@
 
         defaults: {
             'cls': 'uk-margin-small-top'
+        },
+
+        boot: function() {
+
+            // init code
+            UI.ready(function(context) {
+
+                UI.$("[data-uk-margin]", context).each(function() {
+
+                    var ele = UI.$(this), obj;
+
+                    if (!ele.data("stackMargin")) {
+                        obj = UI.stackMargin(ele, UI.Utils.options(ele.attr("data-uk-margin")));
+                    }
+                });
+            });
         },
 
         init: function() {
@@ -25,22 +41,22 @@
                     $this.process();
                 };
 
-                $(function() {
+                UI.$(function() {
                     fn();
                     UI.$win.on("load", fn);
                 });
 
-                return UI.Utils.debounce(fn, 50);
+                return UI.Utils.debounce(fn, 20);
             })());
 
-            UI.$html.on("uk.dom.changed", function(e) {
+            UI.$html.on("changed.uk.dom", function(e) {
                 $this.columns  = $this.element.children();
                 $this.process();
             });
 
-            this.on("uk.check.display", function(e) {
+            this.on("display.uk.check", function(e) {
                 $this.columns = $this.element.children();
-                if(this.element.is(":visible")) this.process();
+                if (this.element.is(":visible")) this.process();
             }.bind(this));
 
             stacks.push(this);
@@ -50,30 +66,7 @@
 
             var $this = this;
 
-            this.revert();
-
-            var skip         = false,
-                firstvisible = this.columns.filter(":visible:first"),
-                offset       = firstvisible.length ? firstvisible.offset().top : false;
-
-            if (offset === false) return;
-
-            this.columns.each(function() {
-
-                var column = $(this);
-
-                if (column.is(":visible")) {
-
-                    if (skip) {
-                        column.addClass($this.options.cls);
-                    } else {
-                        if (column.offset().top != offset) {
-                            column.addClass($this.options.cls);
-                            skip = true;
-                        }
-                    }
-                }
-            });
+            UI.Utils.stackMargin(this.columns, this.options);
 
             return this;
         },
@@ -84,16 +77,167 @@
         }
     });
 
-    // init code
-    UI.ready(function(context) {
 
-        $("[data-uk-margin]", context).each(function() {
-            var ele = $(this), obj;
+    // responsive element e.g. iframes
 
-            if (!ele.data("stackMargin")) {
-                obj = UI.stackMargin(ele, UI.Utils.options(ele.attr("data-uk-margin")));
+    (function(){
+
+        var elements = [], check = function(ele) {
+
+            if (!ele.is(':visible')) return;
+
+            var width  = ele.parent().width(),
+                iwidth = ele.data('width'),
+                ratio  = (width / iwidth),
+                height = Math.floor(ratio * ele.data('height'));
+
+            ele.css({'height': (width < iwidth) ? height : ele.data('height')});
+        };
+
+        UI.component('responsiveElement', {
+
+            defaults: {},
+
+            boot: function() {
+
+                // init code
+                UI.ready(function(context) {
+
+                    UI.$("iframe.uk-responsive-width, [data-uk-responsive]", context).each(function() {
+
+                        var ele = UI.$(this), obj;
+
+                        if (!ele.data("responsiveIframe")) {
+                            obj = UI.responsiveElement(ele, {});
+                        }
+                    });
+                });
+            },
+
+            init: function() {
+
+                var ele = this.element;
+
+                if (ele.attr('width') && ele.attr('height')) {
+
+                    ele.data({
+
+                        'width' : ele.attr('width'),
+                        'height': ele.attr('height')
+
+                    }).on('display.uk.check', function(){
+                        check(ele);
+                    });
+
+                    check(ele);
+
+                    elements.push(ele);
+                }
             }
         });
-    });
 
-})(jQuery, jQuery.UIkit);
+        UI.$win.on('resize load', UI.Utils.debounce(function(){
+
+            elements.forEach(function(ele){
+                check(ele);
+            });
+
+        }, 15));
+
+    })();
+
+
+
+    // helper
+
+    UI.Utils.stackMargin = function(elements, options) {
+
+        options = UI.$.extend({
+            'cls': 'uk-margin-small-top'
+        }, options);
+
+        options.cls = options.cls;
+
+        elements = UI.$(elements).removeClass(options.cls);
+
+        var skip         = false,
+            firstvisible = elements.filter(":visible:first"),
+            offset       = firstvisible.length ? (firstvisible.position().top + firstvisible.outerHeight()) - 1 : false; // (-1): weird firefox bug when parent container is display:flex
+
+        if (offset === false) return;
+
+        elements.each(function() {
+
+            var column = UI.$(this);
+
+            if (column.is(":visible")) {
+
+                if (skip) {
+                    column.addClass(options.cls);
+                } else {
+
+                    if (column.position().top >= offset) {
+                        skip = column.addClass(options.cls);
+                    }
+                }
+            }
+        });
+    };
+
+    UI.Utils.matchHeights = function(elements, options) {
+
+        elements = UI.$(elements).css('min-height', '');
+        options  = UI.$.extend({ row : true }, options);
+
+        var matchHeights = function(group){
+
+            if (group.length < 2) return;
+
+            var max = 0;
+
+            group.each(function() {
+                max = Math.max(max, UI.$(this).outerHeight());
+            }).each(function() {
+
+                var element = UI.$(this),
+                    height  = max - (element.css('box-sizing') == 'border-box' ? 0 : (element.outerHeight() - element.height()));
+
+                element.css('min-height', height + 'px');
+            });
+        };
+
+        if (options.row) {
+
+            elements.first().width(); // force redraw
+
+            setTimeout(function(){
+
+                var lastoffset = false, group = [];
+
+                elements.each(function() {
+
+                    var ele = UI.$(this), offset = ele.offset().top;
+
+                    if (offset != lastoffset && group.length) {
+
+                        matchHeights(UI.$(group));
+                        group  = [];
+                        offset = ele.offset().top;
+                    }
+
+                    group.push(ele);
+                    lastoffset = offset;
+                });
+
+                if (group.length) {
+                    matchHeights(UI.$(group));
+                }
+
+            }, 0);
+
+        } else {
+            matchHeights(elements);
+        }
+    };
+
+})(UIkit);

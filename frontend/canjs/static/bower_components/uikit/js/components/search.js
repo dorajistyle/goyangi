@@ -1,19 +1,19 @@
-/*! UIkit 2.12.0 | http://www.getuikit.com | (c) 2014 YOOtheme | MIT License */
+/*! UIkit 2.21.0 | http://www.getuikit.com | (c) 2014 YOOtheme | MIT License */
 (function(addon) {
 
     var component;
 
-    if (jQuery && jQuery.UIkit) {
-        component = addon(jQuery, jQuery.UIkit);
+    if (window.UIkit) {
+        component = addon(UIkit);
     }
 
     if (typeof define == "function" && define.amd) {
         define("uikit-search", ["uikit"], function(){
-            return component || addon(jQuery, jQuery.UIkit);
+            return component || addon(UIkit);
         });
     }
 
-})(function($, UI){
+})(function(UI){
 
     "use strict";
 
@@ -52,6 +52,18 @@
             }
         },
 
+        boot: function() {
+
+            // init code
+            UI.$html.on("focus.search.uikit", "[data-uk-search]", function(e) {
+                var ele =UI.$(this);
+
+                if (!ele.data("search")) {
+                    var obj = UI.search(ele, UI.Utils.options(ele.attr("data-uk-search")));
+                }
+            });
+        },
+
         init: function() {
             var $this = this;
 
@@ -66,7 +78,7 @@
                 $this.element.removeClass("uk-active");
             });
 
-            this.on('uk.autocomplete.select', function(e, data) {
+            this.on('selectitem.uk.autocomplete', function(e, data) {
                 if (data.url) {
                   location.href = data.url;
                 } else if(data.moreresults) {
@@ -75,15 +87,6 @@
             });
 
             this.element.data("search", this);
-        }
-    });
-
-    // init code
-    UI.$html.on("focus.search.uikit", "[data-uk-search]", function(e) {
-        var ele = $(this);
-
-        if (!ele.data("search")) {
-            var obj = UI.search(ele, UI.Utils.options(ele.attr("data-uk-search")));
         }
     });
 });

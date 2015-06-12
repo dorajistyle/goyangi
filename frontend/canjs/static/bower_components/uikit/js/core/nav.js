@@ -1,5 +1,5 @@
-/*! UIkit 2.12.0 | http://www.getuikit.com | (c) 2014 YOOtheme | MIT License */
-(function($, UI) {
+/*! UIkit 2.21.0 | http://www.getuikit.com | (c) 2014 YOOtheme | MIT License */
+(function(UI) {
 
     "use strict";
 
@@ -11,23 +11,41 @@
             "multiple": false
         },
 
+        boot: function() {
+
+            // init code
+            UI.ready(function(context) {
+
+                UI.$("[data-uk-nav]", context).each(function() {
+                    var nav = UI.$(this);
+
+                    if (!nav.data("nav")) {
+                        var obj = UI.nav(nav, UI.Utils.options(nav.attr("data-uk-nav")));
+                    }
+                });
+            });
+        },
+
         init: function() {
 
             var $this = this;
 
-            this.on("click", this.options.toggle, function(e) {
+            this.on("click.uikit.nav", this.options.toggle, function(e) {
                 e.preventDefault();
-                var ele = $(this);
+                var ele = UI.$(this);
                 $this.open(ele.parent()[0] == $this.element[0] ? ele : ele.parent("li"));
             });
 
             this.find(this.options.lists).each(function() {
-                var $ele   = $(this),
+                var $ele   = UI.$(this),
                     parent = $ele.parent(),
                     active = parent.hasClass("uk-active");
 
                 $ele.wrap('<div style="overflow:hidden;height:0;position:relative;"></div>');
-                parent.data("list-container", $ele.parent());
+                parent.data("list-container", $ele.parent()[active ? 'removeClass':'addClass']('uk-hidden'));
+
+                // Init ARIA
+                parent.attr('aria-expanded', parent.hasClass("uk-open"));
 
                 if (active) $this.open(parent, true);
             });
@@ -36,27 +54,56 @@
 
         open: function(li, noanimation) {
 
-            var element = this.element, $li = $(li);
+            var $this = this, element = this.element, $li = UI.$(li), $container = $li.data('list-container');
 
             if (!this.options.multiple) {
 
-                element.children(".uk-open").not(li).each(function() {
-                    if ($(this).data("list-container")) {
-                        $(this).data("list-container").stop().animate({height: 0}, function() {
-                            $(this).parent().removeClass("uk-open");
+                element.children('.uk-open').not(li).each(function() {
+
+                    var ele = UI.$(this);
+
+                    if (ele.data('list-container')) {
+                        ele.data('list-container').stop().animate({height: 0}, function() {
+                            UI.$(this).parent().removeClass('uk-open').end().addClass('uk-hidden');
                         });
                     }
                 });
             }
 
-            $li.toggleClass("uk-open");
+            $li.toggleClass('uk-open');
 
-            if ($li.data("list-container")) {
+            // Update ARIA
+            $li.attr('aria-expanded', $li.hasClass('uk-open'));
+
+            if ($container) {
+
+                if ($li.hasClass('uk-open')) {
+                    $container.removeClass('uk-hidden');
+                }
+
                 if (noanimation) {
-                    $li.data('list-container').stop().height($li.hasClass("uk-open") ? "auto" : 0);
+
+                    $container.stop().height($li.hasClass('uk-open') ? 'auto' : 0);
+
+                    if (!$li.hasClass('uk-open')) {
+                        $container.addClass('uk-hidden');
+                    }
+
+                    this.trigger('display.uk.check');
+
                 } else {
-                    $li.data('list-container').stop().animate({
-                        height: ($li.hasClass("uk-open") ? getHeight($li.data('list-container').find('ul:first')) : 0)
+
+                    $container.stop().animate({
+                        height: ($li.hasClass('uk-open') ? getHeight($container.find('ul:first')) : 0)
+                    }, function() {
+
+                        if (!$li.hasClass('uk-open')) {
+                            $container.addClass('uk-hidden');
+                        } else {
+                            $container.css('height', '');
+                        }
+
+                        $this.trigger('display.uk.check');
                     });
                 }
             }
@@ -67,7 +114,7 @@
     // helper
 
     function getHeight(ele) {
-        var $ele = $(ele), height = "auto";
+        var $ele = UI.$(ele), height = "auto";
 
         if ($ele.is(":visible")) {
             height = $ele.outerHeight();
@@ -86,16 +133,4 @@
         return height;
     }
 
-    // init code
-    UI.ready(function(context) {
-
-        $("[data-uk-nav]", context).each(function() {
-            var nav = $(this);
-
-            if (!nav.data("nav")) {
-                var obj = UI.nav(nav, UI.Utils.options(nav.attr("data-uk-nav")));
-            }
-        });
-    });
-
-})(jQuery, jQuery.UIkit);
+})(UIkit);

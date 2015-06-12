@@ -1,19 +1,19 @@
-/*! UIkit 2.12.0 | http://www.getuikit.com | (c) 2014 YOOtheme | MIT License */
+/*! UIkit 2.21.0 | http://www.getuikit.com | (c) 2014 YOOtheme | MIT License */
 (function(addon) {
 
     var component;
 
-    if (jQuery && jQuery.UIkit) {
-        component = addon(jQuery, jQuery.UIkit);
+    if (window.UIkit) {
+        component = addon(UIkit);
     }
 
     if (typeof define == "function" && define.amd) {
         define("uikit-sticky", ["uikit"], function(){
-            return component || addon(jQuery, jQuery.UIkit);
+            return component || addon(UIkit);
         });
     }
 
-})(function($, UI){
+})(function(UI){
 
     "use strict";
 
@@ -30,28 +30,78 @@
             clsinit      : 'uk-sticky-init',
             clsactive    : 'uk-active',
             getWidthFrom : '',
+            boundary     : false,
             media        : false,
-            target       : false
+            target       : false,
+            disabled     : false
+        },
+
+        boot: function() {
+
+            // should be more efficient than using $win.scroll(checkscrollposition):
+            UI.$doc.on('scrolling.uk.document', function() { checkscrollposition(); });
+            UI.$win.on('resize orientationchange', UI.Utils.debounce(function() {
+
+                if (!sticked.length) return;
+
+                for (var i = 0; i < sticked.length; i++) {
+                    sticked[i].reset(true);
+                    sticked[i].self.computeWrapper();
+                }
+
+                checkscrollposition();
+            }, 100));
+
+            // init code
+            UI.ready(function(context) {
+
+                setTimeout(function(){
+
+                    UI.$("[data-uk-sticky]", context).each(function(){
+
+                        var $ele = UI.$(this);
+
+                        if(!$ele.data("sticky")) {
+                            UI.sticky($ele, UI.Utils.options($ele.attr('data-uk-sticky')));
+                        }
+                    });
+
+                    checkscrollposition();
+                }, 0);
+            });
         },
 
         init: function() {
 
-            var wrapper  = $('<div class="uk-sticky-placeholder"></div>').css({
-                        'height' : this.element.css('position') != 'absolute' ? this.element.outerHeight() : '',
-                        'float'  : this.element.css("float") != "none" ? this.element.css("float") : '',
-                        'margin' : this.element.css("margin")
-                });
+            var wrapper  = UI.$('<div class="uk-sticky-placeholder"></div>'), boundary = this.options.boundary, boundtoparent;
 
-            wrapper = this.element.css('margin', 0).wrap(wrapper).parent();
+            this.wrapper = this.element.css('margin', 0).wrap(wrapper).parent();
+
+            this.computeWrapper();
+
+            if (boundary) {
+
+                if (boundary === true) {
+
+                    boundary      = this.wrapper.parent();
+                    boundtoparent = true;
+
+                } else if (typeof boundary === "string") {
+                    boundary = UI.$(boundary);
+                }
+            }
 
             this.sticky = {
-                options      : this.options,
-                element      : this.element,
-                currentTop   : null,
-                wrapper      : wrapper,
-                init         : false,
-                getWidthFrom : this.options.getWidthFrom || wrapper,
-                reset        : function(force) {
+                self          : this,
+                options       : this.options,
+                element       : this.element,
+                currentTop    : null,
+                wrapper       : this.wrapper,
+                init          : false,
+                getWidthFrom  : this.options.getWidthFrom || this.wrapper,
+                boundary      : boundary,
+                boundtoparent : boundtoparent,
+                reset         : function(force) {
 
                     var finalize = function() {
                         this.element.css({"position":"", "top":"", "width":"", "left":"", "margin":"0"});
@@ -75,7 +125,12 @@
                         finalize();
                     }
                 },
+
                 check: function() {
+
+                    if (this.options.disabled) {
+                        return false;
+                    }
 
                     if (this.options.media) {
 
@@ -108,30 +163,49 @@
         },
 
         update: function() {
-            scroller();
+            checkscrollposition(this.sticky);
+        },
+
+        enable: function() {
+            this.options.disabled = false;
+            this.update();
+        },
+
+        disable: function(force) {
+            this.options.disabled = true;
+            this.sticky.reset(force);
+        },
+
+        computeWrapper: function() {
+
+            this.wrapper.css({
+                'height' : this.element.css('position') != 'absolute' ? this.element.outerHeight() : '',
+                'float'  : this.element.css("float") != "none" ? this.element.css("float") : '',
+                'margin' : this.element.css("margin")
+            });
         }
     });
 
-    function scroller() {
+    function checkscrollposition() {
 
-        if (!sticked.length) return;
+        var stickies = arguments.length ? arguments : sticked;
+
+        if (!stickies.length || $win.scrollTop() < 0) return;
 
         var scrollTop       = $win.scrollTop(),
             documentHeight  = $doc.height(),
-            dwh             = documentHeight - $win.height(),
+            windowHeight    = $win.height(),
+            dwh             = documentHeight - windowHeight,
             extra           = (scrollTop > dwh) ? dwh - scrollTop : 0,
-            cls, newTop;
+            newTop, containerBottom, stickyHeight, sticky;
 
-        if(scrollTop < 0) return;
+        for (var i = 0; i < stickies.length; i++) {
 
+            sticky = stickies[i];
 
-        for (var i = 0; i < sticked.length; i++) {
-
-            if (!sticked[i].element.is(":visible") || sticked[i].animate) {
+            if (!sticky.element.is(":visible") || sticky.animate) {
                 continue;
             }
-
-            var sticky = sticked[i];
 
             if (!sticky.check()) {
 
@@ -144,16 +218,31 @@
                 if (sticky.options.top < 0) {
                     newTop = 0;
                 } else {
-                    newTop = documentHeight - sticky.element.outerHeight() - sticky.options.top - sticky.options.bottom - scrollTop - extra;
+                    stickyHeight = sticky.element.outerHeight();
+                    newTop = documentHeight - stickyHeight - sticky.options.top - sticky.options.bottom - scrollTop - extra;
                     newTop = newTop < 0 ? newTop + sticky.options.top : sticky.options.top;
                 }
+
+                if (sticky.boundary && sticky.boundary.length) {
+
+                    var bTop = sticky.boundary.position().top;
+
+                    if (sticky.boundtoparent) {
+                        containerBottom = documentHeight - (bTop + sticky.boundary.outerHeight()) + parseInt(sticky.boundary.css('padding-bottom'));
+                    } else {
+                        containerBottom = documentHeight - bTop - parseInt(sticky.boundary.css('margin-top'));
+                    }
+
+                    newTop = (scrollTop + stickyHeight) > (documentHeight - containerBottom - (sticky.options.top < 0 ? 0 : sticky.options.top)) ? (documentHeight - containerBottom) - (scrollTop + stickyHeight) : newTop;
+                }
+
 
                 if (sticky.currentTop != newTop) {
 
                     sticky.element.css({
                         "position" : "fixed",
                         "top"      : newTop,
-                        "width"    : (typeof sticky.getWidthFrom !== 'undefined') ? $(sticky.getWidthFrom).width() : sticky.element.width(),
+                        "width"    : (typeof sticky.getWidthFrom !== 'undefined') ? UI.$(sticky.getWidthFrom).width() : sticky.element.width(),
                         "left"     : sticky.wrapper.offset().left
                     });
 
@@ -163,7 +252,7 @@
 
                         if (location.hash && scrollTop > 0 && sticky.options.target) {
 
-                            var $target = $(location.hash);
+                            var $target = UI.$(location.hash);
 
                             if ($target.length) {
 
@@ -203,39 +292,7 @@
 
             sticky.init = true;
         }
-
     }
 
-    // should be more efficient than using $win.scroll(scroller):
-    $doc.on('uk-scroll', scroller);
-    $win.on('resize orientationchange', UI.Utils.debounce(function() {
-
-        if (!sticked.length) return;
-
-        for (var i = 0; i < sticked.length; i++) {
-            sticked[i].reset(true);
-        }
-
-        scroller();
-    }, 100));
-
-    // init code
-    UI.ready(function(context) {
-
-        setTimeout(function(){
-
-            $("[data-uk-sticky]", context).each(function(){
-
-                var $ele = $(this);
-
-                if(!$ele.data("sticky")) {
-                    UI.sticky($ele, UI.Utils.options($ele.attr('data-uk-sticky')));
-                }
-            });
-
-            scroller();
-        }, 0);
-    });
-
-    return $.fn.uksticky;
+    return UI.sticky;
 });

@@ -8,8 +8,12 @@
 //                  `uk-panel-teaser`
 //
 // Modifiers:       `uk-panel-box`
+//                  `uk-panel-box-hover`
 //                  `uk-panel-box-primary`
+//                  `uk-panel-box-primary-hover`
 //                  `uk-panel-box-secondary`
+//                  `uk-panel-box-secondary-hover`
+//                  `uk-panel-hover`
 //                  `uk-panel-header`
 //                  `uk-panel-space`
 //                  `uk-panel-divider`
@@ -42,22 +46,34 @@ $panel-title-font-weight:                        normal !default;
 $panel-title-color:                              #444 !default;
 $panel-title-text-transform:                     none !default;
 
+$panel-teaser-margin-bottom:                     $panel-title-margin-bottom !default;
+
 $panel-box-padding:                              15px !default;
 $panel-box-background:                           #f5f5f5 !default;
 $panel-box-color:                                #444 !default;
+$panel-box-hover-color:                          $panel-box-color !default;
 $panel-box-title-color:                          #444 !default;
 $panel-box-badge-top:                            10px !default;
 $panel-box-badge-right:                          $panel-box-badge-top !default;
 $panel-box-teaser-margin:                        -$panel-box-padding !default;
-$panel-box-teaser-margin-bottom:                 $panel-title-margin-bottom !default;
 
 $panel-box-primary-background:                   #ebf7fd !default;
 $panel-box-primary-color:                        #2d7091 !default;
+$panel-box-primary-hover-color:                  $panel-box-primary-color !default;
 $panel-box-primary-title-color:                  #2d7091 !default;
 
 $panel-box-secondary-background:                 #eee !default;
 $panel-box-secondary-color:                      #444 !default;
+$panel-box-secondary-hover-color:                $panel-box-secondary-color !default;
 $panel-box-secondary-title-color:                #444 !default;
+
+$panel-hover-padding:                            15px !default;
+$panel-hover-color:                              #444 !default;
+$panel-hover-hover-background:                   #f5f5f5 !default;
+$panel-hover-hover-color:                        #444 !default;
+$panel-hover-badge-top:                          10px !default;
+$panel-hover-badge-right:                        $panel-hover-badge-top !default;
+$panel-hover-teaser-margin:                      -$panel-hover-padding !default;
 
 $panel-header-title-padding:                     10px !default;
 $panel-header-title-border:                      #ddd !default;
@@ -89,12 +105,19 @@ $panel-divider-border-width:                     1px !default;
 }
 
 /*
+ * Allow panels to be anchors
+ */
+
+.uk-panel,
+.uk-panel:hover { text-decoration: none; }
+
+/*
  * Micro clearfix to make panels more robust
  */
 
 .uk-panel:before,
 .uk-panel:after {
-    content: " ";
+    content: "";
     display: table;
 }
 
@@ -133,6 +156,11 @@ $panel-divider-border-width:                     1px !default;
     @include hook-panel-badge();
 }
 
+/* Sub-object: `uk-panel-teaser`
+ ========================================================================== */
+
+.uk-panel-teaser { margin-bottom: $panel-teaser-margin-bottom; }
+
 
 /* Modifier: `uk-panel-box`
  ========================================================================== */
@@ -144,6 +172,11 @@ $panel-divider-border-width:                     1px !default;
     @include hook-panel-box();
 }
 
+.uk-panel-box-hover:hover {
+    color: $panel-box-hover-color;
+    @include hook-panel-box-hover();
+}
+
 .uk-panel-box .uk-panel-title { color: $panel-box-title-color; }
 
 .uk-panel-box .uk-panel-badge {
@@ -151,7 +184,11 @@ $panel-divider-border-width:                     1px !default;
     right: $panel-box-badge-right;
 }
 
-.uk-panel-box .uk-panel-teaser { margin: $panel-box-teaser-margin $panel-box-teaser-margin $panel-box-teaser-margin-bottom $panel-box-teaser-margin; }
+.uk-panel-box .uk-panel-teaser {
+    margin-top: $panel-box-teaser-margin;
+    margin-left: $panel-box-teaser-margin;
+    margin-right: $panel-box-teaser-margin;
+}
 
 /*
  * Nav in panel
@@ -169,6 +206,11 @@ $panel-divider-border-width:                     1px !default;
     @include hook-panel-box-primary();
 }
 
+.uk-panel-box-primary-hover:hover {
+    color: $panel-box-primary-hover-color;
+    @include hook-panel-box-primary-hover();
+}
+
 .uk-panel-box-primary .uk-panel-title { color: $panel-box-primary-title-color; }
 
 /*
@@ -181,7 +223,39 @@ $panel-divider-border-width:                     1px !default;
     @include hook-panel-box-secondary();
 }
 
+.uk-panel-box-secondary-hover:hover {
+    color: $panel-box-secondary-hover-color;
+    @include hook-panel-box-secondary-hover();
+}
+
 .uk-panel-box-secondary .uk-panel-title { color: $panel-box-secondary-title-color; }
+
+
+/* Modifier: `uk-panel-hover`
+ ========================================================================== */
+
+.uk-panel-hover {
+    padding: $panel-hover-padding;
+    color: $panel-hover-color;
+    @include hook-panel-hover();
+}
+
+.uk-panel-hover:hover {
+    background: $panel-hover-hover-background;
+    color: $panel-hover-hover-color;
+    @include hook-panel-hover-hover();
+}
+
+.uk-panel-hover .uk-panel-badge {
+    top: $panel-hover-badge-top;
+    right: $panel-hover-badge-right;
+}
+
+.uk-panel-hover .uk-panel-teaser {
+    margin-top: $panel-hover-teaser-margin;
+    margin-left: $panel-hover-teaser-margin;
+    margin-right: $panel-hover-teaser-margin;
+}
 
 
 /* Modifier: `uk-panel-header`
@@ -238,7 +312,12 @@ $panel-divider-border-width:                     1px !default;
 // @mixin hook-panel-title(){}
 // @mixin hook-panel-badge(){}
 // @mixin hook-panel-box(){}
+// @mixin hook-panel-box-hover(){}
 // @mixin hook-panel-box-primary(){}
+// @mixin hook-panel-box-primary-hover(){}
 // @mixin hook-panel-box-secondary(){}
+// @mixin hook-panel-box-secondary-hover(){}
+// @mixin hook-panel-hover(){}
+// @mixin hook-panel-hover-hover(){}
 // @mixin hook-panel-header(){}
 // @mixin hook-panel-misc(){}
