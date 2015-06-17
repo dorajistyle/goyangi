@@ -34,7 +34,7 @@ Go
 ### With Docker
 ~~~
 $ go get github.com/nitrous-io/goop
-$ git clone dorajistyle/goyangi
+$ git clone github.com/dorajistyle/goyangi
 $ cd goyangi
 $ goop install
 $ docker build -t "dorajistyle/goyangi" --no-cache .
