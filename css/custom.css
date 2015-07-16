@@ -1,0 +1,118 @@
+.intro-img {
+  background-image: url('../media/goyangi-gray.jpg');
+  background-color: '#000000';
+}
+
+body {
+  color: #888;
+  background-color: #fff;
+}
+
+.intro-title {
+  color: #E66C2C;
+  border-color: #000;
+  text-shadow: -1px 0 1px #000;
+}
+
+.intro-description {
+  color: #fff;
+}
+
+.br {
+  padding-top: 20px;
+}
+
+.pr10 {
+  padding-right: 10px;
+}
+
+
+#navigation {
+  background-color: #fff;
+}
+
+.nav.navbar-nav {
+  background-color: #fff;
+}
+
+
+a,a:hover {
+	color: #E66C2C;
+}
+
+.intro .page-scroll a {
+	color: #ffffff;
+}
+
+.intro .page-scroll a:hover {
+	color: #E66C2C;
+}
+
+.icon:hover .fa{
+	color: #E66C2C;
+}
+
+ul.nav li a:hover {
+	color: #E66C2C;
+}
+
+.owl-theme .owl-controls .owl-page.active span,
+.owl-theme .owl-controls.clickable .owl-page:hover span {
+    background-color: #E66C2C;
+}
+
+.bg-skin {
+	background: #E66C2C;
+}
+
+form#contact-form input:focus,form#contact-form select:focus,form#contact-form textarea:focus {
+	border-color: #E66C2C;
+}
+
+footer {
+    background-color: #E66C2C;
+}
+
+.btn-skin {
+  color: #fff;
+  background-color: #E66C2C;
+  border-color: #E66C2C;
+}
+
+a .basic-color, a:hover .basic-color, a:active .basic-color, a:visited .basic-color {
+  color: #888;
+}
+
+/* ==========================
+Parallax
+============================= */
+
+#separator {	
+	background-image: url(../media/parallax-bg.jpg);
+}
+
+#separator .icon {
+	margin-bottom: 20px;
+}
+
+#separator span {
+	color: #fff;
+}
+
+#separator:after {	
+	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAEklEQVQImWNgYGD4z0AswK4SAFXuAf8EPy+xAAAAAElFTkSuQmCC);
+	content: "";
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	top: 0;
+	opacity: 0.7;
+	z-index: -1;
+}
+
+@media (max-width:480px) {
+  .navbar-custom ul.nav li {
+    color: #f4f4f4;
+	}
+}
