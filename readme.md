@@ -171,6 +171,14 @@ It's a foundation of Whatever you need
 
 #### Deployment
 - [x] Generate API document
+Requires [asciidoctor](http://asciidoctor.org/) to generate API document
+
+##### Install Asciidoctor
+~~~
+   sudo gem update --system
+   sudo gem install asciidoctor -N
+~~~
+
 ~~~
    goop exec go run goyangi.go generateAPI
 ~~~
