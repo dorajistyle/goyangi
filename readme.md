@@ -171,12 +171,17 @@ It's a foundation of Whatever you need
 
 #### Deployment
 - [x] Generate API document
-Requires [asciidoctor](http://asciidoctor.org/) to generate API document
+Requires [swagger]() and [asciidoctor](http://asciidoctor.org/) to generate API documents.
+
+##### Install swagger
+~~~
+  go get github.com/yvasiyarov/swagger
+~~~
 
 ##### Install Asciidoctor
 ~~~
    sudo gem update --system
-   sudo gem install asciidoctor -N
+sudo gem install -n /usr/local/bin asciidoctor -N
 ~~~
 
 ~~~
