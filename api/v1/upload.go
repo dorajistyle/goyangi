@@ -14,7 +14,6 @@ import (
 func Upload(parentRoute *gin.RouterGroup) {
 	route := parentRoute.Group("/upload")
 	route.POST("/images", userPermission.AuthRequired(uploadImages))
-	route.POST("/articles", userPermission.AuthRequired(uploadAndSyncArticles))
 
 	route.POST("/files", userPermission.AuthRequired(createFile))
 	route.POST("/files/all", userPermission.AuthRequired(createFiles))
@@ -35,28 +34,12 @@ func Upload(parentRoute *gin.RouterGroup) {
 func uploadImages(c *gin.Context) {
 	status, err := uploadService.UploadImages(c)
 	messageTypes := &response.MessageTypes{
-		OK:                  "upload.done",
-		Unauthorized:        "upload.error.unauthorized",
-		InternalServerError: "upload.error.internalServerError",
-	}
-	messages := &response.Messages{OK: "Files uploaded successfully."}
-	response.JSON(c, status, messageTypes, messages, err)
-}
-
-// @Title uploadAndSyncArticles
-// @Description upload images to storage. And sync article data. Request should contain multipart form data.
-// @Accept  json
-// @Success 201 {object} gin.H "Uploaded"
-// @Failure 401 {object} response.BasicResponse "Authentication required"
-// @Failure 500 {object} response.BasicResponse "Upload failed"
-// @Resource /upload/articles
-// @Router /upload [post]
-func uploadAndSyncArticles(c *gin.Context) {
-	status, err := uploadService.UploadAndSyncArticles(c)
-	messageTypes := &response.MessageTypes{
-		OK:                  "upload.done",
-		Unauthorized:        "upload.error.unauthorized",
-		InternalServerError: "upload.error.internalServerError",
+		OK:                  "image.upload.done",
+		BadRequest:          "image.upload.error.badRequest",
+		Unauthorized:        "image.upload.error.unauthorized",
+		Forbidden:           "image.upload.error.forbidden",
+		NotFound:            "image.upload.error.notFound",
+		InternalServerError: "image.upload.error.internalServerError",
 	}
 	messages := &response.Messages{OK: "Files uploaded successfully."}
 	response.JSON(c, status, messageTypes, messages, err)

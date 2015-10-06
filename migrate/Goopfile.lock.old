@@ -1,8 +1,9 @@
-code.google.com/p/snappy-go #12e4b4183793ac4b061921e7980845e750679fd0
-github.com/fatih/color #f19a133fbf02ea4974db468b07328745a8840da7
-github.com/go-sql-driver/mysql #cebeb3599d51814753350e87cd21f24b3ddaa66e
-github.com/gocql/gocql #fbad3bab5a1044b1eeb586d79e5f06df39861e2a
-github.com/golang/groupcache #86ced4a88341076f89d57b6937a5c91ec1762ee3
-github.com/lib/pq #3e3efe51a0c4b23e817075438703cb15bd58c1a8
+github.com/fatih/color #1b35f289c47d5c73c398cea8e006b7bcb6234a96
+github.com/go-sql-driver/mysql #0cc29e9fe8e25c2c58cf47bcab566e029bbaa88b
+github.com/gocql/gocql #ec1f5626d6984ebe4da69779317a76f3a6698381
+github.com/golang/groupcache #604ed5785183e59ae2789449d89e73f3a2a77987
+github.com/golang/snappy #a911026e1ffa84898778ccb0363930485e0aa880
+github.com/lib/pq #a8d8d01c4f91602f876bf5aa210274e8203a6b45
 github.com/mattes/migrate #2cf4b2c33e35ec3476613d2ce09a87a34446b388
+github.com/shiena/ansicolor #8368d3b31cf6f2c2464c7a91675342c9a0ac6658
 speter.net/go/exp/math/dec/inf #42ca6cd68aa922bc3f32f1e056e61b65945d9ad7

@@ -23,6 +23,7 @@ func Articles(parentRoute *gin.RouterGroup) {
 	route.GET("", retrieveArticles)
 	route.PUT("/:id", userPermission.AuthRequired(updateArticle))
 	route.DELETE("/:id", userPermission.AuthRequired(deleteArticle))
+	route.POST("/sync", userPermission.AuthRequired(uploadAndSyncArticles))
 
 	route.POST("/comments", userPermission.AuthRequired(createCommentOnArticle))
 	route.GET("/:id/comments", retrieveCommentsOnArticle)
@@ -65,8 +66,8 @@ func createArticle(c *gin.Context) {
 // @Success 201 {object} model.Article "Created"
 // @Failure 401 {object} response.BasicResponse "Authentication required"
 // @Failure 500 {object} response.BasicResponse "Article is not created"
-// @Resource /upload/files
-// @Router /upload [post]
+// @Resource /articles/all
+// @Router /articles [post]
 func createArticles(c *gin.Context) {
 	status, err := articleService.CreateArticles(c)
 
@@ -318,5 +319,27 @@ func deleteLikingOnArticle(c *gin.Context) {
 		InternalServerError: "liking.unlike.fail"}
 	messages := &response.Messages{OK: "Article liked successfully."}
 
+	response.JSON(c, status, messageTypes, messages, err)
+}
+
+// @Title uploadAndSyncArticles
+// @Description upload images to storage. And sync article data. Request should contain multipart form data.
+// @Accept  json
+// @Success 201 {object} gin.H "Uploaded"
+// @Failure 401 {object} response.BasicResponse "Authentication required"
+// @Failure 500 {object} response.BasicResponse "Upload failed"
+// @Resource /articles/sync
+// @Router /articles [post]
+func uploadAndSyncArticles(c *gin.Context) {
+	status, err := articleService.UploadAndSyncArticles(c)
+	messageTypes := &response.MessageTypes{
+		OK:                  "article.upload.done",
+		BadRequest:          "article.upload.error.badRequest",
+		Unauthorized:        "article.upload.error.unauthorized",
+		Forbidden:           "article.upload.error.forbidden",
+		NotFound:            "article.upload.error.notFound",
+		InternalServerError: "article.upload.error.internalServerError",
+	}
+	messages := &response.Messages{OK: "Files uploaded successfully."}
 	response.JSON(c, status, messageTypes, messages, err)
 }

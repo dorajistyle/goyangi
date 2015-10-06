@@ -14,15 +14,28 @@ import (
 	"github.com/dorajistyle/goyangi/config"
 )
 
-func MediumOption() vips.Options {
+func LargeOption() vips.Options {
 	options := vips.Options{
-		Width:        config.ImageWidth,
-		Height:       0,
+		Width:        0,
+		Height:       config.LargeHeight,
 		Crop:         false,
 		Extend:       vips.EXTEND_WHITE,
-		Interpolator: vips.BILINEAR,
+		Interpolator: vips.BICUBIC,
 		Gravity:      vips.CENTRE,
 		Quality:      95,
+	}
+	return options
+}
+
+func MediumOption() vips.Options {
+	options := vips.Options{
+		Width:        0,
+		Height:       config.MediumHeight,
+		Crop:         false,
+		Extend:       vips.EXTEND_WHITE,
+		Interpolator: vips.BICUBIC,
+		Gravity:      vips.CENTRE,
+		Quality:      90,
 	}
 	return options
 }
@@ -30,14 +43,18 @@ func MediumOption() vips.Options {
 func ThumbnailOption() vips.Options {
 	options := vips.Options{
 		Width:        config.ThumbnailWidth,
-		Height:       0,
-		Crop:         false,
+		Height:       config.ThumbnailHeight,
+		Crop:         true,
 		Extend:       vips.EXTEND_WHITE,
 		Interpolator: vips.BILINEAR,
 		Gravity:      vips.CENTRE,
-		Quality:      95,
+		Quality:      90,
 	}
 	return options
+}
+
+func ResizeLargeVips(inBuf []byte) ([]byte, error) {
+	return vips.Resize(inBuf, LargeOption())
 }
 
 func ResizeMediumVips(inBuf []byte) ([]byte, error) {

@@ -5,6 +5,7 @@ import (
 	"github.com/dorajistyle/goyangi/model"
 	"github.com/dorajistyle/goyangi/util/log"
 	_ "github.com/go-sql-driver/mysql"
+	// _ "github.com/lib/pq"
 	"github.com/jinzhu/gorm"
 )
 
@@ -12,6 +13,7 @@ var ORM, Errs = GormInit()
 
 // GormInit init gorm ORM.
 func GormInit() (gorm.DB, error) {
+	// db, err := gorm.Open("postgres", config.PostgresDSL())
 	db, err := gorm.Open("mysql", config.MysqlDSL())
 	//db, err := gorm.Open("sqlite3", "/tmp/gorm.db")
 
@@ -24,11 +26,12 @@ func GormInit() (gorm.DB, error) {
 	db.DB().SetMaxOpenConns(100)
 
 	// Disable table name's pluralization
-	db.SingularTable(true)
+	// db.SingularTable(true)
 	if config.Environment == "DEVELOPMENT" {
 		// db.LogMode(true)
-		db.AutoMigrate(&model.User{}, &model.Role{}, &model.Connection{}, &model.Language{}, &model.Article{}, &model.Location{}, &model.Comment{}, &model.File{})
-		db.Model(&model.User{}).AddIndex("idx_user_token", "token")
+		// db.AutoMigrate(&model.User{}, &model.Role{}, &model.Connection{}, &model.Language{}, &model.Article{}, &model.Location{}, &model.Comment{}, &model.File{})
+		db.AutoMigrate(&model.User{}, &model.Role{}, &model.Connection{}, &model.Language{}, &model.File{})
+		// db.Model(&model.User{}).AddIndex("idx_user_token", "token")
 	}
 	log.CheckError(err)
 

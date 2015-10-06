@@ -7,6 +7,8 @@ const (
 	AWSS3RegionName                    = ""
 	AWSS3BucketName                    = ""
 	AWSS3BucketPrefix                  = ""
+	AWSS3TestBucketName                = ""
+	AWSS3TestBucketPrefix              = ""
 	AWSStaticS3BucketName              = ""
 	AWSElasticBeanstalkS3BucketName    = ""
 	AWSElasticBeanstalkRegion          = ""

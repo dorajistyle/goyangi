@@ -119,7 +119,7 @@ func DeleteFile(c *gin.Context) (int, error) {
 	}
 	switch config.UploadTarget {
 	case "S3":
-		s3UploadPath := config.UploadS3ImagePath + strconv.FormatInt(targetFile.UserId, 10) + "/"
+		s3UploadPath := config.UploadS3Path + strconv.FormatInt(targetFile.UserId, 10) + "/"
 		log.Debugf("s3UploadPath %s", s3UploadPath)
 		err = aws.DelFromMyBucket(s3UploadPath, targetFile.Name)
 		if err != nil {

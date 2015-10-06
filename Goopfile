@@ -1,7 +1,6 @@
 golang.org/x/crypto/bcrypt
 github.com/gorilla/securecookie
 github.com/gin-gonic/gin
-github.com/go-sql-driver/mysql
 github.com/jinzhu/gorm
 github.com/Sirupsen/logrus
 github.com/onsi/ginkgo/ginkgo
@@ -16,3 +15,5 @@ github.com/daddye/vips
 gopkg.in/natefinch/lumberjack.v2
 github.com/codegangsta/cli
 github.com/codegangsta/gin
+github.com/lib/pq
+github.com/go-sql-driver/mysql
