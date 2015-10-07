@@ -15,7 +15,7 @@ type Location struct {
 	Longitude      float64     `json:"longitude"`
 	Type           string      `json:"type"`
 	UserId         int64       `json:"userId"`
-	Author         PublicUser  `json:"author"`
+	Author         User        `json:"author"`
 	ReferralId     int64       `json:"referralId"`
 	ReferralUserId int64       `json:"referralUserId"`
 	PrevId         int64       `json:"prevId"`

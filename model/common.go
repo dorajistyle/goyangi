@@ -25,7 +25,7 @@ type Comment struct {
 	CreatedAt   time.Time  `json:"createdAt"`
 	UpdatedAt   time.Time  `json:"updatedAt"`
 	DeletedAt   time.Time  `json:"deletedAt"`
-	User        PublicUser `json:"user"`
+	User        User `json:"user"`
 }
 
 // LikingList is list that contains likings and meta.
@@ -35,7 +35,7 @@ type LikingList struct {
 	Count       int           `json:"count"`
 	CurrentPage int           `json:"currentPage"`
 	IsLiked     bool          `json:"isLiked"`
-	Likings     []*PublicUser `json:"likings"`
+	Likings     []User        `json:"likings"`
 }
 
 // LikedList is list that contains liked and meta.
@@ -44,7 +44,7 @@ type LikedList struct {
 	HasNext     bool          `json:"hasNext"`
 	Count       int           `json:"count"`
 	CurrentPage int           `json:"currentPage"`
-	Liked       []*PublicUser `json:"liked"`
+	Liked       []User        `json:"liked"`
 }
 
 // Image is a image model.

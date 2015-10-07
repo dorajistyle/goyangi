@@ -80,12 +80,7 @@ type PublicUser struct {
 	Articles    omit `json:"articles,omitempty"`
 }
 
-// Role is a role model for user permission.
-type Role struct {
-	Id          int64  `json:"id"`
-	Name        string `json:"name",sql:"size:255"`
-	Description string `json:"description",sql:"size:255"`
-}
+
 
 // Connection is a connection model for oauth.
 type Connection struct {
@@ -96,10 +91,4 @@ type Connection struct {
 	AccessToken    string `json:"accessToken"`
 	ProfileUrl     string `gorm:"column:profile_url", json:"profileUrl"`
 	ImageUrl       string `gorm:"column:image_url", json:"imageUrl"`
-}
-
-// Language is a language model.
-type Language struct {
-	Id   int64  `json:"id"`
-	Name string `json:"name"`
 }

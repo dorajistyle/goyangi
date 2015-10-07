@@ -38,7 +38,8 @@ func assignRelatedUser(location *model.Location) {
 	if db.ORM.Model(&location).Select(config.UserPublicFields).Related(&tempUser).RecordNotFound() {
 		log.Warn("user is not found.")
 	}
-	location.Author = model.PublicUser{User: &tempUser}
+	// location.Author = model.PublicUser{User: &tempUser}
+	location.Author = tempUser
 }
 
 // CreateLocation creates a location.

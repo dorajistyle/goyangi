@@ -11,17 +11,7 @@ import (
 )
 
 func getAbsPath() string {
-
-	var relPath string
-	relPath = "./migrations"
-	// switch config.Environment {
-	// 	case "DEVELOPMENT":
-	// 	relPath = "./migrations"
-	// 	case "TEST":
-	// 	relPath = "./migrations_test"
-	// 	default:
-	// 	relPath = "./migrations"
-	// }
+	var relPath = "./migrations_mysql"
 	absPath, err := filepath.Abs(relPath)
 	if err != nil {
 		log.Fatal(err)
@@ -35,8 +25,7 @@ func getAbsPath() string {
 
 func migrateUp() {
 	absPath := getAbsPath()
-	// allErrors, ok := migrate.UpSync("mysql://"+config.MysqlDSL(), absPath)
-	allErrors, ok := migrate.UpSync("postgres://"+config.PostgresMigrateDSL(), absPath)
+	allErrors, ok := migrate.UpSync("mysql://"+config.MysqlDSL(), absPath)
 	if !ok {
 		for _, error := range allErrors {
 			s := error.Error()
@@ -49,8 +38,8 @@ func migrateUp() {
 
 func migrateDown() {
 	absPath := getAbsPath()
-	// allErrors, ok := migrate.DownSync("mysql://"+config.MysqlDSL(), absPath)
-	allErrors, ok := migrate.DownSync("postgres://"+config.PostgresMigrateDSL(), absPath)
+
+	allErrors, ok := migrate.DownSync("mysql://"+config.MysqlDSL(), absPath)
 	if !ok {
 		for _, error := range allErrors {
 			s := error.Error()

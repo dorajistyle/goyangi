@@ -38,9 +38,9 @@ func CreateLikingOnArticle(c *gin.Context) (int, error) {
 }
 
 // RetrieveLikingsOnArticles retrieves likings on article.
-func RetrieveLikingsOnArticles(c *gin.Context) ([]*model.PublicUser, int, bool, bool, int, int, error) {
+func RetrieveLikingsOnArticles(c *gin.Context) ([]model.User, int, bool, bool, int, int, error) {
 	var article model.Article
-	var likings []*model.PublicUser
+	var likings []model.User
 	var retrieveListForm form.RetrieveListForm
 	var hasPrev, hasNext bool
 	var currentPage, count int

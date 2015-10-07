@@ -5,7 +5,7 @@ import "github.com/dorajistyle/goyangi/model"
 // SetLikingPageMeta set likingList's page meta.
 func SetLikingPageMeta(likingList *model.LikingList, currentPage int, hasPrev bool, hasNext bool, count int, currentUserlikedCount int) {
 	if len(likingList.Likings) == 0 {
-		likingList.Likings = make([]*model.PublicUser, 0)
+		likingList.Likings = make([]model.User, 0)
 	}
 	if currentUserlikedCount == 1 {
 		likingList.IsLiked = true
@@ -19,7 +19,7 @@ func SetLikingPageMeta(likingList *model.LikingList, currentPage int, hasPrev bo
 // SetLikedPageMeta set likedList's page meta.
 func SetLikedPageMeta(likedList *model.LikedList, currentPage int, hasPrev bool, hasNext bool, count int) {
 	if len(likedList.Liked) == 0 {
-		likedList.Liked = make([]*model.PublicUser, 0)
+		likedList.Liked = make([]model.User, 0)
 	}
 	likedList.CurrentPage = currentPage
 	likedList.HasPrev = hasPrev

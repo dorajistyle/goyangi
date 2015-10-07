@@ -46,7 +46,8 @@ func assignRelatedUser(article *model.Article) {
 	if db.ORM.Model(&article).Select(config.UserPublicFields).Related(&tempUser).RecordNotFound() {
 		log.Warn("user is not found.")
 	}
-	article.Author = model.PublicUser{User: &tempUser}
+	// article.Author = model.PublicUser{User: &tempUser}
+	article.Author = tempUser
 }
 
 // CreateArticle creates an article.

@@ -11,7 +11,7 @@ type Article struct {
 	Url            string      `json:"url",sql:"size:512"`
 	Content        string      `json:"content"`
 	UserId         int64       `json:"userId"`
-	Author         PublicUser  `json:"author"`
+	Author         User  `json:"author"`
 	ReferralId     int64       `json:"referralId"`
 	ReferralUserId int64       `json:"referralUserId"`
 	CategoryId     int         `json:"categoryId"`

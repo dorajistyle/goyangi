@@ -38,9 +38,9 @@ func CreateLikingOnLocation(c *gin.Context) (int, error) {
 }
 
 // RetrieveLikingsOnLocations retrieves likings on location.
-func RetrieveLikingsOnLocations(c *gin.Context) ([]*model.PublicUser, int, bool, bool, int, int, error) {
+func RetrieveLikingsOnLocations(c *gin.Context) ([]model.User, int, bool, bool, int, int, error) {
 	var location model.Location
-	var likings []*model.PublicUser
+	var likings []model.User
 	var retrieveListForm form.RetrieveListForm
 	var hasPrev, hasNext bool
 	var currentPage, count int

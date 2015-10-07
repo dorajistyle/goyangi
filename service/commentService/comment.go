@@ -22,7 +22,8 @@ func AssignRelatedUser(comments []model.Comment) {
 		if db.ORM.Model(&comment).Select(config.UserPublicFields).Related(&tempUser).RecordNotFound() {
 			log.Warn("user is not found.")
 		}
-		comments[i].User = model.PublicUser{User: &tempUser}
+		// comments[i].User = model.PublicUser{User: &tempUser}
+		comments[i].User = tempUser
 	}
 }
 

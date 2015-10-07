@@ -1,323 +1,622 @@
--- MySQL dump 10.15  Distrib 10.0.17-MariaDB, for Linux (x86_64)
 --
--- Host: localhost    Database: goyangi_dev
--- ------------------------------------------------------
--- Server version	10.0.17-MariaDB-log
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `article`
+-- PostgreSQL database dump
 --
 
-DROP TABLE IF EXISTS `article`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `article` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) DEFAULT NULL,
-  `url` varchar(255) DEFAULT NULL,
-  `content` varchar(255) DEFAULT NULL,
-  `user_id` bigint(20) DEFAULT NULL,
-  `referral_id` bigint(20) DEFAULT NULL,
-  `referral_user_id` bigint(20) DEFAULT NULL,
-  `category_id` int(11) DEFAULT NULL,
-  `prev_id` bigint(20) DEFAULT NULL,
-  `next_id` bigint(20) DEFAULT NULL,
-  `like_count` int(11) DEFAULT NULL,
-  `comment_count` int(11) DEFAULT NULL,
-  `share_count` int(11) DEFAULT NULL,
-  `image_name` varchar(255) DEFAULT NULL,
-  `thumbnail_name` varchar(255) DEFAULT NULL,
-  `activate` tinyint(1) DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `liking_count` int(11) DEFAULT NULL,
-  `sharing_count` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1333 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET default_tablespace = '';
+SET default_with_oids = false;
 
 --
--- Table structure for table `articles_comments`
+-- Name: articles; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
-DROP TABLE IF EXISTS `articles_comments`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `articles_comments` (
-  `article_id` bigint(20) DEFAULT NULL,
-  `comment_id` bigint(20) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE TABLE articles (
+    id bigint NOT NULL,
+    title character varying(255),
+    url character varying(255),
+    content character varying(255),
+    user_id bigint,
+    referral_id bigint,
+    referral_user_id bigint,
+    category_id integer,
+    prev_id bigint,
+    next_id bigint,
+    liking_count integer,
+    comment_count integer,
+    sharing_count integer,
+    image_name character varying(255),
+    thumbnail_name character varying(255),
+    activate boolean,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE articles OWNER TO postgres;
 
 --
--- Table structure for table `articles_users`
+-- Name: articles_comments; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
-DROP TABLE IF EXISTS `articles_users`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `articles_users` (
-  `article_id` bigint(20) DEFAULT NULL,
-  `user_id` bigint(20) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE TABLE articles_comments (
+    article_id bigint,
+    comment_id bigint
+);
+
+
+ALTER TABLE articles_comments OWNER TO postgres;
 
 --
--- Table structure for table `comment`
+-- Name: articles_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-DROP TABLE IF EXISTS `comment`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `comment` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `content` varchar(255) DEFAULT NULL,
-  `user_id` bigint(20) DEFAULT NULL,
-  `like_count` int(11) DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `liking_count` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=64 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE SEQUENCE articles_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE articles_id_seq OWNER TO postgres;
 
 --
--- Table structure for table `connection`
+-- Name: articles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-DROP TABLE IF EXISTS `connection`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `connection` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `user_id` bigint(20) DEFAULT NULL,
-  `provider_id` bigint(20) DEFAULT NULL,
-  `provider_user_id` varchar(255) DEFAULT NULL,
-  `access_token` varchar(255) DEFAULT NULL,
-  `profile_url` varchar(255) DEFAULT NULL,
-  `image_url` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+ALTER SEQUENCE articles_id_seq OWNED BY articles.id;
+
 
 --
--- Table structure for table `file`
+-- Name: articles_users; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
-DROP TABLE IF EXISTS `file`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `file` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `user_id` bigint(20) DEFAULT NULL,
-  `name` varchar(255) DEFAULT NULL,
-  `size` int(11) DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1166 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE TABLE articles_users (
+    article_id bigint,
+    user_id bigint
+);
+
+
+ALTER TABLE articles_users OWNER TO postgres;
 
 --
--- Table structure for table `language`
+-- Name: comments; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
-DROP TABLE IF EXISTS `language`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `language` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE TABLE comments (
+    id bigint NOT NULL,
+    content character varying(255),
+    user_id bigint,
+    liking_count integer,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE comments OWNER TO postgres;
 
 --
--- Table structure for table `location`
+-- Name: comments_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-DROP TABLE IF EXISTS `location`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `location` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  `url` varchar(255) DEFAULT NULL,
-  `content` varchar(255) DEFAULT NULL,
-  `address` varchar(255) DEFAULT NULL,
-  `latitude` double DEFAULT NULL,
-  `longitude` double DEFAULT NULL,
-  `type` varchar(255) DEFAULT NULL,
-  `user_id` bigint(20) DEFAULT NULL,
-  `referral_id` bigint(20) DEFAULT NULL,
-  `referral_user_id` bigint(20) DEFAULT NULL,
-  `prev_id` bigint(20) DEFAULT NULL,
-  `next_id` bigint(20) DEFAULT NULL,
-  `liking_count` int(11) DEFAULT NULL,
-  `comment_count` int(11) DEFAULT NULL,
-  `sharing_count` int(11) DEFAULT NULL,
-  `activate` tinyint(1) DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE SEQUENCE comments_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE comments_id_seq OWNER TO postgres;
 
 --
--- Table structure for table `locations_comments`
+-- Name: comments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-DROP TABLE IF EXISTS `locations_comments`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `locations_comments` (
-  `location_id` bigint(20) DEFAULT NULL,
-  `comment_id` bigint(20) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+ALTER SEQUENCE comments_id_seq OWNED BY comments.id;
+
 
 --
--- Table structure for table `locations_users`
+-- Name: connections; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
-DROP TABLE IF EXISTS `locations_users`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `locations_users` (
-  `location_id` bigint(20) DEFAULT NULL,
-  `user_id` bigint(20) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE TABLE connections (
+    id bigint NOT NULL,
+    user_id bigint,
+    provider_id bigint,
+    provider_user_id character varying(255),
+    access_token character varying(255),
+    profile_url character varying(255),
+    image_url character varying(255)
+);
+
+
+ALTER TABLE connections OWNER TO postgres;
 
 --
--- Table structure for table `role`
+-- Name: connections_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-DROP TABLE IF EXISTS `role`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `role` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  `description` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE SEQUENCE connections_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE connections_id_seq OWNER TO postgres;
 
 --
--- Table structure for table `schema_migrations`
+-- Name: connections_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-DROP TABLE IF EXISTS `schema_migrations`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `schema_migrations` (
-  `version` int(11) NOT NULL,
-  PRIMARY KEY (`version`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+ALTER SEQUENCE connections_id_seq OWNED BY connections.id;
+
 
 --
--- Table structure for table `user`
+-- Name: files; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
-DROP TABLE IF EXISTS `user`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `user` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `username` varchar(255) DEFAULT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `password` varchar(255) DEFAULT NULL,
-  `name` varchar(255) DEFAULT NULL,
-  `birthday` timestamp NULL DEFAULT NULL,
-  `gender` int(11) DEFAULT NULL,
-  `description` varchar(255) DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT '0000-00-00 00:00:00',
-  `updated_at` timestamp NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `last_login_at` timestamp NULL DEFAULT NULL,
-  `current_login_at` timestamp NULL DEFAULT NULL,
-  `last_login_ip` varchar(255) DEFAULT NULL,
-  `current_login_ip` varchar(255) DEFAULT NULL,
-  `liked_count` int(11) DEFAULT NULL,
-  `md5` varchar(255) DEFAULT NULL,
-  `liking_count` int(11) DEFAULT NULL,
-  `activation` tinyint(1) DEFAULT NULL,
-  `password_reset_token` varchar(255) DEFAULT NULL,
-  `activated_at` timestamp NULL DEFAULT NULL,
-  `activation_token` varchar(255) DEFAULT NULL,
-  `password_reset_until` timestamp NULL DEFAULT NULL,
-  `activate_until` timestamp NULL DEFAULT NULL,
-  `token` varchar(255) DEFAULT NULL,
-  `token_expiration` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `username` (`username`,`email`),
-  KEY `idx_user_email` (`email`),
-  KEY `idx_user_name` (`name`),
-  KEY `idx_user_token` (`token`)
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE TABLE files (
+    id bigint NOT NULL,
+    user_id bigint,
+    name character varying(255),
+    size integer,
+    created_at timestamp with time zone
+);
+
+
+ALTER TABLE files OWNER TO postgres;
 
 --
--- Table structure for table `user_languages`
+-- Name: files_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-DROP TABLE IF EXISTS `user_languages`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `user_languages` (
-  `user_id` bigint(20) DEFAULT NULL,
-  `language_id` bigint(20) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE SEQUENCE files_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE files_id_seq OWNER TO postgres;
 
 --
--- Table structure for table `users_followers`
+-- Name: files_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-DROP TABLE IF EXISTS `users_followers`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `users_followers` (
-  `user_id` bigint(20) DEFAULT NULL,
-  `follower_id` bigint(20) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+ALTER SEQUENCE files_id_seq OWNED BY files.id;
+
 
 --
--- Table structure for table `users_roles`
+-- Name: languages; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
 --
 
-DROP TABLE IF EXISTS `users_roles`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `users_roles` (
-  `user_id` bigint(20) DEFAULT NULL,
-  `role_id` bigint(20) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+CREATE TABLE languages (
+    id bigint NOT NULL,
+    name character varying(255)
+);
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-03-19 23:29:16
+ALTER TABLE languages OWNER TO postgres;
+
+--
+-- Name: languages_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE languages_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE languages_id_seq OWNER TO postgres;
+
+--
+-- Name: languages_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE languages_id_seq OWNED BY languages.id;
+
+
+--
+-- Name: locations; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
+--
+
+CREATE TABLE locations (
+    id bigint NOT NULL,
+    name character varying(255),
+    url character varying(255),
+    content character varying(255),
+    address character varying(255),
+    latitude numeric,
+    longitude numeric,
+    type character varying(255),
+    user_id bigint,
+    referral_id bigint,
+    referral_user_id bigint,
+    prev_id bigint,
+    next_id bigint,
+    liking_count integer,
+    comment_count integer,
+    sharing_count integer,
+    activate boolean,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
+    deleted_at timestamp with time zone
+);
+
+
+ALTER TABLE locations OWNER TO postgres;
+
+--
+-- Name: locations_comments; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
+--
+
+CREATE TABLE locations_comments (
+    location_id bigint,
+    comment_id bigint
+);
+
+
+ALTER TABLE locations_comments OWNER TO postgres;
+
+--
+-- Name: locations_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE locations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE locations_id_seq OWNER TO postgres;
+
+--
+-- Name: locations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE locations_id_seq OWNED BY locations.id;
+
+
+--
+-- Name: locations_users; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
+--
+
+CREATE TABLE locations_users (
+    location_id bigint,
+    user_id bigint
+);
+
+
+ALTER TABLE locations_users OWNER TO postgres;
+
+--
+-- Name: roles; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
+--
+
+CREATE TABLE roles (
+    id bigint NOT NULL,
+    name character varying(255),
+    description character varying(255)
+);
+
+
+ALTER TABLE roles OWNER TO postgres;
+
+--
+-- Name: roles_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE roles_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE roles_id_seq OWNER TO postgres;
+
+--
+-- Name: roles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE roles_id_seq OWNED BY roles.id;
+
+
+--
+-- Name: user_languages; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
+--
+
+CREATE TABLE user_languages (
+    user_id bigint,
+    language_id bigint
+);
+
+
+ALTER TABLE user_languages OWNER TO postgres;
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
+--
+
+CREATE TABLE users (
+    id bigint NOT NULL,
+    email character varying(255),
+    password character varying(255),
+    name character varying(255),
+    username character varying(255),
+    birthday timestamp with time zone,
+    gender integer,
+    description character varying(255),
+    token character varying(255),
+    token_expiration timestamp with time zone,
+    md5 character varying(255),
+    activation boolean,
+    password_reset_token character varying(255),
+    activation_token character varying(255),
+    password_reset_until timestamp with time zone,
+    activate_until timestamp with time zone,
+    activated_at timestamp with time zone,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
+    deleted_at timestamp with time zone,
+    last_login_at timestamp with time zone,
+    current_login_at timestamp with time zone,
+    last_login_ip character varying(255),
+    current_login_ip character varying(255),
+    liking_count integer,
+    liked_count integer
+);
+
+
+ALTER TABLE users OWNER TO postgres;
+
+--
+-- Name: users_followers; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
+--
+
+CREATE TABLE users_followers (
+  user_id bigint,
+  follower_id bigint
+);
+
+
+ALTER TABLE users_followers OWNER TO postgres;
+
+--
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE users_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE users_id_seq OWNER TO postgres;
+
+--
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE users_id_seq OWNED BY users.id;
+
+
+--
+-- Name: users_roles; Type: TABLE; Schema: public; Owner: postgres; Tablespace:
+--
+
+CREATE TABLE users_roles (
+    user_id bigint,
+    role_id bigint
+);
+
+
+ALTER TABLE users_roles OWNER TO postgres;
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY articles ALTER COLUMN id SET DEFAULT nextval('articles_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY comments ALTER COLUMN id SET DEFAULT nextval('comments_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY connections ALTER COLUMN id SET DEFAULT nextval('connections_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY files ALTER COLUMN id SET DEFAULT nextval('files_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY languages ALTER COLUMN id SET DEFAULT nextval('languages_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY locations ALTER COLUMN id SET DEFAULT nextval('locations_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY roles ALTER COLUMN id SET DEFAULT nextval('roles_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
+
+--
+-- Name: articles_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('articles_id_seq', 1, false);
+
+--
+-- Name: comments_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('comments_id_seq', 1, false);
+
+
+--
+-- Name: connections_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('connections_id_seq', 1, false);
+
+
+--
+-- Name: files_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('files_id_seq', 1, false);
+
+--
+-- Name: languages_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('languages_id_seq', 1, false);
+
+--
+-- Name: locations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('locations_id_seq', 1, false);
+
+--
+-- Name: roles_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('roles_id_seq', 1, false);
+
+--
+-- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('users_id_seq', 1, true);
+
+--
+-- Name: articles_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
+--
+
+ALTER TABLE ONLY articles
+    ADD CONSTRAINT articles_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: comments_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
+--
+
+ALTER TABLE ONLY comments
+    ADD CONSTRAINT comments_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: connections_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
+--
+
+ALTER TABLE ONLY connections
+    ADD CONSTRAINT connections_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: files_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
+--
+
+ALTER TABLE ONLY files
+    ADD CONSTRAINT files_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: languages_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
+--
+
+ALTER TABLE ONLY languages
+    ADD CONSTRAINT languages_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: locations_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
+--
+
+ALTER TABLE ONLY locations
+    ADD CONSTRAINT locations_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: roles_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
+--
+
+ALTER TABLE ONLY roles
+    ADD CONSTRAINT roles_pkey PRIMARY KEY (id);
+
+--
+-- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace:
+--
+
+ALTER TABLE ONLY users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: idx_user_token; Type: INDEX; Schema: public; Owner: postgres; Tablespace:
+--
+
+CREATE INDEX idx_user_token ON users USING btree (token);
+
+
+--
+-- Name: public; Type: ACL; Schema: -; Owner: dorajistyle
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM dorajistyle;
+GRANT ALL ON SCHEMA public TO dorajistyle;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+--
+-- PostgreSQL database dump complete
+--

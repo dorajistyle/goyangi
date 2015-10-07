@@ -19,7 +19,7 @@ github.com/goamz/goamz/aws #53a0c224cce889e9dc606396f60bd111e40d6440
 github.com/goamz/goamz/s3 #53a0c224cce889e9dc606396f60bd111e40d6440
 github.com/golang/protobuf #3d2510a4dd961caffa2ae781669c628d82db700a
 github.com/gorilla/securecookie #e95799a481bbcc3d01c2ad5178524cb8bec9f370
-github.com/jinzhu/gorm #ede940e82d978b7f414dc05f7de1e2d33702e6c0
+github.com/jinzhu/gorm #087b7083ad1154ff0573d560b64310e4869a2820
 github.com/lib/pq #b269bd035a727d6c1081f76e7a239a1b00674c40
 github.com/manucorporat/sse #fe6ea2c8e398672518ef204bf0fbd9af858d0e15
 github.com/manucorporat/stats #8f2d6ace262eba462e9beb552382c98be51d807b
