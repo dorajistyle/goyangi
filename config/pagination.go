@@ -4,7 +4,7 @@ package config
 const (
 	ArticlePerPage  = 10
 	LocationPerPage = 2
-	LikingPerPage   = 1
-	LikedPerPage    = 1
+	LikingPerPage   = 5
+	LikedPerPage    = 5
 	CommentPerPage  = 2
 )

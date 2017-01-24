@@ -11,10 +11,10 @@ import (
 	"github.com/dorajistyle/goyangi/db"
 	"github.com/dorajistyle/goyangi/model"
 	"github.com/dorajistyle/goyangi/service/likingService/likingMeta"
-	"github.com/dorajistyle/goyangi/service/likingService/likingRetriever"
 	"github.com/dorajistyle/goyangi/util/crypto"
 	"github.com/dorajistyle/goyangi/util/log"
 	"github.com/dorajistyle/goyangi/util/modelHelper"
+	"github.com/dorajistyle/goyangi/util/pagination"
 	"github.com/dorajistyle/goyangi/util/timeHelper"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -89,9 +89,9 @@ func CreateUser(c *gin.Context) (int, error) {
 }
 
 // RetrieveUser retrieves a user.
-func RetrieveUser(c *gin.Context) (*model.PublicUser, bool, int64, int, error) {
+func RetrieveUser(c *gin.Context) (*model.PublicUser, bool, uint, int, error) {
 	var user model.User
-	var currentUserId int64
+	var currentUserId uint
 	var isAuthor bool
 	// var publicUser *model.PublicUser
 	// publicUser.User = &user
@@ -104,18 +104,43 @@ func RetrieveUser(c *gin.Context) (*model.PublicUser, bool, int64, int, error) {
 		currentUserId = currentUser.Id
 		isAuthor = currentUser.Id == user.Id
 	}
+	var currentPage int
+
+	currentPage = 1
+
+	var likings []model.User
+	var likingCount int
+	db.ORM.Table("users_followers").Where("users_followers.user_id=?", user.Id).Count(&likingCount)
+	offset, currentPage, hasPrev, hasNext := pagination.Paginate(currentPage, config.LikingPerPage, likingCount)
+	if err = db.ORM.Limit(config.LikingPerPage).Order(config.LikingOrder).Offset(offset).Select(config.UserPublicFields).
+		Joins("JOIN users_followers on users_followers.user_id=?", user.Id).
+		Where("users.id = users_followers.follower_id").
+		Group("users.id").Find(&likings).Error; err != nil {
+		log.Fatal(err.Error())
+	}
+	user.Likings = likings
 	var likingList model.LikingList
-	likings, currentPage, hasPrev, hasNext, _ := likingRetriever.RetrieveLikings(user)
 	likingList.Likings = likings
-	currentUserlikedCount := db.ORM.Model(&user).Where("id =?", currentUserId).Association("Likings").Count()
-	log.Debugf("Current user like count : %d", currentUserlikedCount)
-	likingMeta.SetLikingPageMeta(&likingList, currentPage, hasPrev, hasNext, user.LikingCount, currentUserlikedCount)
+	likingMeta.SetLikingPageMeta(&likingList, currentPage, hasPrev, hasNext, likingCount, currentUser.LikingCount)
 	user.LikingList = likingList
+
+	var liked []model.User
+	var likedCount int
+	db.ORM.Table("users_followers").Where("users_followers.follower_id=?", user.Id).Count(&likedCount)
+	offset, currentPage, hasPrev, hasNext = pagination.Paginate(currentPage, config.LikedPerPage, likedCount)
+	if err = db.ORM.Limit(config.LikedPerPage).Order(config.LikedOrder).Offset(offset).Select(config.UserPublicFields).
+		Joins("JOIN users_followers on users_followers.follower_id=?", user.Id).
+		Where("users.id = users_followers.user_id").
+		Group("users.id").Find(&liked).Error; err != nil {
+		log.Fatal(err.Error())
+	}
+	user.Liked = liked
 	var likedList model.LikedList
-	liked, currentPage, hasPrev, hasNext, _ := likingRetriever.RetrieveLiked(user)
 	likedList.Liked = liked
-	likingMeta.SetLikedPageMeta(&likedList, currentPage, hasPrev, hasNext, user.LikedCount)
+	likingMeta.SetLikedPageMeta(&likedList, currentPage, hasPrev, hasNext, likedCount)
 	user.LikedList = likedList
+	log.Debugf("user liking %v\n", user.Likings)
+	log.Debugf("user liked %v\n", user.Liked)
 	return &model.PublicUser{User: &user}, isAuthor, currentUserId, http.StatusOK, nil
 }
 

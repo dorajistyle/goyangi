@@ -24,13 +24,13 @@ func HasAdmin(user *model.User) bool {
 }
 
 // CurrentOrAdmin check that user has admin permission or user is the current user.
-func CurrentOrAdmin(user *model.User, userId int64) bool {
+func CurrentOrAdmin(user *model.User, userId uint) bool {
 	log.Debugf("user.Id == userId %d %d %s", user.Id, userId, user.Id == userId)
 	return (HasAdmin(user) || user.Id == userId)
 }
 
 // CurrentUserIdentical check that userId is same as current user's Id.
-func CurrentUserIdentical(c *gin.Context, userId int64) (int, error) {
+func CurrentUserIdentical(c *gin.Context, userId uint) (int, error) {
 	currentUser, err := userService.CurrentUser(c)
 	if err != nil {
 		return http.StatusUnauthorized, errors.New("Auth failed.")

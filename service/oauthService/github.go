@@ -14,16 +14,6 @@ import (
 	"github.com/gin-gonic/gin/binding"
 )
 
-// GithubUser is a struct that contained github user information.
-type GithubUser struct {
-	UserId     int    `json:"id"`
-	Email      string `json:"email"`
-	Username   string `json:"login"`
-	Name       string `json:"name""`
-	ImageUrl   string `json:"avatar_url"`
-	ProfileUrl string `json:"html_url"`
-}
-
 // GithubURL return github auth url.
 func GithubURL() (string, int) {
 	return oauth2.OauthURL(github.Config), http.StatusOK
@@ -37,7 +27,10 @@ func SetGithubUser(response *http.Response) (*GithubUser, error) {
 	if err != nil {
 		return githubUser, err
 	}
-	json.Unmarshal(body, &githubUser)
+	unmarshalErr := json.Unmarshal(body, &githubUser)
+	if unmarshalErr != nil {
+		return githubUser, unmarshalErr
+	}
 	log.Debugf("\ngithubUser: %v\n", githubUser)
 	return githubUser, err
 }
@@ -59,7 +52,7 @@ func OauthGithub(c *gin.Context) (int, error) {
 		return http.StatusInternalServerError, err
 	}
 	modelHelper.AssignValue(&oauthUser, githubUser)
-	oauthUser.Id = strconv.Itoa(githubUser.UserId)
+	oauthUser.ID = strconv.Itoa(githubUser.UserID)
 	log.Debugf("\noauthUser item : %v", oauthUser)
 	status, err := LoginOrCreateOauthUser(c, &oauthUser, github.ProviderId, token)
 	if err != nil {

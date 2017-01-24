@@ -15,7 +15,7 @@ import (
 
 // LinkedinUser is a struct that contained linkedin user information.
 type LinkedinUser struct {
-	Id         string `json:"id"`
+	ID         string `json:"id"`
 	Email      string `json:"emailAddress"`
 	Username   string `json:"firstName"`
 	Name       string `json:"lastName""`
@@ -36,7 +36,10 @@ func SetLinkedinUser(response *http.Response) (*LinkedinUser, error) {
 	if err != nil {
 		return linkedinUser, err
 	}
-	json.Unmarshal(body, &linkedinUser)
+	unmarshalErr := json.Unmarshal(body, &linkedinUser)
+	if unmarshalErr != nil {
+		return linkedinUser, unmarshalErr
+	}
 	log.Debugf("\nlinkedinUser: %v\n", linkedinUser)
 	return linkedinUser, err
 }
@@ -57,8 +60,8 @@ func OauthLinkedin(c *gin.Context) (int, error) {
 	}
 	modelHelper.AssignValue(&oauthUser, linkedinUser)
 	log.Debugf("\noauthUser item : %v", oauthUser)
-	log.Debugf("\nlinkedinUser id : %s", linkedinUser.Id)
-	log.Debugf("\noauthUser id : %s", oauthUser.Id)
+	log.Debugf("\nlinkedinUser id : %s", linkedinUser.ID)
+	log.Debugf("\noauthUser id : %s", oauthUser.ID)
 	status, err := LoginOrCreateOauthUser(c, &oauthUser, linkedin.ProviderId, token)
 	if err != nil {
 		return status, err

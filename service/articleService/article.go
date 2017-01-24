@@ -91,10 +91,10 @@ func CreateArticles(c *gin.Context) (int, error) {
 }
 
 // RetrieveArticle retrieve an article.
-func RetrieveArticle(c *gin.Context) (model.Article, bool, int64, int, error) {
+func RetrieveArticle(c *gin.Context) (model.Article, bool, uint, int, error) {
 	var article model.Article
 	var count int
-	var currentUserId int64
+	var currentUserId uint
 	var isAuthor bool
 	id := c.Params.ByName("id")
 	if db.ORM.First(&article, "id = ?", id).RecordNotFound() {

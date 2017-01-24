@@ -15,7 +15,7 @@ type LoginForm struct {
 
 // UserForm is used when updating a user.
 type UserForm struct {
-	Age  int64  `form:"age"`
+	Age  uint   `form:"age"`
 	Name string `form:"name" binding:"required"`
 }
 

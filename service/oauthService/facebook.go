@@ -13,13 +13,6 @@ import (
 	"github.com/gin-gonic/gin/binding"
 )
 
-// FacebookUser is a struct that contained facebook user information.
-type FacebookUser struct {
-	Id         string `json:"id"`
-	Username   string `json:"name"`
-	ProfileUrl string `json:"link"`
-}
-
 // FacebookURL return facebook auth url.
 func FacebookURL() (string, int) {
 	return oauth2.OauthURL(facebook.Config), http.StatusOK
@@ -33,7 +26,10 @@ func SetFacebookUser(response *http.Response) (*FacebookUser, error) {
 	if err != nil {
 		return facebookUser, err
 	}
-	json.Unmarshal(body, &facebookUser)
+	unmarshalErr := json.Unmarshal(body, &facebookUser)
+	if unmarshalErr != nil {
+		return facebookUser, unmarshalErr
+	}
 	log.Debugf("\nfacebookUser: %v\n", facebookUser)
 	return facebookUser, nil
 }

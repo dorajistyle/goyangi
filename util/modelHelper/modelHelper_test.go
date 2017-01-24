@@ -8,12 +8,12 @@ import (
 )
 
 type TestModel struct {
-	Id    int64
+	ID    int64
 	Title string
 	Order int
 }
 type TestForm struct {
-	Id    int64
+	ID    int64
 	Title string
 	Level int
 }
@@ -26,7 +26,7 @@ var _ = Describe("ModelHelper", func() {
 
 	BeforeEach(func() {
 		model = &TestModel{}
-		form = &TestForm{Id: 4, Title: "Goyangi, the beast."}
+		form = &TestForm{ID: 4, Title: "Nowplay, the beast."}
 	})
 
 	Describe("Check the interface", func() {
@@ -41,8 +41,8 @@ var _ = Describe("ModelHelper", func() {
 			BeforeEach(func() {
 				AssignValue(model, form)
 			})
-			It("should have same Id", func() {
-				Expect(model.Id).To(Equal(form.Id))
+			It("should have same ID", func() {
+				Expect(model.ID).To(Equal(form.ID))
 			})
 
 			It("should have same title", func() {

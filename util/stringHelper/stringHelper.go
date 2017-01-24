@@ -17,3 +17,12 @@ func Concat(buffer *bytes.Buffer, str string) {
 func ConcatExist(strs []string, str string) []string {
 	return append(strs, str)
 }
+
+// ConcatString concatenates leadingStr and followingStr.
+func ConcatString(leadingStr string, followingStr string) string {	
+	var buffer *bytes.Buffer	
+	buffer = new(bytes.Buffer)
+	buffer.WriteString(leadingStr)	
+	buffer.WriteString(followingStr)
+	return buffer.String()
+}

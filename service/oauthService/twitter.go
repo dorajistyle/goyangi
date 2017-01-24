@@ -1,6 +1,7 @@
 package oauthService
 
 import (
+	// "encoding/json"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -12,16 +13,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 )
-
-// TwitterUser is a struct that contained twitter user information.
-type TwitterUser struct {
-	Id         string `json:"id"`
-	Email      string `json:"email"`
-	Name       string `json:"name"`
-	Username   string `json:"screen_name"`
-	ProfileUrl string `json:"url"`
-	ImageUrl   string `json:"profile_image_url"`
-}
 
 // TwitterURL return twitter auth url.
 func TwitterURL() (string, int) {
@@ -36,7 +27,10 @@ func SetTwitterUser(response *http.Response) (*TwitterUser, error) {
 	if err != nil {
 		return twitterUser, err
 	}
-	json.Unmarshal(body, &twitterUser)
+	unmarshalErr := json.Unmarshal(body, &twitterUser)
+	if unmarshalErr != nil {
+		return twitterUser, unmarshalErr
+	}
 	log.Debugf("\ntwitterUser: %v\n", twitterUser)
 	return twitterUser, err
 }

@@ -13,16 +13,6 @@ import (
 	"github.com/gin-gonic/gin/binding"
 )
 
-// YahooUser is a struct that contained yahoo user information.
-type YahooUser struct {
-	Id         string `json:"guid"`
-	Email      string `json:"email"`
-	Name       string `json:"nickname"`
-	Username   string `json:"nickname"`
-	ImageUrl   string `json:"imageURL"`
-	ProfileUrl string `json:"profileURL"`
-}
-
 // YahooURL return yahoo auth url.
 func YahooURL() (string, int) {
 	return oauth2.OauthURL(yahoo.Config), http.StatusOK
@@ -36,7 +26,10 @@ func SetYahooUser(response *http.Response) (*YahooUser, error) {
 	if err != nil {
 		return yahooUser, err
 	}
-	json.Unmarshal(body, &yahooUser)
+	unmarshalErr := json.Unmarshal(body, &yahooUser)
+	if unmarshalErr != nil {
+		return yahooUser, unmarshalErr
+	}
 	log.Debugf("\nyahooUser: %v\n", yahooUser)
 	return yahooUser, err
 }

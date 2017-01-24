@@ -10,8 +10,8 @@ type ArticleFilter struct {
 
 // ArticleForm is a form of article.
 type ArticleForm struct {
-	Id            int64  `form:"id"`
-	UserId        int64  `form:"userId"`
+	Id            uint   `form:"id"`
+	UserId        uint   `form:"userId"`
 	CategoryId    int    `form:"categoryId"`
 	Title         string `form:"title"`
 	Url           string `form:"url" binding:"required"`

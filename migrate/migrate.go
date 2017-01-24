@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/dorajistyle/goyangi/config"
+	_ "github.com/mattes/migrate/driver/postgres"
 	"github.com/mattes/migrate/migrate"
 )
 

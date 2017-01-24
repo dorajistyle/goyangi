@@ -15,7 +15,7 @@ func initI18N() {
 }
 
 func init() {
-	log.Init()
+	log.Init(config.Environment)
 	initI18N()
 }
 

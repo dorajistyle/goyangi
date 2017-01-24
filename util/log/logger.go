@@ -5,7 +5,8 @@ import (
 	"os"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/dorajistyle/goyangi/config"
+	"github.com/dorajistyle/goyangi/util/config"
+	// "github.com/dorajistyle/goyangi/util/octokit"
 	lumberjack "gopkg.in/natefinch/lumberjack.v2"
 )
 
@@ -18,11 +19,16 @@ func LumberJackLogger(filePath string, maxSize int, maxBackups int, maxAge int) 
 	}
 }
 
-func InitLogToStdout() {
+func InitLogToStdoutDebug() {
 	logrus.SetFormatter(&logrus.TextFormatter{ForceColors: true})
 	logrus.SetOutput(os.Stdout)
-	// logrus.SetOutput(os.Stderr)
 	logrus.SetLevel(logrus.DebugLevel)
+}
+
+func InitLogToStdout() {
+	logrus.SetFormatter(&logrus.TextFormatter{})
+	logrus.SetOutput(os.Stdout)
+	logrus.SetLevel(logrus.WarnLevel)
 }
 
 func InitLogToFile() {
@@ -38,20 +44,44 @@ func InitLogToFile() {
 	logrus.SetLevel(logrus.WarnLevel)
 }
 
+// DEPRECATED BEACAUSE OF code.google.com/p/go-netrc/netrc
+// func InitLogToGithub() {
+// 	logrus.SetFormatter(&logrus.TextFormatter{})
+// 	logrus.AddHook(octokit.NewOctokitHook(config.OctokitGitHubAPIURL,
+// 		config.OctokitUserAgent,
+// 		config.OctokitAccessToken,
+// 		config.OctokitTargetOwner,
+// 		config.OctokitTargetRepo))
+//     logrus.SetOutput(os.Stdout)
+// 	logrus.SetLevel(logrus.WarnLevel)
+// }
+
+// func InitLogToGithubAndFile() {
+// 	logrus.SetFormatter(&logrus.TextFormatter{})
+// 	logrus.AddHook(octokit.NewOctokitHook(config.OctokitGitHubAPIURL,
+// 		config.OctokitUserAgent,
+// 		config.OctokitAccessToken,
+// 		config.OctokitTargetOwner,
+// 		config.OctokitTargetRepo))
+// 	out := LumberJackLogger(config.ErrorLogFilePath+config.ErrorLogFileExtension, config.ErrorLogMaxSize, config.ErrorLogMaxBackups, config.ErrorLogMaxAge)
+// 	logrus.SetOutput(out)
+// 	logrus.SetLevel(logrus.WarnLevel)
+// }
+
 // Init logrus
-func Init() {
+func Init(environment string) {
 	// Use the Airbrake hook to report errors that have Error severity or above to
 	// an exception tracker. You can create custom hooks, see the Hooks section.
 	//  logrus.AddHook(&log_airbrake.AirbrakeHook{})
-	switch config.Environment {
+	switch environment {
 	case "DEVELOPMENT":
-		InitLogToStdout()
+		InitLogToStdoutDebug()
 	case "TEST":
-		InitLogToStdout()
+		InitLogToFile()
 	case "PRODUCTION":
 		InitLogToFile()
 	}
-	logrus.Debugf("config.Environment : %s", config.Environment)
+	logrus.Debugf("Environment : %s", environment)
 }
 
 // Debug logs a message with debug log level.

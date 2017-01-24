@@ -1,7 +1,7 @@
 package aws
 
 import (
-	"github.com/dorajistyle/goyangi/config"
+	"github.com/dorajistyle/goyangi/util/config"
 	"github.com/goamz/goamz/aws"
 )
 
