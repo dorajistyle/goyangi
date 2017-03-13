@@ -13,16 +13,6 @@ import (
 	"github.com/gin-gonic/gin/binding"
 )
 
-// KakaoUser is a struct that contained kakao user information.
-type KakaoUser struct {
-	Id         string `json:"id"`
-	Email      string `json:"email"`
-	Username   string `json:"login"`
-	Name       string `json:"name""`
-	ImageUrl   string `json:"avatar_url"`
-	ProfileUrl string `json:"html_url"`
-}
-
 // KakaoURL return kakao auth url.
 func KakaoURL() (string, int) {
 	return oauth2.OauthURL(kakao.Config), http.StatusOK
@@ -38,7 +28,10 @@ func SetKakaoUser(response *http.Response) (*KakaoUser, error) {
 	if err != nil {
 		return kakaoUser, err
 	}
-	json.Unmarshal(body, &kakaoUser)
+	unmarshalErr := json.Unmarshal(body, &kakaoUser)
+	if unmarshalErr != nil {
+		return kakaoUser, unmarshalErr
+	}
 	log.Debugf("\nkakaoUser: %v\n", kakaoUser)
 	return kakaoUser, err
 }

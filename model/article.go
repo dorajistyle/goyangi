@@ -6,17 +6,17 @@ import (
 
 // Article is a article model.
 type Article struct {
-	Id             int64       `json:"id"`
+	Id             uint        `json:"id"`
 	Title          string      `json:"title",sql:"size:255"`
 	Url            string      `json:"url",sql:"size:512"`
 	Content        string      `json:"content"`
-	UserId         int64       `json:"userId"`
-	Author         User  `json:"author"`
-	ReferralId     int64       `json:"referralId"`
-	ReferralUserId int64       `json:"referralUserId"`
+	UserId         uint        `json:"userId"`
+	Author         User        `json:"author"`
+	ReferralId     uint        `json:"referralId"`
+	ReferralUserId uint        `json:"referralUserId"`
 	CategoryId     int         `json:"categoryId"`
-	PrevId         int64       `json:"prevId"`
-	NextId         int64       `json:"nextId"`
+	PrevId         uint        `json:"prevId"`
+	NextId         uint        `json:"nextId"`
 	LikingCount    int         `json:"likingCount"`
 	CommentCount   int         `json:"commentCount"`
 	SharingCount   int         `json:"sharingCount"`
@@ -25,7 +25,7 @@ type Article struct {
 	Activate       bool        `json:"active"`
 	CreatedAt      time.Time   `json:"createdAt"`
 	UpdatedAt      time.Time   `json:"updatedAt"`
-	DeletedAt      time.Time   `json:"deletedAt"`
+	DeletedAt      *time.Time  `json:"deletedAt"`
 	Comments       []Comment   `gorm:"many2many:articles_comments;"`
 	CommentList    CommentList `json:"commentList"`
 	Likings        []User      `gorm:"many2many:articles_users;"`

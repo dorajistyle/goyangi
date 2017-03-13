@@ -3,7 +3,7 @@ package aws
 import (
 	"bytes"
 
-	"github.com/dorajistyle/goyangi/config"
+	"github.com/dorajistyle/goyangi/util/config"
 	"github.com/goamz/goamz/aws"
 	"github.com/goamz/goamz/s3"
 )
@@ -17,8 +17,6 @@ func Connection(auth aws.Auth, region aws.Region) *s3.S3 {
 func Bucket(connection *s3.S3, bucketName string) *s3.Bucket {
 	return connection.Bucket(bucketName)
 }
-
-
 
 // List get list from bucket.
 func List(bucket *s3.Bucket, prefix, delim, marker string, max int) (*s3.ListResp, error) {

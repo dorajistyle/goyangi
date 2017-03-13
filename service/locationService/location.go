@@ -58,9 +58,9 @@ func CreateLocation(c *gin.Context) (model.Location, int, error) {
 }
 
 // RetrieveLocation retrieves a location.
-func RetrieveLocation(c *gin.Context) (model.Location, bool, int64, int, error) {
+func RetrieveLocation(c *gin.Context) (model.Location, bool, uint, int, error) {
 	var location model.Location
-	var currentUserId int64
+	var currentUserId uint
 	isAuthor := false
 	id := c.Params.ByName("id")
 	if db.ORM.First(&location, "id = ?", id).RecordNotFound() {

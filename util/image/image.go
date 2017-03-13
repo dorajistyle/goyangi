@@ -8,11 +8,24 @@ import (
 	"image/jpeg"
 	"image/png"
 	"io"
+	"strconv"
 
 	"github.com/daddye/vips"
 	"github.com/disintegration/gift"
-	"github.com/dorajistyle/goyangi/config"
+	"github.com/dorajistyle/goyangi/util/config"
+	"github.com/dorajistyle/goyangi/util/stringHelper"
 )
+
+func GenerateURL(imageURLPrefix string, types string, id int64, name string) string {
+	imageURLBuffer := new(bytes.Buffer)
+	stringHelper.Concat(imageURLBuffer, imageURLPrefix)
+	stringHelper.Concat(imageURLBuffer, types)
+	stringHelper.Concat(imageURLBuffer, "/")
+	stringHelper.Concat(imageURLBuffer, strconv.FormatInt(id, 10))
+	stringHelper.Concat(imageURLBuffer, "/")
+	stringHelper.Concat(imageURLBuffer, name)
+	return imageURLBuffer.String()
+}
 
 func LargeOption() vips.Options {
 	options := vips.Options{

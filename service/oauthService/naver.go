@@ -13,16 +13,6 @@ import (
 	"github.com/gin-gonic/gin/binding"
 )
 
-// NaverUser is a struct that contained naver user information.
-type NaverUser struct {
-	Id         string `json:"id"`
-	Email      string `json:"email"`
-	Username   string `json:"login"`
-	Name       string `json:"name""`
-	ImageUrl   string `json:"avatar_url"`
-	ProfileUrl string `json:"html_url"`
-}
-
 // NaverURL return naver auth url.
 func NaverURL() (string, int) {
 	return oauth2.OauthURL(naver.Config), http.StatusOK
@@ -37,7 +27,10 @@ func SetNaverUser(response *http.Response) (*NaverUser, error) {
 	if err != nil {
 		return naverUser, err
 	}
-	json.Unmarshal(body, &naverUser)
+	unmarshalErr := json.Unmarshal(body, &naverUser)
+	if unmarshalErr != nil {
+		return naverUser, unmarshalErr
+	}
 	log.Debugf("\nnaverUser: %v\n", naverUser)
 	return naverUser, err
 }

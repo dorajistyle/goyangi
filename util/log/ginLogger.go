@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/dorajistyle/goyangi/config"
+	"github.com/dorajistyle/goyangi/util/config"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,6 +20,18 @@ var (
 	reset   = string([]byte{27, 91, 48, 109})
 )
 
+// GetContextLogInfo gets context log information
+func GetContextLogInfo(c *gin.Context) (string, int, string, string, string) {
+	method := c.Request.Method
+	statusCode := c.Writer.Status()
+	urlPath := c.Request.URL.Path
+	errorString := c.Errors.String()
+	clientIP := c.ClientIP()
+	// clientIP := c.Request.RemoteAddr
+	return method, statusCode, urlPath, errorString, clientIP
+}
+
+// AccessLogger write access log into a file.
 func AccessLogger() gin.HandlerFunc {
 	// f, err := os.OpenFile(config.AccessLogFilePath+config.AccessLogFileExtension, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	// if err != nil {
@@ -43,20 +55,16 @@ func AccessLogger() gin.HandlerFunc {
 		end := time.Now()
 		latency := end.Sub(start)
 
-		clientIP := c.Request.RemoteAddr
-		method := c.Request.Method
-		statusCode := c.Writer.Status()
-		statusColor := colorForStatus(statusCode)
-		methodColor := colorForMethod(method)
+		method, statusCode, urlPath, errorString, clientIP := GetContextLogInfo(c)
 
-		stdlogger.Printf("[GIN] %v |%s %3d %s| %12v | %s |%s  %s %-7s %s\n%s",
+		stdlogger.Printf("[GIN] %v |%3d| %12v |%s %-7s | %s | %s",
 			end.Format("2006/01/02 - 15:04:05"),
-			statusColor, statusCode, reset,
+			statusCode,
 			latency,
+			method,
+			urlPath,
 			clientIP,
-			methodColor, reset, method,
-			c.Request.URL.Path,
-			c.Errors.String(),
+			errorString,
 		)
 	}
 }
@@ -94,3 +102,44 @@ func colorForMethod(method string) string {
 		return reset
 	}
 }
+
+// func AccessLoggerLegacy() gin.HandlerFunc {
+// 	// f, err := os.OpenFile(config.AccessLogFilePath+config.AccessLogFileExtension, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+// 	// if err != nil {
+// 	// 	Fatalf("error opening file: %v", err)
+// 	// }
+// 	// defer f.Close()
+// 	out := LumberJackLogger(config.AccessLogFilePath+config.AccessLogFileExtension, config.AccessLogMaxSize, config.AccessLogMaxBackups, config.AccessLogMaxAge)
+// 	stdlogger := log.New(out, "", 0)
+// 	// stdlogger := log.New(f, "", 0)
+// 	// stdlogger := log.New(os.Stdout, "", 0)
+// 	// errlogger := log.New(os.Stderr, "", 0)
+
+// 	return func(c *gin.Context) {
+// 		// Start timer
+// 		start := time.Now()
+
+// 		// Process request
+// 		c.Next()
+
+// 		// Stop timer
+// 		end := time.Now()
+// 		latency := end.Sub(start)
+
+// 		clientIP := c.Request.RemoteAddr
+// 		method := c.Request.Method
+// 		statusCode := c.Writer.Status()
+// 		statusColor := colorForStatus(statusCode)
+// 		methodColor := colorForMethod(method)
+
+// 		stdlogger.Printf("[GIN] %v |%s %3d %s| %12v | %s |%s  %s %-7s %s\n%s",
+// 			end.Format("2006/01/02 - 15:04:05"),
+// 			statusColor, statusCode, reset,
+// 			latency,
+// 			clientIP,
+// 			methodColor, reset, method,
+// 			c.Request.URL.Path,
+// 			c.Errors.String(),
+// 		)
+// 	}
+// }

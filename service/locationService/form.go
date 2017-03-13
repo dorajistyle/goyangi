@@ -10,8 +10,8 @@ type LocationFilter struct {
 
 // LocationForm is used when creating or updating a location.
 type LocationForm struct {
-	Id        int64   `form:"id"`
-	UserId    int64   `form:"userId"`
+	Id        uint    `form:"id"`
+	UserId    uint    `form:"userId"`
 	Latitude  float64 `form:"latitude" binding:"required"`
 	Longitude float64 `form:"longitude" binding:"required"`
 	Type      string  `form:"type"`

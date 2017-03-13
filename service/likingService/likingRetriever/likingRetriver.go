@@ -17,6 +17,7 @@ func RetrieveLikings(item interface{}, currentPages ...int) ([]model.User, int, 
 	} else {
 		currentPage = 1
 	}
+	log.Debugf("Liking Association : %v", db.ORM.Model(item).Association("Likings"))
 	count := db.ORM.Model(item).Association("Likings").Count()
 	offset, currentPage, hasPrev, hasNext := pagination.Paginate(currentPage, config.LikingPerPage, count)
 	db.ORM.Limit(config.LikingPerPage).Order(config.LikingOrder).Offset(offset).Select(config.UserPublicFields).Model(item).Association("Likings").Find(&users)

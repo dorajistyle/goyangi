@@ -18,38 +18,38 @@ type CommentList struct {
 
 // Comment is a comment model.
 type Comment struct {
-	Id          int64      `json:"id"`
-	Content     string     `json:"content"`
-	UserId      int64      `json:"userId"`
-	LikingCount int        `json:"likingCount"`
-	CreatedAt   time.Time  `json:"createdAt"`
-	UpdatedAt   time.Time  `json:"updatedAt"`
-	DeletedAt   time.Time  `json:"deletedAt"`
-	User        User `json:"user"`
+	Id          uint      `json:"id"`
+	Content     string    `json:"content"`
+	UserId      uint      `json:"userId"`
+	LikingCount int       `json:"likingCount"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UpdatedAt   time.Time `json:"updatedAt"`
+	DeletedAt   time.Time `json:"deletedAt"`
+	User        User      `json:"user"`
 }
 
 // LikingList is list that contains likings and meta.
 type LikingList struct {
-	HasPrev     bool          `json:"hasPrev"`
-	HasNext     bool          `json:"hasNext"`
-	Count       int           `json:"count"`
-	CurrentPage int           `json:"currentPage"`
-	IsLiked     bool          `json:"isLiked"`
-	Likings     []User        `json:"likings"`
+	HasPrev     bool   `json:"hasPrev"`
+	HasNext     bool   `json:"hasNext"`
+	Count       int    `json:"count"`
+	CurrentPage int    `json:"currentPage"`
+	IsLiked     bool   `json:"isLiked"`
+	Likings     []User `json:"likings"`
 }
 
 // LikedList is list that contains liked and meta.
 type LikedList struct {
-	HasPrev     bool          `json:"hasPrev"`
-	HasNext     bool          `json:"hasNext"`
-	Count       int           `json:"count"`
-	CurrentPage int           `json:"currentPage"`
-	Liked       []User        `json:"liked"`
+	HasPrev     bool   `json:"hasPrev"`
+	HasNext     bool   `json:"hasNext"`
+	Count       int    `json:"count"`
+	CurrentPage int    `json:"currentPage"`
+	Liked       []User `json:"liked"`
 }
 
 // Image is a image model.
 type Image struct {
-	Id        int64     `json:"id"`
+	Id        uint      `json:"id"`
 	Kind      int       `json:"kind"`
 	Large     string    `json:"large"`
 	Medium    string    `json:"medium"`
@@ -59,13 +59,13 @@ type Image struct {
 
 // Tag is a tag model.
 type Tag struct {
-	Id   int64  `json:"id"`
+	Id   uint   `json:"id"`
 	Name string `json:"name",sql:"size:255"`
 }
 
 // Link is a link model.
 type Link struct {
-	Id        int64     `json:"id"`
+	Id        uint      `json:"id"`
 	Kind      int       `json:"kind"`
 	Name      string    `json:"title",sql:"size:255"`
 	Url       string    `json:"url",sql:"size:512"`

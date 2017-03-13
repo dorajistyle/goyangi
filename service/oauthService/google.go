@@ -13,28 +13,6 @@ import (
 	"github.com/gin-gonic/gin/binding"
 )
 
-// Email is a struct that contained googleUser's email.
-type Email struct {
-	Value string `json:"value" binding:"required"`
-	Type  string `json:"type" binding:"required"`
-}
-
-// Image is a struct that contained googleUser's image meta data.
-type Image struct {
-	URL       string `json:"url" binding:"required"`
-	IsDefault string `json:"isDefault" binding:"required"`
-}
-
-// GoogleUser is a struct that contained google user information.
-type GoogleUser struct {
-	Id         string  `json:"id"`
-	Username   string  `json:"nickname"`
-	Emails     []Email `json:"emails"`
-	Name       string  `json:"displayName"`
-	Image      Image   `json:"image"`
-	ProfileUrl string  `json:"url"`
-}
-
 // GoogleURL return google auth url.
 func GoogleURL() (string, int) {
 	return oauth2.OauthURL(google.Config), http.StatusOK
@@ -49,7 +27,10 @@ func SetGoogleUser(response *http.Response) (*GoogleUser, error) {
 	if err != nil {
 		return googleUser, err
 	}
-	json.Unmarshal(body, &googleUser)
+	unmarshalErr := json.Unmarshal(body, &googleUser)
+	if unmarshalErr != nil {
+		return googleUser, unmarshalErr
+	}
 	return googleUser, err
 }
 

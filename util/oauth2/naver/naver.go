@@ -3,7 +3,7 @@ package naver
 import (
 	"net/url"
 
-	"github.com/dorajistyle/goyangi/config"
+	"github.com/dorajistyle/goyangi/util/config"
 	"golang.org/x/oauth2"
 )
 

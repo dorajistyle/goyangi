@@ -28,7 +28,7 @@ type oauthStatusMap map[string]bool
 
 // OauthUser is a struct for connection.
 type OauthUser struct {
-	Id         string
+	ID         string
 	Email      string
 	Username   string
 	Name       string
@@ -129,13 +129,13 @@ func CreateOauthUser(c *gin.Context, oauthUser *OauthUser, connection *model.Con
 }
 
 // LoginOrCreateOauthUser login or create with oauthUser
-func LoginOrCreateOauthUser(c *gin.Context, oauthUser *OauthUser, providerID int64, token *oauth2.Token) (int, error) {
+func LoginOrCreateOauthUser(c *gin.Context, oauthUser *OauthUser, providerId uint, token *oauth2.Token) (int, error) {
 	var connection model.Connection
 	var count int
-	db.ORM.Where("provider_id = ? and provider_user_id = ?", providerID, oauthUser.Id).First(&connection).Count(&count)
+	db.ORM.Where("provider_id = ? and provider_user_id = ?", providerId, oauthUser.ID).First(&connection).Count(&count)
 
-	connection.ProviderId = providerID
-	connection.ProviderUserId = oauthUser.Id
+	connection.ProviderId = providerId
+	connection.ProviderUserId = oauthUser.ID
 	connection.AccessToken = token.AccessToken
 	connection.ProfileUrl = oauthUser.ProfileUrl
 	connection.ImageUrl = oauthUser.ImageUrl
@@ -152,7 +152,7 @@ func LoginOrCreateOauthUser(c *gin.Context, oauthUser *OauthUser, providerID int
 		status, err := LoginWithOauthUser(c, user.Token)
 		return status, err
 	}
-	log.Debugf("Connection is not exist.")
+	log.Debugf("Connection does not exist.")
 	user, status, err := CreateOauthUser(c, oauthUser, &connection)
 	if err != nil {
 		return status, err
@@ -162,14 +162,14 @@ func LoginOrCreateOauthUser(c *gin.Context, oauthUser *OauthUser, providerID int
 }
 
 // RevokeOauth revokes oauth connection.
-func RevokeOauth(c *gin.Context, providerID int64) (oauthStatusMap, int, error) {
+func RevokeOauth(c *gin.Context, providerId int64) (oauthStatusMap, int, error) {
 	var oauthStatus oauthStatusMap
 	var connection model.Connection
 	currentUser, err := userService.CurrentUser(c)
 	if err != nil {
 		return oauthStatus, http.StatusUnauthorized, err
 	}
-	if db.ORM.First(&connection, "user_id= ? and provider_id = ? ", currentUser.Id, providerID).RecordNotFound() {
+	if db.ORM.First(&connection, "user_id= ? and provider_id = ? ", currentUser.Id, providerId).RecordNotFound() {
 		return oauthStatus, http.StatusNotFound, errors.New("Connection is not found.")
 	}
 	if db.ORM.Delete(&connection).Error != nil {
