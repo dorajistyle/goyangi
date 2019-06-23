@@ -56,9 +56,9 @@ VUE_JS_ROOT $ yarn serve
 * ID : admin
 * password : password
 
-![Goyangi Vue.js Home](./document/images/goyangi-vuejs-home.jpg "Goyangi Vue.js Home")
+![Goyangi Vue.js Home](./document/images/goyangi-vuejs-home.JPG "Goyangi Vue.js Home")
 
-![Goyangi Vue.js Board](./document/images/goyangi-vuejs-board.jpg "Goyangi Vue.js Board")
+![Goyangi Vue.js Board](./document/images/goyangi-vuejs-board.JPG "Goyangi Vue.js Board")
 
 
 ### Configuration
