@@ -7,7 +7,7 @@ import (
 // User is a user model
 type User struct {
 	Id uint `json:"id"`
-
+	AppId 	        uint      `json:"appId"`
 	Email           string    `json:"email",sql:"size:255;unique"`
 	Password        string    `json:"password",sql:"size:255"`
 	Name            string    `json:"name",sql:"size:255"`

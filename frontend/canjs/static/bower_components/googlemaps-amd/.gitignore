@@ -1,5 +1,0 @@
-# standard gitignore
-.idea/
-.idea/*
-.DS_STORE
-*.log

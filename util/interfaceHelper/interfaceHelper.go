@@ -1,8 +1,8 @@
 package interfaceHelper
 
-import (    
+import (
     "errors"
-    "strconv"    
+    "strconv"
 )
 
 // GetInt64 recognize a type of interface and return it's value
@@ -11,15 +11,15 @@ func GetInt64(unknown interface{}) (int64, error) {
     case float32:
         return int64(i), nil
     case float64:
-        return int64(i), nil    
+        return int64(i), nil
     case int:
         return int64(i), nil
     case int8:
         return int64(i), nil
     case int16:
-        return int64(i), nil        
+        return int64(i), nil
     case int32:
-        return int64(i), nil            
+        return int64(i), nil
     case int64:
         return i, nil
     case uint:
@@ -27,16 +27,16 @@ func GetInt64(unknown interface{}) (int64, error) {
     case uint8:
         return int64(i), nil
     case uint16:
-        return int64(i), nil        
+        return int64(i), nil
     case uint32:
-        return int64(i), nil            
+        return int64(i), nil
     case uint64:
-        return int64(i), nil        
+        return int64(i), nil
     case string:
          v, err := strconv.ParseInt(i, 10, 64)
          return v, err
     // ...other cases...
-    default:     
+    default:
         return -1, errors.New("get int64: unknown value is of incompatible type")
     }
 }

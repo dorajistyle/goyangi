@@ -6,7 +6,7 @@ const (
 	AccessLogFileExtension     = ".txt"
 	AccessLogMaxSize           = 5 // megabytes
 	AccessLogMaxBackups        = 7
-	AccessLogMaxAge            = 30 //days   
+	AccessLogMaxAge            = 30 //days
 	ErrorLogFilePath           = "log/error"
 	ErrorLogFileExtension      = ".json"
 	ErrorLogMaxSize            = 10 // megabytes

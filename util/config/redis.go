@@ -7,9 +7,9 @@ import (
 const (
 	redisAddrDevelopment = ""
 	redisPortDevelopment = "6379"
-	redisAddrTest        = "goyangi-redis.ohpuh0.0001.usw1.cache.amazonaws.com"
+	redisAddrTest        = "goyangi-redis"
 	redisPortTest        = "6379"
-	redisAddrProduction  = "goyangi-redis.ohpuh0.0001.usw1.cache.amazonaws.com"
+	redisAddrProduction  = "goyangi-redis"
 	redisPortProduction  = "6379"
 	Capacity             = 1
 	MaxCap               = 2

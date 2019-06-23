@@ -6,13 +6,12 @@
 // @License BSD
 // @LicenseUrl http://opensource.org/licenses/BSD-2-Clause
 // @SubApi Authentication [/authentications]
-// @SubApi User [/users]
-// @SubApi User extra [/user]
+// @SubApi Users [/users]
 // @SubApi Oauth [/oauth]
-// @SubApi Role [/roles]
-// @SubApi Article [/articles]
-// @SubApi Location [/locations]
-// @SubApi Upload [/locations]
+// @SubApi Roles [/roles]
+// @SubApi Articles [/articles]
+// @SubApi Upload [/upload]
+// @SubApi Commands [/commands]
 package api
 
 import (
@@ -30,9 +29,8 @@ func RouteAPI(parentRoute *gin.Engine) {
 		v1.Roles(route)
 		v1.Authentications(route)
 		v1.Articles(route)
-		v1.Locations(route)
 		v1.Upload(route)
-		v1.Experiments(route)
+		v1.Commands(route)
 		v1.Oauth(route)
 	}
 

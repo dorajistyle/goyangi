@@ -13,13 +13,13 @@ type Resampling interface {
 }
 
 func bcspline(x, b, c float32) float32 {
-	if x < 0.0 {
+	if x < 0 {
 		x = -x
 	}
-	if x < 1.0 {
+	if x < 1 {
 		return ((12-9*b-6*c)*x*x*x + (-18+12*b+6*c)*x*x + (6 - 2*b)) / 6
 	}
-	if x < 2.0 {
+	if x < 2 {
 		return ((-b-6*c)*x*x*x + (6*b+30*c)*x*x + (-12*b-48*c)*x + (8*b + 24*c)) / 6
 	}
 	return 0
@@ -27,7 +27,7 @@ func bcspline(x, b, c float32) float32 {
 
 func sinc(x float32) float32 {
 	if x == 0 {
-		return 1.0
+		return 1
 	}
 	return float32(math.Sin(math.Pi*float64(x)) / (math.Pi * float64(x)))
 }
@@ -50,68 +50,82 @@ func (r resamp) Kernel(x float32) float32 {
 	return r.kernel(x)
 }
 
-// Nearest neighbor resampling filter.
+// NearestNeighborResampling is a nearest neighbor resampling filter.
 var NearestNeighborResampling Resampling
 
-// Box resampling filter.
+// BoxResampling is a box resampling filter (average of surrounding pixels).
 var BoxResampling Resampling
 
-// Linear resampling filter.
+// LinearResampling is a bilinear resampling filter.
 var LinearResampling Resampling
 
-// Cubic resampling filter (Catmull-Rom).
+// CubicResampling is a bicubic resampling filter (Catmull-Rom).
 var CubicResampling Resampling
 
-// Lanczos resampling filter (3 lobes).
+// LanczosResampling is a Lanczos resampling filter (3 lobes).
 var LanczosResampling Resampling
 
-func precomputeResamplingWeights(dstSize, srcSize int, resampling Resampling) [][]uweight {
-	du := float32(srcSize) / float32(dstSize)
-	scale := du
-	if scale < 1.0 {
-		scale = 1.0
+type resampWeight struct {
+	index  int
+	weight float32
+}
+
+func prepareResampWeights(dstSize, srcSize int, resampling Resampling) [][]resampWeight {
+	delta := float32(srcSize) / float32(dstSize)
+	scale := delta
+	if scale < 1 {
+		scale = 1
 	}
-	ru := float32(math.Ceil(float64(scale * resampling.Support())))
+	radius := float32(math.Ceil(float64(scale * resampling.Support())))
 
-	tmp := make([]float32, int(ru+2)*2)
-	result := make([][]uweight, dstSize)
+	result := make([][]resampWeight, dstSize)
+	tmp := make([]resampWeight, 0, dstSize*int(radius+2)*2)
 
-	for v := 0; v < dstSize; v++ {
-		fU := (float32(v)+0.5)*du - 0.5
+	for i := 0; i < dstSize; i++ {
+		center := (float32(i)+0.5)*delta - 0.5
 
-		startu := int(math.Ceil(float64(fU - ru)))
-		if startu < 0 {
-			startu = 0
+		left := int(math.Ceil(float64(center - radius)))
+		if left < 0 {
+			left = 0
 		}
-		endu := int(math.Floor(float64(fU + ru)))
-		if endu > srcSize-1 {
-			endu = srcSize - 1
+		right := int(math.Floor(float64(center + radius)))
+		if right > srcSize-1 {
+			right = srcSize - 1
 		}
 
-		sumf := float32(0.0)
-		for u := startu; u <= endu; u++ {
-			w := resampling.Kernel((float32(u) - fU) / scale)
-			sumf += w
-			tmp[u-startu] = w
+		var sum float32
+		for j := left; j <= right; j++ {
+			weight := resampling.Kernel((float32(j) - center) / scale)
+			if weight == 0 {
+				continue
+			}
+			tmp = append(tmp, resampWeight{
+				index:  j,
+				weight: weight,
+			})
+			sum += weight
 		}
-		for u := startu; u <= endu; u++ {
-			w := float32(tmp[u-startu] / sumf)
-			result[v] = append(result[v], uweight{u, w})
+
+		for j := range tmp {
+			tmp[j].weight /= sum
 		}
+
+		result[i] = tmp
+		tmp = tmp[len(tmp):]
 	}
 
 	return result
 }
 
-func resizeLine(dstBuf []pixel, srcBuf []pixel, weights [][]uweight) {
-	for dstu := 0; dstu < len(weights); dstu++ {
+func resizeLine(dst []pixel, src []pixel, weights [][]resampWeight) {
+	for i := 0; i < len(dst); i++ {
 		var r, g, b, a float32
-		for _, iw := range weights[dstu] {
-			c := srcBuf[iw.u]
-			wa := c.A * iw.weight
-			r += c.R * wa
-			g += c.G * wa
-			b += c.B * wa
+		for _, w := range weights[i] {
+			c := src[w.index]
+			wa := c.a * w.weight
+			r += c.r * wa
+			g += c.g * wa
+			b += c.b * wa
 			a += wa
 		}
 		if a != 0 {
@@ -119,7 +133,7 @@ func resizeLine(dstBuf []pixel, srcBuf []pixel, weights [][]uweight) {
 			g /= a
 			b /= a
 		}
-		dstBuf[dstu] = pixel{r, g, b, a}
+		dst[i] = pixel{r, g, b, a}
 	}
 }
 
@@ -127,15 +141,15 @@ func resizeHorizontal(dst draw.Image, src image.Image, w int, resampling Resampl
 	srcb := src.Bounds()
 	dstb := dst.Bounds()
 
-	weights := precomputeResamplingWeights(w, srcb.Dx(), resampling)
+	weights := prepareResampWeights(w, srcb.Dx(), resampling)
 
 	pixGetter := newPixelGetter(src)
 	pixSetter := newPixelSetter(dst)
 
-	parallelize(options.Parallelization, srcb.Min.Y, srcb.Max.Y, func(pmin, pmax int) {
+	parallelize(options.Parallelization, srcb.Min.Y, srcb.Max.Y, func(start, stop int) {
 		srcBuf := make([]pixel, srcb.Dx())
 		dstBuf := make([]pixel, w)
-		for srcy := pmin; srcy < pmax; srcy++ {
+		for srcy := start; srcy < stop; srcy++ {
 			pixGetter.getPixelRow(srcy, &srcBuf)
 			resizeLine(dstBuf, srcBuf, weights)
 			pixSetter.setPixelRow(dstb.Min.Y+srcy-srcb.Min.Y, dstBuf)
@@ -147,15 +161,15 @@ func resizeVertical(dst draw.Image, src image.Image, h int, resampling Resamplin
 	srcb := src.Bounds()
 	dstb := dst.Bounds()
 
-	weights := precomputeResamplingWeights(h, srcb.Dy(), resampling)
+	weights := prepareResampWeights(h, srcb.Dy(), resampling)
 
 	pixGetter := newPixelGetter(src)
 	pixSetter := newPixelSetter(dst)
 
-	parallelize(options.Parallelization, srcb.Min.X, srcb.Max.X, func(pmin, pmax int) {
+	parallelize(options.Parallelization, srcb.Min.X, srcb.Max.X, func(start, stop int) {
 		srcBuf := make([]pixel, srcb.Dy())
 		dstBuf := make([]pixel, h)
-		for srcx := pmin; srcx < pmax; srcx++ {
+		for srcx := start; srcx < stop; srcx++ {
 			pixGetter.getPixelColumn(srcx, &srcBuf)
 			resizeLine(dstBuf, srcBuf, weights)
 			pixSetter.setPixelColumn(dstb.Min.X+srcx-srcb.Min.X, dstBuf)
@@ -172,8 +186,8 @@ func resizeNearest(dst draw.Image, src image.Image, w, h int, options *Options) 
 	pixGetter := newPixelGetter(src)
 	pixSetter := newPixelSetter(dst)
 
-	parallelize(options.Parallelization, dstb.Min.Y, dstb.Min.Y+h, func(pmin, pmax int) {
-		for dsty := pmin; dsty < pmax; dsty++ {
+	parallelize(options.Parallelization, dstb.Min.Y, dstb.Min.Y+h, func(start, stop int) {
+		for dsty := start; dsty < stop; dsty++ {
 			for dstx := dstb.Min.X; dstx < dstb.Min.X+w; dstx++ {
 				fx := math.Floor((float64(dstx-dstb.Min.X) + 0.5) * dx)
 				fy := math.Floor((float64(dsty-dstb.Min.Y) + 0.5) * dy)
@@ -200,11 +214,11 @@ func (p *resizeFilter) Bounds(srcBounds image.Rectangle) (dstBounds image.Rectan
 		dstBounds = image.Rect(0, 0, 0, 0)
 	} else if w == 0 {
 		fw := float64(h) * float64(srcw) / float64(srch)
-		dstw := int(math.Max(1.0, math.Floor(fw+0.5)))
+		dstw := int(math.Max(1, math.Floor(fw+0.5)))
 		dstBounds = image.Rect(0, 0, dstw, h)
 	} else if h == 0 {
 		fh := float64(w) * float64(srch) / float64(srcw)
-		dsth := int(math.Max(1.0, math.Floor(fh+0.5)))
+		dsth := int(math.Max(1, math.Floor(fh+0.5)))
 		dstBounds = image.Rect(0, 0, w, dsth)
 	} else {
 		dstBounds = image.Rect(0, 0, w, h)
@@ -248,7 +262,6 @@ func (p *resizeFilter) Draw(dst draw.Image, src image.Image, options *Options) {
 	tmp := createTempImage(image.Rect(0, 0, w, src.Bounds().Dy()))
 	resizeHorizontal(tmp, src, w, p.resampling, options)
 	resizeVertical(dst, tmp, h, p.resampling, options)
-	return
 }
 
 // Resize creates a filter that resizes an image to the specified width and height using the specified resampling.
@@ -308,7 +321,6 @@ func (p *resizeToFitFilter) Bounds(srcBounds image.Rectangle) image.Rectangle {
 func (p *resizeToFitFilter) Draw(dst draw.Image, src image.Image, options *Options) {
 	b := p.Bounds(src.Bounds())
 	Resize(b.Dx(), b.Dy(), p.resampling).Draw(dst, src, options)
-	return
 }
 
 // ResizeToFit creates a filter that resizes an image to fit within the specified dimensions while preserving the aspect ratio.
@@ -364,8 +376,6 @@ func (p *resizeToFillFilter) Draw(dst draw.Image, src image.Image, options *Opti
 	tmp := createTempImage(image.Rect(0, 0, tmpw, tmph))
 	Resize(tmpw, tmph, p.resampling).Draw(tmp, src, options)
 	CropToSize(w, h, p.anchor).Draw(dst, tmp, options)
-
-	return
 }
 
 // ResizeToFill creates a filter that resizes an image to the smallest possible size that will cover the specified dimensions,
@@ -384,7 +394,7 @@ func init() {
 	// Nearest neighbor resampling filter.
 	NearestNeighborResampling = resamp{
 		name:    "NearestNeighborResampling",
-		support: 0.0,
+		support: 0,
 		kernel: func(x float32) float32 {
 			return 0
 		},
@@ -395,11 +405,11 @@ func init() {
 		name:    "BoxResampling",
 		support: 0.5,
 		kernel: func(x float32) float32 {
-			if x < 0.0 {
+			if x < 0 {
 				x = -x
 			}
 			if x <= 0.5 {
-				return 1.0
+				return 1
 			}
 			return 0
 		},
@@ -408,13 +418,13 @@ func init() {
 	// Linear resampling filter.
 	LinearResampling = resamp{
 		name:    "LinearResampling",
-		support: 1.0,
+		support: 1,
 		kernel: func(x float32) float32 {
-			if x < 0.0 {
+			if x < 0 {
 				x = -x
 			}
-			if x < 1.0 {
-				return 1.0 - x
+			if x < 1 {
+				return 1 - x
 			}
 			return 0
 		},
@@ -423,13 +433,13 @@ func init() {
 	// Cubic resampling filter (Catmull-Rom).
 	CubicResampling = resamp{
 		name:    "CubicResampling",
-		support: 2.0,
+		support: 2,
 		kernel: func(x float32) float32 {
-			if x < 0.0 {
+			if x < 0 {
 				x = -x
 			}
-			if x < 2.0 {
-				return bcspline(x, 0.0, 0.5)
+			if x < 2 {
+				return bcspline(x, 0, 0.5)
 			}
 			return 0
 		},
@@ -438,13 +448,13 @@ func init() {
 	// Lanczos resampling filter (3 lobes).
 	LanczosResampling = resamp{
 		name:    "LanczosResampling",
-		support: 3.0,
+		support: 3,
 		kernel: func(x float32) float32 {
-			if x < 0.0 {
+			if x < 0 {
 				x = -x
 			}
-			if x < 3.0 {
-				return sinc(x) * sinc(x/3.0)
+			if x < 3 {
+				return sinc(x) * sinc(x/3)
 			}
 			return 0
 		},

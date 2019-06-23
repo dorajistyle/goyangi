@@ -12,12 +12,8 @@ func InitApp() []string {
 		log.Fatal(err)
 	}
 	commands = append(commands, "SCRIPTPATH="+dir)
-	commands = append(commands, "goop install")
-	commands = append(commands, "cd \"$SCRIPTPATH/migrate\"")
-	commands = append(commands, "goop install")
-	commands = append(commands, GoopGoRun+"migrate.go")
-	commands = append(commands, "cd \"$SCRIPTPATH/frontend/canjs/compiler\"")
-	commands = append(commands, "npm install --save-dev")
-	commands = append(commands, "gulp")
+	commands = append(commands, "dep ensure")
+	commands = append(commands, "cd \"$SCRIPTPATH/frontend/vuejs\"")
+	commands = append(commands, "yarn")
 	return commands
 }

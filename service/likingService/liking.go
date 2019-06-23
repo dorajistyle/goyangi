@@ -4,19 +4,71 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/dorajistyle/goyangi/config"
 	"github.com/dorajistyle/goyangi/db"
 	"github.com/dorajistyle/goyangi/model"
 	"github.com/dorajistyle/goyangi/service/userService/userPermission"
 	"github.com/dorajistyle/goyangi/util/log"
+	"github.com/dorajistyle/goyangi/util/pagination"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+
 )
+
+func RetrieveLikings(item interface{}, currentUserId uint, currentPages ...int) (model.LikingList) {
+	var users []model.User
+	var currentPage int
+	currentUserlikedCount := db.ORM.Model(item).Where("id =?", currentUserId).Association("Likings").Count()
+	log.Debugf("Current user like count : %d", currentUserlikedCount)
+	isLiked := currentUserlikedCount == 1
+	if len(currentPages) > 0 {
+		currentPage = currentPages[0]
+	} else {
+		currentPage = 1
+	}
+	log.Debugf("Liking Association : %v", db.ORM.Model(item).Association("Likings"))
+	count := db.ORM.Model(item).Association("Likings").Count()
+	offset, currentPage, hasPrev, hasNext := pagination.Paginate(currentPage, config.LikingPerPage, count)
+	db.ORM.Limit(config.LikingPerPage).Order(config.LikingOrder).Offset(offset).Select(config.UserPublicFields).Model(item).Association("Likings").Find(&users)
+
+
+	return model.LikingList{Likings: users, HasPrev: hasPrev, HasNext: hasNext, Count: count, CurrentPage: currentPage, IsLiked: isLiked}
+}
+
+// RetrieveLiked retrieves liked.
+func RetrieveLiked(item interface{}, currentPages ...int) (model.LikedList) {
+	var users []model.User
+	var currentPage int
+	if len(currentPages) > 0 {
+		currentPage = currentPages[0]
+	} else {
+		currentPage = 1
+	}
+	count := db.ORM.Model(item).Association("Liked").Count()
+	offset, currentPage, hasPrev, hasNext := pagination.Paginate(currentPage, config.LikedPerPage, count)
+	db.ORM.Limit(config.LikedPerPage).Order(config.LikedOrder).Offset(offset).Select(config.UserPublicFields).Model(item).Association("Liked").Find(&users)
+	//
+	// var likedArr []model.PublicUser
+	// for _, user := range users {
+	// 	likedArr = append(likedArr, model.PublicUser{User: user})
+	// }
+
+	log.Debugf("liked : %v", users)
+	return model.LikedList{Liked: users, HasPrev: hasPrev, HasNext: hasNext, Count: count, CurrentPage: currentPage}
+}
+
 
 // CreateLiking create a liking.
 func CreateLiking(c *gin.Context, item interface{}) (int, error) {
 	var form CreateLikingForm
 	var likingUser model.User
-	c.BindWith(&form, binding.Form)
+
+	bindErr := c.MustBindWith(&form, binding.Form)
+	log.Debugf("bind error : %s\n", bindErr)
+	if bindErr != nil  {
+		return http.StatusInternalServerError, errors.New("Invalid form.")
+	}
+
 	log.Debugf("liking_form : %v", form)
 	if db.ORM.First(item, form.ParentId).RecordNotFound() {
 		return http.StatusNotFound, errors.New("Item is not found.")

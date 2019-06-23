@@ -3,12 +3,11 @@ package articleService
 import (
 	"errors"
 	"net/http"
-
 	"github.com/dorajistyle/goyangi/db"
 	"github.com/dorajistyle/goyangi/form"
 	"github.com/dorajistyle/goyangi/model"
+	"github.com/dorajistyle/goyangi/service/userService"
 	"github.com/dorajistyle/goyangi/service/likingService"
-	"github.com/dorajistyle/goyangi/service/likingService/likingRetriever"
 	"github.com/dorajistyle/goyangi/util/log"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -38,21 +37,30 @@ func CreateLikingOnArticle(c *gin.Context) (int, error) {
 }
 
 // RetrieveLikingsOnArticles retrieves likings on article.
-func RetrieveLikingsOnArticles(c *gin.Context) ([]model.User, int, bool, bool, int, int, error) {
+func RetrieveLikingsOnArticles(c *gin.Context) (model.LikingList, int, error) {
 	var article model.Article
-	var likings []model.User
+	var likingList model.LikingList
 	var retrieveListForm form.RetrieveListForm
-	var hasPrev, hasNext bool
-	var currentPage, count int
+	
 	articleId := c.Params.ByName("id")
 	log.Debugf("Liking params : %v", c.Params)
-	c.BindWith(&retrieveListForm, binding.Form)
+
+	bindErr := c.MustBindWith(&retrieveListForm, binding.Form)
+	log.Debugf("[RetrieveLikingsOnArticles] bind error : %s\n", bindErr)
+	if bindErr != nil {
+		return likingList, http.StatusBadRequest, errors.New("Comments are not retrieved.")
+	}
+
+
 	log.Debugf("retrieveListForm %+v\n", retrieveListForm)
 	if db.ORM.First(&article, articleId).RecordNotFound() {
-		return likings, currentPage, hasPrev, hasNext, count, http.StatusNotFound, errors.New("Article is not found.")
+		return likingList, http.StatusNotFound, errors.New("Article is not found.")
 	}
-	likings, currentPage, hasPrev, hasNext, count = likingRetriever.RetrieveLikings(article, retrieveListForm.CurrentPage)
-	return likings, currentPage, hasPrev, hasNext, count, http.StatusOK, nil
+	currentUser, _ := userService.CurrentUser(c)
+	likingList = likingService.RetrieveLikings(article, currentUser.Id)
+	// DEPRECATED likingMeta.SetLikingPageMeta(&likingList, currentPage, hasPrev, hasNext, article.LikingCount, currentUserlikedCount)
+
+	return likingList, http.StatusOK, nil
 }
 
 // DeleteLikingOnArticle deletes liking on article.

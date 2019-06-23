@@ -11,6 +11,6 @@ const (
 	// UploadTarget  = "S3"
 	//	UploadBucket = TEST | PRODUCTION
 	UploadBucket  = "TEST"
-	
+
 	UploadTimeout = 30 * time.Second
 )

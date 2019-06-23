@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <title>goyangi</title>
+    <meta name="description" content="">
+    <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.5.0/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <!--if lt IE 9
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    -->
+  </head>
+  <body>
+    <noscript>
+      <strong>We're sorry but vuejs doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
+
+    <section class="section is-fullheight is-default is-bold">
+      <div class="container">
+        <div id="messageContainer">
+          <div id="ajaxProgress" class="is-hidden">
+            <a class="button is-loading">Now loading...</a>
+          </div>
+        </div>
+        <div id="welcomeWrapper"></div>
+      </div>
+
+      <div id="appWrapper">
+        <div id="app">
+          <router-view></router-view>
+          <div id="messageContainer">
+            <div id="ajaxProgress" class="is-hidden">
+              <a class="button is-loading">Now loading...</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="popup"></div>
+
+    </section>
+
+    <!-- built files will be auto injected -->
+  </body>
+</html>

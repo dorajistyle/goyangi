@@ -40,24 +40,24 @@ func (p *pixelateFilter) Draw(dst draw.Image, src image.Image, options *Options)
 	pixGetter := newPixelGetter(src)
 	pixSetter := newPixelSetter(dst)
 
-	parallelize(options.Parallelization, 0, numBlocksY, func(bmin, bmax int) {
-		for by := bmin; by < bmax; by++ {
+	parallelize(options.Parallelization, 0, numBlocksY, func(start, stop int) {
+		for by := start; by < stop; by++ {
 			for bx := 0; bx < numBlocksX; bx++ {
-				// calculate the block bounds
+				// Calculate the block bounds.
 				bb := image.Rect(bx*blockSize, by*blockSize, (bx+1)*blockSize, (by+1)*blockSize)
 				bbSrc := bb.Add(srcb.Min).Intersect(srcb)
 				bbDst := bbSrc.Sub(srcb.Min).Add(dstb.Min).Intersect(dstb)
 
-				// calculate average color of the block
+				// Calculate the average color of the block.
 				var r, g, b, a float32
 				var cnt float32
 				for y := bbSrc.Min.Y; y < bbSrc.Max.Y; y++ {
 					for x := bbSrc.Min.X; x < bbSrc.Max.X; x++ {
 						px := pixGetter.getPixel(x, y)
-						r += px.R
-						g += px.G
-						b += px.B
-						a += px.A
+						r += px.r
+						g += px.g
+						b += px.b
+						a += px.a
 						cnt++
 					}
 				}
@@ -68,7 +68,7 @@ func (p *pixelateFilter) Draw(dst draw.Image, src image.Image, options *Options)
 					a /= cnt
 				}
 
-				// set the calculated color for all pixels in the block
+				// Set the calculated color for all pixels in the block.
 				for y := bbDst.Min.Y; y < bbDst.Max.Y; y++ {
 					for x := bbDst.Min.X; x < bbDst.Max.X; x++ {
 						pixSetter.setPixel(x, y, pixel{r, g, b, a})

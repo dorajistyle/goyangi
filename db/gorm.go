@@ -16,7 +16,6 @@ func GormInit() (*gorm.DB, error) {
 	// db, err := gorm.Open("mysql", config.MysqlDSL())
 	//db, err := gorm.Open("sqlite3", "/tmp/gorm.db")
 
-	// Get database connection handle [*sql.DB](http://golang.org/pkg/database/sql/#DB)
 	db.DB()
 
 	// Then you could invoke `*sql.DB`'s functions with it
@@ -28,29 +27,8 @@ func GormInit() (*gorm.DB, error) {
 	// db.SingularTable(true)
 	if config.Environment == "DEVELOPMENT" {
 		db.LogMode(true)
-		// db.DropTable(&model.User{}, "UserFollower")
-		// db.AutoMigrate(&model.UserFollower{})
-		// db.AutoMigrate(&model.User{}, &model.Role{}, &model.Connection{}, &model.Language{}, &model.Article{}, &model.Location{}, &model.Comment{}, &model.File{})
-		// db.Model(&model.User{}).AddIndex("idx_user_token", "token")
-
 	}
 	log.CheckError(err)
-
-	// relation := gorm.Relationship{}
-	// relation.Kind = "many2many"
-	// relation.ForeignFieldNames = []string{"id"}            //(M1 pkey)
-	// relation.ForeignDBNames = []string{"user_id"}          //(M1 fkey in m1m2join)
-	// relation.AssociationForeignFieldNames = []string{"id"} //(M2 pkey)
-	// // relation.AssociationForeignStructFieldNames = []string{"id", "ID"} //(m2 pkey name in m2 struct?)
-	// relation.AssociationForeignDBNames = []string{"follower_id"} //(m2 fkey in m1m2join)
-	// m1Type := reflect.TypeOf(model.User{})
-	// m2Type := reflect.TypeOf(model.User{})
-	// handler := gorm.JoinTableHandler{}
-	// // ORDER BELOW MATTERS
-	// // Install handler
-	// db.SetJoinTableHandler(&model.User{}, "Likings", &handler)
-	// // Configure handler to use the relation that we've defined
-	// handler.Setup(&relation, "users_followers", m1Type, m2Type)
 
 	return db, err
 }

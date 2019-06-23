@@ -12,7 +12,7 @@ func Commands() []cli.Command {
 		// Init application
 		{
 			Name:  "init",
-			Usage: "Init application(go packages / DB migration / Frontend compiler)",
+			Usage: "Init application(go packages)",
 			Action: func(c *cli.Context) {
 				commands := InitApp()
 				RunScript(commands)
@@ -69,21 +69,6 @@ func Commands() []cli.Command {
 				commands := Test(ci)
 				RunScript(commands)
 				println("Test script done.")
-			},
-		},
-		// Run watcher
-		{
-			Name:    "watcher",
-			Aliases: []string{"w"},
-			Usage:   "Run watcher",
-			Action: func(c *cli.Context) {
-				frontend := "canjs"
-				if len(c.Args()) > 0 {
-					frontend = c.Args()[0]
-				}
-				commands := Watcher(frontend)
-				RunScript(commands)
-				println("Watcher is running now.")
 			},
 		},
 	} // end []cli.Command

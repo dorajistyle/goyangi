@@ -13,11 +13,11 @@ import (
 )
 
 // FindUserByUserName creates a user.
-func FindUserByUserName(appID int64, userName string) (model.User, int, error) {
+func FindUserByUserName(appId int64, userName string) (model.User, int, error) {
 	var user model.User
 	var err error
 	// token := c.Request.Header.Get("X-Auth-Token")
-	user, err = retrieveHelper.RetriveUserWithAppIDAndUserName(appID, userName)
+	user, err = retrieveHelper.RetriveUserWithAppIdAndUserName(appId, userName)
 	if err != nil {
 		return user, http.StatusUnauthorized, err
 	}
@@ -25,7 +25,7 @@ func FindUserByUserName(appID int64, userName string) (model.User, int, error) {
 }
 
 // FindOrCreateUser creates a user.
-func FindOrCreateUser(appID int64, userName string) (model.User, int, error) {
+func FindOrCreateUser(appId int64, userName string) (model.User, int, error) {
 	var user model.User
 	var err error
 
@@ -40,13 +40,13 @@ func FindOrCreateUser(appID int64, userName string) (model.User, int, error) {
 	// }
 	log.Debugf("userName : %s\n", userName)
 	// log.Debugf("Error : %s\n", err.Error())
-	user, err = retrieveHelper.RetriveUserWithAppIDAndUserName(appID, userName)
+	user, err = retrieveHelper.RetriveUserWithAppIdAndUserName(appId, userName)
 	if err != nil {
 		var user model.User
 		// return user, http.StatusBadRequest, err
 		user.Name = userName
 		// user.Token = token
-		user.AppID = appID
+		user.AppId = appId
 		log.Debugf("user %+v\n", user)
 		if db.ORM.Create(&user).Error != nil {
 			return user, http.StatusBadRequest, errors.New("User is not created.")

@@ -3,7 +3,7 @@ package jwt
 import (
 	"github.com/dorajistyle/goyangi/util/config"
 	"github.com/dorajistyle/goyangi/util/timeHelper"
-	jwt "github.com/dorajistyle/goyangi/vendor/github.com/dgrijalva/jwt-go"
+	"github.com/dgrijalva/jwt-go"
 	// "github.com/dorajistyle/goyangi/util/interfaceHelper"
 	"errors"
 	"fmt"
@@ -18,10 +18,10 @@ import (
 func CreateTokenHMAC(appKey string, secretkey string, username string, expiration int64, signingKey string) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 	// Set some claims
-	token.Claims["ak"] = appKey
-	token.Claims["sk"] = secretkey
-	token.Claims["un"] = username
-	token.Claims["exp"] = expiration
+	token.Claims.(jwt.MapClaims)["ak"] = appKey
+	token.Claims.(jwt.MapClaims)["sk"] = secretkey
+	token.Claims.(jwt.MapClaims)["un"] = username
+	token.Claims.(jwt.MapClaims)["exp"] = expiration
 	// Sign and get the complete encoded token as a string
 	tokenString, err := token.SignedString([]byte(signingKey))
 	return tokenString, err
@@ -61,10 +61,10 @@ func ParseTokenHMAC(userToken string, signingKey string) (*jwt.Token, error) {
 func CreateTokenRSA(appKey string, secretkey string, username string, expiration int64, signingKey string) (string, error) {
 	token := jwt.New(jwt.SigningMethodRS256)
 	// Set some claims
-	token.Claims["ak"] = appKey
-	token.Claims["sk"] = secretkey
-	token.Claims["un"] = username
-	token.Claims["exp"] = expiration
+	token.Claims.(jwt.MapClaims)["ak"] = appKey
+	token.Claims.(jwt.MapClaims)["sk"] = secretkey
+	token.Claims.(jwt.MapClaims)["un"] = username
+	token.Claims.(jwt.MapClaims)["exp"] = expiration
 	// Sign and get the complete encoded token as a string
 	tokenString, err := token.SignedString([]byte(signingKey))
 	return tokenString, err
@@ -144,7 +144,7 @@ func ValidateToken(userToken string, signingKey string) (map[string]interface{},
 			if ve.Errors&jwt.ValidationErrorMalformed != 0 {
 				return nil, http.StatusUnauthorized, err
 			} else if ve.Errors&(jwt.ValidationErrorExpired|jwt.ValidationErrorNotValidYet) != 0 {
-				claims = token.Claims
+				claims = token.Claims.(jwt.MapClaims)
 				if signingKey == config.JWTSigningKeyHMACServer {
 					var app model.App
 					var user model.User
@@ -152,12 +152,12 @@ func ValidateToken(userToken string, signingKey string) (map[string]interface{},
 						return nil, http.StatusNotFound, errors.New("App is not found.")
 					}
 
-					if db.ORM.Where("app_id=? and name=?", app.ID, claims["un"]).First(&user).RecordNotFound() {
-						return nil, http.StatusNotFound, errors.New("User not found. (Check the AppID and the UserName)")
+					if db.ORM.Where("app_id=? and name=?", app.Id, claims["un"]).First(&user).RecordNotFound() {
+						return nil, http.StatusNotFound, errors.New("User not found. (Check the AppId and the UserName)")
 					}
 					var expiredTokenLog model.ExpiredTokenLog
 
-					expiredTokenLog.UserID = user.ID
+					expiredTokenLog.UserId = user.Id
 					expiredTokenLog.AccessedAt = time.Now()
 					if db.ORM.Create(&expiredTokenLog).Error != nil {
 						return nil, http.StatusBadRequest, errors.New("ExpiredTokenLog is not created.")
@@ -170,7 +170,7 @@ func ValidateToken(userToken string, signingKey string) (map[string]interface{},
 			return nil, http.StatusUnauthorized, err
 		}
 	}
-	claims = token.Claims
+	claims = token.Claims.(jwt.MapClaims)
 	// var expInt64 int64
 	// exp := claims["exp"]
 	// expInt64, err = interfaceHelper.GetInt64(exp)
@@ -181,12 +181,12 @@ func ValidateToken(userToken string, signingKey string) (map[string]interface{},
 	//         return nil, http.StatusNotFound, errors.New("App is not found.")
 	//     }
 
-	//     if db.ORM.Where("app_id=? and name=?", app.ID, claims["un"]).First(&user).RecordNotFound() {
-	//         return nil, http.StatusNotFound, errors.New("User not found. (Check the AppID and the UserName)")
+	//     if db.ORM.Where("app_id=? and name=?", app.Id, claims["un"]).First(&user).RecordNotFound() {
+	//         return nil, http.StatusNotFound, errors.New("User not found. (Check the AppId and the UserName)")
 	//     }
 	//     var expiredTokenLog model.ExpiredTokenLog
 
-	//     expiredTokenLog.UserID = user.ID
+	//     expiredTokenLog.UserId = user.Id
 	//     expiredTokenLog.AccessedAt = time.Now()
 	//     createErr := db.ORM.Create(&expiredTokenLog).Error
 	//     if  createErr != nil {

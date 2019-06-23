@@ -25,7 +25,7 @@ var _ = Describe("StringHelper", func() {
 	)
 
 	BeforeEach(func() {
-		testStr = "Nowplay is a SDK."
+		testStr = "Goyangi is a SDK."
 		leadingStr = "Tanguero y "
 		followingStr = "Tanguera"
 	})

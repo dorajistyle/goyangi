@@ -1,23 +1,19 @@
 /*
-
 Package gift provides a set of useful image processing filters.
 
 Basic usage:
 
-	// 1. Create a new GIFT and add some filters:
-
+	// 1. Create a new filter list and add some filters.
 	g := gift.New(
 	    gift.Resize(800, 0, gift.LanczosResampling),
-	    gift.UnsharpMask(1.0, 1.0, 0.0),
+	    gift.UnsharpMask(1, 1, 0),
 	)
 
 	// 2. Create a new image of the corresponding size.
-	// dst is a new target image, src is the original image
-
+	// dst is a new target image, src is the original image.
 	dst := image.NewRGBA(g.Bounds(src.Bounds()))
 
-	// 3. Use Draw func to apply the filters to src and store the result in dst:
-
+	// 3. Use the Draw func to apply the filters to src and store the result in dst.
 	g.Draw(dst, src)
 
 */
@@ -45,13 +41,13 @@ var defaultOptions = Options{
 	Parallelization: true,
 }
 
-// GIFT implements a list of filters that can be applied to an image at once.
+// GIFT is a list of image processing filters.
 type GIFT struct {
 	Filters []Filter
 	Options Options
 }
 
-// New creates a new instance of the filter toolkit and initializes it with the given list of filters.
+// New creates a new filter list and initializes it with the given slice of filters.
 func New(filters ...Filter) *GIFT {
 	return &GIFT{
 		Filters: filters,
@@ -59,12 +55,8 @@ func New(filters ...Filter) *GIFT {
 	}
 }
 
-// SetParallelization enables or disables faster image processing using parallel goroutines.
+// SetParallelization enables or disables the image processing parallelization.
 // Parallelization is enabled by default.
-// To achieve maximum performance, make sure to allow Go to utilize all CPU cores:
-//
-// 	runtime.GOMAXPROCS(runtime.NumCPU())
-//
 func (g *GIFT) SetParallelization(isEnabled bool) {
 	g.Options.Parallelization = isEnabled
 }
@@ -136,6 +128,7 @@ func (g *GIFT) Draw(dst draw.Image, src image.Image) {
 // Operator is an image composition operator.
 type Operator int
 
+// Composition operators.
 const (
 	CopyOperator Operator = iota
 	OverOperator
@@ -154,20 +147,20 @@ func (g *GIFT) DrawAt(dst draw.Image, src image.Image, pt image.Point, op Operat
 		pixGetterTmp := newPixelGetter(tmp)
 		pixSetterDst := newPixelSetter(dst)
 		ib := tb.Intersect(dst.Bounds())
-		parallelize(g.Options.Parallelization, ib.Min.Y, ib.Max.Y, func(pmin, pmax int) {
-			for y := pmin; y < pmax; y++ {
+		parallelize(g.Options.Parallelization, ib.Min.Y, ib.Max.Y, func(start, stop int) {
+			for y := start; y < stop; y++ {
 				for x := ib.Min.X; x < ib.Max.X; x++ {
 					px0 := pixGetterDst.getPixel(x, y)
 					px1 := pixGetterTmp.getPixel(x, y)
-					c1 := px1.A
-					c0 := (1 - c1) * px0.A
+					c1 := px1.a
+					c0 := (1 - c1) * px0.a
 					cs := c0 + c1
 					c0 /= cs
 					c1 /= cs
-					r := px0.R*c0 + px1.R*c1
-					g := px0.G*c0 + px1.G*c1
-					b := px0.B*c0 + px1.B*c1
-					a := px0.A + px1.A*(1-px0.A)
+					r := px0.r*c0 + px1.r*c1
+					g := px0.g*c0 + px1.g*c1
+					b := px0.b*c0 + px1.b*c1
+					a := px0.a + px1.a*(1-px0.a)
 					pixSetterDst.setPixel(x, y, pixel{r, g, b, a})
 				}
 			}
@@ -189,8 +182,8 @@ func (g *GIFT) DrawAt(dst draw.Image, src image.Image, pt image.Point, op Operat
 		pixGetter := newPixelGetter(tmp)
 		pixSetter := newPixelSetter(dst)
 		ib := tb.Intersect(dst.Bounds())
-		parallelize(g.Options.Parallelization, ib.Min.Y, ib.Max.Y, func(pmin, pmax int) {
-			for y := pmin; y < pmax; y++ {
+		parallelize(g.Options.Parallelization, ib.Min.Y, ib.Max.Y, func(start, stop int) {
+			for y := start; y < stop; y++ {
 				for x := ib.Min.X; x < ib.Max.X; x++ {
 					pixSetter.setPixel(x, y, pixGetter.getPixel(x, y))
 				}

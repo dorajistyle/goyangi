@@ -1,47 +1,65 @@
 # [Goyangi](http://goyangi.dorajistyle.net)
 
-Goyangi is a web foundation to help you getting started with a new web project based on Golang. It suits for you who want to develop SPA or mobile application.
-It also good example how to develop large web application that combined fancy golang packages. [Goyangi](http://en.wikipedia.org/wiki/goyangi) means cat in Korean.
+Goyangi is a web foundation to help you get started with a new web project based on Golang. It suits for you who want to develop a SPA or mobile application.
+It is also a good example of how to develop a large web application that combined fancy Go packages. [Goyangi](http://en.wikipedia.org/wiki/goyangi) means cat in Korean.
 
 ## Why?
-There are some good frameworks like a magic([Beego](http://beego.me/), [Revel](http://revel.github.io/)...). However these are too much.  
-Some of developers prefer to using micro frameworks and lightweight packages for flexibility and performance.  
-It's not easy to select and combine packages though.  
-So, Goyangi carefully chosen packages and combined.
+There are some good frameworks like magic([Beego](http://beego.me/), [Revel](http://revel.github.io/)...). However, these are too much.
+Some developers prefer to using micro frameworks and lightweight packages for flexibility and performance.
+It's not easy to select and combine packages though.
+So, Goyangi carefully has chosen packages and combined.
+Keep it simple and DRY.
 
 ## The goal
-Develop foundation codes that commonly used in web development.  
-Keep it simple and DRY.  
-Help creative lazybones.
+The goal of Goyangi project is making a reliable foundation for developers who want to make web services with the Go server.
+When the Goyangi project becomes more stable, developers would become lazybones.
+And then lazybones could not only show their creativity but also devote themselves to problems what they can solve.
 
 ## How it works?
 ![Goyangi How it works](./document/images/goyangi-howitworks.png "Goyangi How it works")
 
-## Stack
-![Goyangi Stack](./document/images/goyangi-stack.png "Goyangi Stack")
 
-
-## Demo
-[Demo Server](http://168.235.151.141:6060/)
-
-## Installation
+## Getting Started
 
 ### Pre installation
-Mercurial
+* [dep](https://github.com/golang/dep) - Install the dependency management for Go.
+* [PostgreSQL](https://www.postgresql.org) - Install and run the postgresql service. [username: postgres / password: postgres]
+* [yarn](https://yarnpkg.com) - Install a dependency management tool.
 
-Go
-
-### With Docker
+### Clone the source
 ~~~
-$ go get github.com/nitrous-io/goop
 $ git clone github.com/dorajistyle/goyangi
 $ cd goyangi
-$ goop install
-$ docker build -t "dorajistyle/goyangi" --no-cache .
+$ dep ensure
+~~~
+### Run server
+~~~
+SOURCE_ROOT $ go run main.go
 ~~~
 
-### Without Docker
-`update soon`
+### Migration (First time only)
+~~~
+createdb goyangi_dev -U postgres;
+createdb goyangi_test  -U postgres;
+createdb goyangi  -U postgres;
+~~~
+Connect to http://localhost:3001/api/v1/commands/migrate while running the server.
+
+### Run frontend (Vue.js)
+~~~
+SOURCE_ROOT $ cd frontend/vuejs
+VUE_JS_ROOT $ yarn
+VUE_JS_ROOT $ yarn serve
+~~~
+
+### Default Login for Goyangi
+* ID : admin
+* password : password
+
+![Goyangi Vue.js Home](./document/images/goyangi-vuejs-home.jpg "Goyangi Vue.js Home")
+
+![Goyangi Vue.js Board](./document/images/goyangi-vuejs-board.jpg "Goyangi Vue.js Board")
+
 
 ### Configuration
 
@@ -53,9 +71,7 @@ You can find all configuration files in ./config
 * aws.go : If you want to use aws S3, you should setup configuration here.
 * db.go : Be sure that you have a database for migration and run application.
 * email.go : If you want to send an email to users, set your email information.
-* environment.go : It has three type of environments. DEVELOPMENT | TEST | PRODUCTION
-* frontend.go : Frontend related configuration.
-* guid.go : Guid for build frontend. Use guid in the static url to ignore cache.
+* environment.go : It has three types of environments. DEVELOPMENT | TEST | PRODUCTION
 * image.go : Image related configuration.
 * logger.go : Log related configuration.
 * oauth.go : When you want to connect with oauth, set your oauth information.
@@ -63,36 +79,6 @@ You can find all configuration files in ./config
 * pagination.go : Pagination of models.
 * public.go : Public fields of user for privacy.
 * uploader.go : Uploader related configuration.
-
-### Frontend
-
-#### canjs
-
-##### ./frontend/canjs/compiler
-
-~~~
-$ gulp
-~~~
-It generates views.build.js from *.stache files. Also it generates css files and merges into application.css from *.scss file.
-
-~~~
-$ gulp watch
-~~~
-It watches *.stache files and *.scss files. When these files are modified, It generate views.build.js and application.css
-
-~~~
-$ node ./r.js -o build.js
-~~~
-It runs requirejs optimize and generate optimized files into ./frontend/canjs/static-build
-You can use this for production environment.
-
-##### ./frontend/canjs/static/js/*.js
-
-###### settings.js
-If you want to use share article to facebook, set your facebook app Id to exports.facebookAppId
-
-###### app.js
-If you want to use google map, set your key into googlemaps/params/key
 
 
 ## Features
@@ -117,25 +103,17 @@ User is core of web application.
 - [ ] Messaging
 
 #### Article
-It's a foundation of basic board.
+It is a foundation of a basic content management system(CMS).
 - [x] Article CRUD
 - [x] Liking
 - [x] Comment
 
-#### Location
-It's a foundation of basic location.
-- [x] Location CRUD
-- [x] Liking
-- [x] Comment
-- [x] Search on a google map
-- [ ] Search on a other maps likes open street map.
-
 #### Upload
-It's a foundation of basic file upload.
+It is a foundation of basic file upload.
 - [x] Upload files to local storage
 - [x] Upload files to amazon aws S3
-- [x] Upload files meta data to database
-- [ ] Upload files to other cloud server
+- [x] Upload files metadata to database
+- [ ] Upload files to other cloud servers
 - [ ] Upload csv to database
 
 ##### Image
@@ -143,30 +121,20 @@ Image handling included in uploads function.
 - [x] Resize (vips)
 - [x] Filtering (gift)
 
-#### Statistics
-It's a foundation of statistics.
-- [ ] ???
+##### App management for permissions
+It would be a foundation of App management for permissions such as API call permission.
+- [] -
 
-#### Whatever you need
-It's a foundation of Whatever you need
-- [ ] You can add any foundation code that commonly used in web application.
+#### Other API
+We can add any foundation API we need.
+- [ ] We can add any foundation code that is commonly used in web application.
 
 ### From Development to Deployment
-
-#### Development
-- [x] watcher for backend golang
-~~~
-  goop exec watcher server
-~~~
-- [x] wathcer for frontend
-~~~
-  goop exec go run goyangi.go watcher
-~~~
 
 #### Testing
 - [x] BDD testing
 ~~~
-   goop exec go run goyangi.go test
+   $ go run main.go test
 ~~~
 
 #### Deployment
@@ -185,14 +153,21 @@ sudo gem install -n /usr/local/bin asciidoctor -N
 ~~~
 
 ~~~
-   goop exec go run goyangi.go generateAPI
+   go run goyangi.go generateAPI
 ~~~
-- [x] Dockerfile
-You can find dockerfiles in ./dockerFiles
 
 ### SPA ready
-Goyangi separates server and frondend clearly. And default SPA frontend used canjs.  
-However developer can change the frontend easily. Just develop frontend and put it into 'frontend/'.
+Goyangi separates server and frontend clearly. And default SPA frontend used Vue.js.
+However, developers can add frontend easily. Are you interested? Develop frontend and put it into 'frontend/' directory.
+
+
+### Frontend Implemantation
+|API|Server|Vuejs|
+|--|--|--|
+|User|all|registration,login,logout|
+|Article|all|all|
+|Upload|all|-|
+|Image|all|-|
 
 
 ### Packages
@@ -204,15 +179,15 @@ Goyangi uses great open source packages. You can check that which packages used 
 
 
 ### TODO
+* [ ] Decide what functions should be maintained.
+* [ ] Implement All server features in Vue.js frontend.
 * [ ] Add tons of BDD tests
 * [ ] Improve documentation
 * [ ] Automatically ignore private configuration when commit using git filter for contributors.
 
 
-### Contributing
-Just fork it, and enhance it.  
-When the Goyangi become more stable, developers become lazybones.  
-And then lazybones become creative.
+### Contribution
+Any contributions are more than welcome.
 
 
 ### Donation

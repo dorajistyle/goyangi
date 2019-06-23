@@ -120,8 +120,8 @@ func SendTestEmail() error {
 	msg.SetAddressHeader("Cc", config.EmailTestTo, "dorajistyle")
 	msg.SetHeader("Subject", "Hi(안녕하세요)?!")
 	msg.SetBody("text/plain", "Hi(안녕하세요)?!")
-	msg.AddAlternative("text/html", "<p><b>Nowplay(나우플레이)</b> means <i>Let's play</i>!!?</p>")
-	path, err := filepath.Abs("frontend/canjs/static/images/goyangi.jpg")
+	msg.AddAlternative("text/html", "<p><b>Goyangi</b> means <i>cat</i>!!?</p>")
+	path, err := filepath.Abs("frontend/vuejs/static/images/goyangi.jpg")
 	if err != nil {
 		panic(err)
 	}

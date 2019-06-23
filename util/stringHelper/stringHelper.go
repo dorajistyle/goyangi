@@ -19,10 +19,10 @@ func ConcatExist(strs []string, str string) []string {
 }
 
 // ConcatString concatenates leadingStr and followingStr.
-func ConcatString(leadingStr string, followingStr string) string {	
-	var buffer *bytes.Buffer	
+func ConcatString(leadingStr string, followingStr string) string {
+	var buffer *bytes.Buffer
 	buffer = new(bytes.Buffer)
-	buffer.WriteString(leadingStr)	
+	buffer.WriteString(leadingStr)
 	buffer.WriteString(followingStr)
 	return buffer.String()
 }

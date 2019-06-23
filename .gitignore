@@ -9,9 +9,10 @@
 *.zip
 *.coverprofile
 node_modules
-frontend/canjs/static-build
-*views.build.js
-*application.css
 *.private
 .vendor
+vendor
+vendor/*
 gin-bin
+*.legacy
+.vscode

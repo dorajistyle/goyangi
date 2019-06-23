@@ -26,7 +26,7 @@ var _ = Describe("ModelHelper", func() {
 
 	BeforeEach(func() {
 		model = &TestModel{}
-		form = &TestForm{ID: 4, Title: "Nowplay, the beast."}
+		form = &TestForm{ID: 4, Title: "goyangi, the beast."}
 	})
 
 	Describe("Check the interface", func() {

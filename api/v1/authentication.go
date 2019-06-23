@@ -5,6 +5,7 @@ import (
 
 	"github.com/dorajistyle/goyangi/api/response"
 	"github.com/dorajistyle/goyangi/service/userService"
+	"github.com/dorajistyle/goyangi/util/log"
 )
 
 // @Title Authentications
@@ -31,6 +32,7 @@ func createUserAuthentication(c *gin.Context) {
 		Unauthorized: "login.error.passwordIncorrect",
 		NotFound:     "login.error.userNotFound"}
 	messages := &response.Messages{OK: "User logged in successfully."}
+	log.Debugf("header : %s", c.Request)
 	response.JSON(c, status, messageTypes, messages, err)
 }
 

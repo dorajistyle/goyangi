@@ -1,10 +1,13 @@
 package server
 
 import (
+	"time"
+
 	"github.com/dorajistyle/goyangi/api"
 	"github.com/dorajistyle/goyangi/config"
-	"github.com/dorajistyle/goyangi/frontend/canjs"
+	// "github.com/dorajistyle/goyangi/frontend/vuejs"
 	"github.com/dorajistyle/goyangi/util/log"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/nicksnyder/go-i18n/i18n"
 )
@@ -21,16 +24,18 @@ func init() {
 
 // CORSMiddleware for CORS
 func CORSMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
-		if c.Request.Method == "OPTIONS" {
-			// c.Abort(200)
-			c.Abort()
-			return
-		}
-		c.Next()
-	}
+	corsConfig := cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:8080"},
+		AllowMethods:     []string{"PUT", "PATCH", "DELETE"},
+		AllowHeaders:     []string{"Origin"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		AllowOriginFunc: func(origin string) bool {
+			return origin == "https://github.com"
+		},
+		MaxAge: 12 * time.Hour,
+	})
+	return corsConfig
 }
 
 func Run() {
@@ -48,12 +53,7 @@ func Run() {
 	}
 	r.Use(gin.Recovery())
 	r.Use(CORSMiddleware())
-	switch config.Frontend {
-	case "CanJS":
-		canjs.LoadPage(r)
-	default:
-		canjs.LoadPage(r)
-	}
+
 	api.RouteAPI(r)
 
 	// Listen and server on 0.0.0.0:3001

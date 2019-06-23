@@ -29,7 +29,7 @@ func GetAuthorizedUser(appKey string, secretkey string, userName string) (model.
 	if err != nil {
 		return user, status, err
 	}
-	appID := app.ID
-	user, status, err = userHelper.FindUserByUserName(appID, userName)
+	appId := app.Id
+	user, status, err = userHelper.FindUserByUserName(appId, userName)
 	return user, status, err
 }

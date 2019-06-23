@@ -109,11 +109,14 @@ func SetCookieHandler(c *gin.Context, email string, pass string) (int, error) {
 		if err != nil {
 			return http.StatusUnauthorized, errors.New("Password incorrect.")
 		}
+		_, err = c.Cookie("X-Auth-Token")
+		if err != nil {
+			c.SetCookie("X-Auth-Token", user.Token, 3600, "/", "localhost", true, true)
+		}
 		status, err := SetCookie(c, user.Token)
 		if err != nil {
 			return status, err
 		}
-		c.Writer.Header().Set("X-Auth-Token", user.Token)
 		return http.StatusOK, nil
 	} else {
 		return http.StatusNotFound, errors.New("User is not found.")
@@ -139,24 +142,34 @@ func RegisterHandler(c *gin.Context) (int, error) {
 }
 
 // CurrentUser get a current user.
-func CurrentUser(c *gin.Context) (model.User, error) {
+
+func CurrentUserByToken(token string) (model.User, error) {
 	var user model.User
-	var token string
-	var err error
-	token = c.Request.Header.Get("X-Auth-Token")
-	if len(token) > 0 {
-		log.Debug("header token exist.")
-	} else {
-		token, err = Token(c)
-		log.Debug("header token not exist.")
-		if err != nil {
-			return user, err
-		}
-	}
+	
 	if db.ORM.Select(config.UserPublicFields+", email").Where("token = ?", token).First(&user).RecordNotFound() {
 		return user, errors.New("User is not found.")
 	}
 	db.ORM.Model(&user).Association("Languages").Find(&user.Languages)
 	db.ORM.Model(&user).Association("Roles").Find(&user.Roles)
 	return user, nil
+}
+
+func GetAuthToken(c *gin.Context) (string, error) {
+	token, err := c.Cookie("X-Auth-Token")
+	log.Debugf("token gin: %s \n", token)
+	if len(token) > 0 {
+		log.Debug("header token exist.")
+	} else {
+		token, err = Token(c)
+		log.Debug("header token not exist.")
+	}
+	return token, err
+}
+
+func CurrentUser(c *gin.Context) (model.User, error) {
+	token, err := GetAuthToken(c)
+	if err != nil {
+		return model.User{}, err
+	}
+	return CurrentUserByToken(token)
 }

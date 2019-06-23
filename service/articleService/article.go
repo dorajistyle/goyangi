@@ -2,7 +2,6 @@ package articleService
 
 import (
 	"bytes"
-	"encoding/json"
 	"errors"
 	"time"
 
@@ -12,8 +11,7 @@ import (
 	"github.com/dorajistyle/goyangi/db"
 	"github.com/dorajistyle/goyangi/model"
 	"github.com/dorajistyle/goyangi/service/commentService"
-	"github.com/dorajistyle/goyangi/service/likingService/likingMeta"
-	"github.com/dorajistyle/goyangi/service/likingService/likingRetriever"
+	"github.com/dorajistyle/goyangi/service/likingService"
 	"github.com/dorajistyle/goyangi/service/userService"
 	"github.com/dorajistyle/goyangi/service/userService/userPermission"
 	"github.com/dorajistyle/goyangi/util/log"
@@ -53,14 +51,16 @@ func assignRelatedUser(article *model.Article) {
 // CreateArticle creates an article.
 func CreateArticle(c *gin.Context) (model.Article, int, error) {
 	var form ArticleForm
-	c.BindWith(&form, binding.Form)
-	log.Debugf("struct map : %s\n", form)
+	bindErr := c.MustBindWith(&form, binding.Form)
+	log.Debugf("bind error : %s\n", bindErr)
+
 	user, _ := userService.CurrentUser(c)
 	form.UserId = user.Id
 	article := model.Article{}
 	modelHelper.AssignValue(&article, &form)
-	if db.ORM.Create(&article).Error != nil {
-		return article, http.StatusInternalServerError, errors.New("User is not created.")
+	log.Debugf("article : %s\n", article)
+	if bindErr != nil || db.ORM.Create(&article).Error != nil {
+		return article, http.StatusInternalServerError, errors.New("Article is not created.")
 	}
 	return article, http.StatusCreated, nil
 }
@@ -68,7 +68,7 @@ func CreateArticle(c *gin.Context) (model.Article, int, error) {
 // CreateArticles creates articles.
 func CreateArticles(c *gin.Context) (int, error) {
 	var forms ArticlesForm
-	c.BindWith(&forms, binding.JSON)
+	c.BindJSON(&forms)
 	log.Debugf("CreateFiles c form : %v", forms)
 
 	user, _ := userService.CurrentUser(c)
@@ -91,52 +91,42 @@ func CreateArticles(c *gin.Context) (int, error) {
 }
 
 // RetrieveArticle retrieve an article.
-func RetrieveArticle(c *gin.Context) (model.Article, bool, uint, int, error) {
+func RetrieveArticle(c *gin.Context) (model.Article, int, error) {
 	var article model.Article
 	var count int
-	var currentUserId uint
-	var isAuthor bool
 	id := c.Params.ByName("id")
 	if db.ORM.First(&article, "id = ?", id).RecordNotFound() {
-		return article, isAuthor, currentUserId, http.StatusNotFound, errors.New("Article is not found.")
+		return article, http.StatusNotFound, errors.New("Article is not found.")
 	}
 	log.Debugf("Article : %s\n", article)
 	log.Debugf("Count : %s\n", count)
-	currentUser, err := userService.CurrentUser(c)
-	if err == nil {
-		currentUserId = currentUser.Id
-		isAuthor = currentUser.Id == article.UserId
-	}
+	currentUser, _ := userService.CurrentUser(c)
 
 	assignRelatedUser(&article)
-	var commentList model.CommentList
-	comments, currentPage, hasPrev, hasNext, _ := commentService.RetrieveComments(article)
-	commentList.Comments = comments
-	commentService.SetCommentPageMeta(&commentList, currentPage, hasPrev, hasNext, article.CommentCount)
-	article.CommentList = commentList
+
+	article.CommentList = commentService.RetrieveComments(article)
 	var likingList model.LikingList
-	likings, currentPage, hasPrev, hasNext, _ := likingRetriever.RetrieveLikings(article)
-	likingList.Likings = likings
-	currentUserlikedCount := db.ORM.Model(&article).Where("id =?", currentUserId).Association("Likings").Count()
-	log.Debugf("Current user like count : %d", currentUserlikedCount)
-	likingMeta.SetLikingPageMeta(&likingList, currentPage, hasPrev, hasNext, article.LikingCount, currentUserlikedCount)
+	likingList = likingService.RetrieveLikings(article, currentUser.Id)
+
+	// DEPRECATED likingMeta.SetLikingPageMeta(&likingList, currentPage, hasPrev, hasNext, article.LikingCount, currentUserlikedCount)
 	article.LikingList = likingList
-	return article, isAuthor, currentUserId, http.StatusOK, nil
+	return article, http.StatusOK, nil
 }
 
 // RetrieveArticles retrieves articles.
-func RetrieveArticles(c *gin.Context) ([]model.Article, bool, int, int, bool, bool, int, error) {
+func RetrieveArticles(c *gin.Context) (model.ArticleList, int, error) {
 	var articles []model.Article
 	var category int
 	var articleCount, articlePerPage int
-	filterQuery := c.Request.URL.Query().Get("filter")
-	articlePerPage = config.ArticlePerPage
+
 	filter := &ArticleFilter{}
+
+	articlePerPage = config.ArticlePerPage
+
 	whereBuffer := new(bytes.Buffer)
 	whereValues := []interface{}{}
-	if len(filterQuery) > 0 {
-		log.Debugf("retrieve Articles filter : %s\n", filterQuery)
-		json.Unmarshal([]byte(filterQuery), &filter)
+	if c.Bind(filter) == nil {
+		log.Debug("====== Bind By Query String ======")
 		if filter.UserId > 0 {
 			stringHelper.Concat(whereBuffer, "user_id = ?")
 			whereValues = append(whereValues, filter.UserId)
@@ -158,7 +148,7 @@ func RetrieveArticles(c *gin.Context) ([]model.Article, bool, int, int, bool, bo
 	} else {
 		log.Debug("no filters found.\n")
 	}
-	log.Debugf("filterQuery %v.\n", filterQuery)
+
 	log.Debugf("filter %v.\n", filter)
 	whereStr := whereBuffer.String()
 	log.Debugf("whereStr %s.\n", whereStr)
@@ -168,20 +158,25 @@ func RetrieveArticles(c *gin.Context) ([]model.Article, bool, int, int, bool, bo
 	log.Debugf("currentPage, perPage, total : %d, %d, %d", filter.CurrentPage, articlePerPage, articleCount)
 	log.Debugf("offset, currentPage, hasPrev, hasNext : %d, %d, %t, %t", offset, currentPage, hasPrev, hasNext)
 	db.ORM.Limit(articlePerPage).Offset(offset).Order(config.ArticleOrder).Where(whereStr, whereValues...).Find(&articles)
-	return articles, canUserWrite(c, category), category, currentPage, hasPrev, hasNext, http.StatusOK, nil
+	return model.ArticleList{Articles: articles, Category: category, HasPrev: hasPrev, HasNext: hasNext, Count: articleCount, CurrentPage: currentPage, PerPage: articlePerPage}, http.StatusOK, nil
 }
 
 // UpdateArticle updates an article.
 func UpdateArticle(c *gin.Context) (model.Article, int, error) {
 	var article model.Article
 	var form ArticleForm
-	id := c.Params.ByName("id")
-	c.BindWith(&form, binding.Form)
-	if db.ORM.First(&article, id).RecordNotFound() {
+	bindErr := c.MustBindWith(&form, binding.Form)
+	log.Debugf("[Update] bind error : %s\n", bindErr)
+	if bindErr != nil {
+		return article, http.StatusBadRequest, errors.New("Article is not updated.")
+	}
+	if db.ORM.First(&article, form.Id).RecordNotFound() {
+		log.Debug("[Update] Record Not found\n")
 		return article, http.StatusNotFound, errors.New("Article is not found.")
 	}
 	status, err := userPermission.CurrentUserIdentical(c, article.UserId)
 	if err != nil {
+		log.Debugf("[Update] User err : %s\n" + err.Error())
 		return article, status, err
 	}
 	article.Title = form.Title
@@ -189,6 +184,7 @@ func UpdateArticle(c *gin.Context) (model.Article, int, error) {
 	article.ImageName = form.ImageName
 	article.Content = form.Content
 	if db.ORM.Save(&article).Error != nil {
+		log.Debug("[Update] Update save error\n")
 		return article, http.StatusBadRequest, errors.New("Article is not updated.")
 	}
 	return article, http.StatusOK, nil

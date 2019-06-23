@@ -2,7 +2,7 @@ package script
 
 func GenerateAPI(format string) []string {
 	commands := make([]string, 2)
-	prefix := GoopExec + "swagger -apiPackage=\"github.com/dorajistyle/goyangi/api/v1\" -mainApiFile=\"github.com/dorajistyle/goyangi/api/route.go\" -format=\"" + format + "\" "
+	prefix := "swagger -apiPackage=\"github.com/dorajistyle/goyangi/api/v1\" -mainApiFile=\"github.com/dorajistyle/goyangi/api/route.go\" -format=\"" + format + "\" "
 	switch format {
 	case "go":
 		fallthrough

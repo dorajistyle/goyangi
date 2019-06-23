@@ -7,6 +7,7 @@ import (
 	"github.com/dorajistyle/goyangi/config"
 	"github.com/dorajistyle/goyangi/db"
 	"github.com/dorajistyle/goyangi/model"
+	"github.com/dorajistyle/goyangi/service/userService"
 	"github.com/dorajistyle/goyangi/service/userService/userPermission"
 	"github.com/dorajistyle/goyangi/util/log"
 	"github.com/dorajistyle/goyangi/util/modelHelper"
@@ -27,37 +28,37 @@ func AssignRelatedUser(comments []model.Comment) {
 	}
 }
 
-// SetCommentPageMeta set comment's page meta.
-func SetCommentPageMeta(commentList *model.CommentList, currentPage int, hasPrev bool, hasNext bool, count int) {
-	if len(commentList.Comments) == 0 {
-		commentList.Comments = make([]model.Comment, 0)
-	}
-	commentList.CurrentPage = currentPage
-	commentList.HasPrev = hasPrev
-	commentList.HasNext = hasNext
-	commentList.Count = count
-}
-
 // CreateComment creates a comment.
 func CreateComment(c *gin.Context, item interface{}) (int, error) {
 	var form CreateCommentForm
 	var comment model.Comment
-	c.BindWith(&form, binding.Form)
-	log.Debugf("comment_form : %v", form)
-	status, err := userPermission.CurrentUserIdentical(c, form.UserId)
-	if err != nil {
-		return status, err
+	user, userErr := userService.CurrentUser(c)
+	log.Debugf("user error : %s\n", userErr)
+	if userErr != nil {
+		return http.StatusForbidden, userErr
 	}
-	if db.ORM.First(item, form.ParentId).RecordNotFound() {
+	form.UserId = user.Id
+	if db.ORM.First(item, c.Param("id")).RecordNotFound() {
 		return http.StatusNotFound, errors.New("Item is not found.")
 	}
+
+	bindErr := c.MustBindWith(&form, binding.Form)
+	log.Debugf("bind error : %s\n", bindErr)
+	if bindErr != nil  {
+		return http.StatusInternalServerError, errors.New("Invalid form.")
+	}
+
+	log.Debugf("comment_form : %v", form)
+
 	modelHelper.AssignValue(&comment, &form)
-	db.ORM.Model(item).Association("Comments").Append(comment)
+	if db.ORM.Model(item).Association("Comments").Append(comment).Error != nil {
+		return http.StatusInternalServerError, errors.New("Comment is not created.")
+	}
 	return http.StatusOK, nil
 }
 
 // RetrieveComments retrieves comments.
-func RetrieveComments(item interface{}, currentPages ...int) ([]model.Comment, int, bool, bool, int) {
+func RetrieveComments(item interface{}, currentPages ...int) (model.CommentList) {
 	var comments []model.Comment
 	var currentPage int
 	if len(currentPages) > 0 {
@@ -70,17 +71,25 @@ func RetrieveComments(item interface{}, currentPages ...int) ([]model.Comment, i
 	db.ORM.Limit(config.CommentPerPage).Order(config.CommentOrder).Offset(offset).Model(item).Association("Comments").Find(&comments)
 	AssignRelatedUser(comments)
 	log.Debugf("comments : %v", comments)
-	return comments, currentPage, hasPrev, hasNext, count
+	return model.CommentList{Comments: comments, HasPrev: hasPrev, HasNext: hasNext, Count: count, CurrentPage: currentPage}
 }
 
 // UpdateComment updates a comment.
 func UpdateComment(c *gin.Context, item interface{}) (int, error) {
 	var form CommentForm
 	var comment model.Comment
-	c.BindWith(&form, binding.Form)
-	if db.ORM.First(item, form.ParentId).RecordNotFound() {
+	itemId := c.Params.ByName("id")
+
+	if db.ORM.First(item, itemId).RecordNotFound() {
 		return http.StatusNotFound, errors.New("Item is not found.")
 	}
+
+	bindErr := c.MustBindWith(&form, binding.Form)
+	log.Debugf("bind error : %s\n", bindErr)
+	if bindErr != nil  {
+		return http.StatusInternalServerError, errors.New("Invalid form.")
+	}
+
 	if db.ORM.First(&comment, form.CommentId).RecordNotFound() {
 		return http.StatusNotFound, errors.New("Comment is not found.")
 	}

@@ -9,11 +9,11 @@ type omit bool
 
 // CommentList is list that contains comments and meta.
 type CommentList struct {
+	Comments    []Comment `json:"comments"`
 	HasPrev     bool      `json:"hasPrev"`
 	HasNext     bool      `json:"hasNext"`
 	Count       int       `json:"count"`
 	CurrentPage int       `json:"currentPage"`
-	Comments    []Comment `json:"comments"`
 }
 
 // Comment is a comment model.
@@ -24,27 +24,28 @@ type Comment struct {
 	LikingCount int       `json:"likingCount"`
 	CreatedAt   time.Time `json:"createdAt"`
 	UpdatedAt   time.Time `json:"updatedAt"`
-	DeletedAt   time.Time `json:"deletedAt"`
+	DeletedAt   *time.Time `json:"deletedAt"`
 	User        User      `json:"user"`
 }
 
 // LikingList is list that contains likings and meta.
 type LikingList struct {
+	Likings     []User `json:"likings"`
 	HasPrev     bool   `json:"hasPrev"`
 	HasNext     bool   `json:"hasNext"`
 	Count       int    `json:"count"`
 	CurrentPage int    `json:"currentPage"`
 	IsLiked     bool   `json:"isLiked"`
-	Likings     []User `json:"likings"`
 }
 
 // LikedList is list that contains liked and meta.
 type LikedList struct {
+	Liked       []User `json:"liked"`
 	HasPrev     bool   `json:"hasPrev"`
 	HasNext     bool   `json:"hasNext"`
 	Count       int    `json:"count"`
 	CurrentPage int    `json:"currentPage"`
-	Liked       []User `json:"liked"`
+	
 }
 
 // Image is a image model.

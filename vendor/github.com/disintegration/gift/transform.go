@@ -42,8 +42,8 @@ func (p *transformFilter) Draw(dst draw.Image, src image.Image, options *Options
 	pixGetter := newPixelGetter(src)
 	pixSetter := newPixelSetter(dst)
 
-	parallelize(options.Parallelization, srcb.Min.Y, srcb.Max.Y, func(pmin, pmax int) {
-		for srcy := pmin; srcy < pmax; srcy++ {
+	parallelize(options.Parallelization, srcb.Min.Y, srcb.Max.Y, func(start, stop int) {
+		for srcy := start; srcy < stop; srcy++ {
 			for srcx := srcb.Min.X; srcx < srcb.Max.X; srcx++ {
 				var dstx, dsty int
 				switch p.tt {
@@ -128,11 +128,11 @@ func Transverse() Filter {
 type Interpolation int
 
 const (
-	// Nearest Neighbor interpolation algorithm
+	// NearestNeighborInterpolation is a nearest-neighbor interpolation algorithm.
 	NearestNeighborInterpolation Interpolation = iota
-	// Linear interpolation algorithm
+	// LinearInterpolation is a bilinear interpolation algorithm.
 	LinearInterpolation
-	// Cubic interpolation algorithm
+	// CubicInterpolation is a bicubic interpolation algorithm.
 	CubicInterpolation
 )
 
@@ -202,14 +202,14 @@ func (p *rotateFilter) Draw(dst draw.Image, src image.Image, options *Options) {
 	dstxoff := float32(w)/2 - 0.5
 	dstyoff := float32(h)/2 - 0.5
 
-	bgpx := pixelclr(p.bgcolor)
+	bgpx := pixelFromColor(p.bgcolor)
 	asin, acos := sincosf32(p.angle)
 
 	pixGetter := newPixelGetter(src)
 	pixSetter := newPixelSetter(dst)
 
-	parallelize(options.Parallelization, 0, h, func(pmin, pmax int) {
-		for y := pmin; y < pmax; y++ {
+	parallelize(options.Parallelization, 0, h, func(start, stop int) {
+		for y := start; y < stop; y++ {
 			for x := 0; x < w; x++ {
 
 				xf, yf := rotatePoint(float32(x)-dstxoff, float32(y)-dstyoff, asin, acos)
@@ -229,8 +229,6 @@ func (p *rotateFilter) Draw(dst draw.Image, src image.Image, options *Options) {
 			}
 		}
 	})
-
-	return
 }
 
 func interpolateCubic(xf, yf float32, bounds image.Rectangle, pixGetter *pixelGetter, bgpx pixel) pixel {
@@ -256,9 +254,9 @@ func interpolateCubic(xf, yf float32, bounds image.Rectangle, pixGetter *pixelGe
 	}
 
 	const (
-		k04 = 1.0 / 4.0
-		k12 = 1.0 / 12.0
-		k36 = 1.0 / 36.0
+		k04 = 1 / 4.0
+		k12 = 1 / 12.0
+		k36 = 1 / 36.0
 	)
 
 	cfs[0] = k36 * xq * yq * (xq - 1) * (xq - 2) * (yq - 1) * (yq - 2)
@@ -279,17 +277,17 @@ func interpolateCubic(xf, yf float32, bounds image.Rectangle, pixGetter *pixelGe
 	cfs[15] = k36 * xq * yq * (xq - 1) * (xq + 1) * (yq - 1) * (yq + 1)
 
 	for i := range pxs {
-		wa := pxs[i].A * cfs[i]
-		px.R += pxs[i].R * wa
-		px.G += pxs[i].G * wa
-		px.B += pxs[i].B * wa
-		px.A += wa
+		wa := pxs[i].a * cfs[i]
+		px.r += pxs[i].r * wa
+		px.g += pxs[i].g * wa
+		px.b += pxs[i].b * wa
+		px.a += wa
 	}
 
-	if px.A != 0.0 {
-		px.R /= px.A
-		px.G /= px.A
-		px.B /= px.A
+	if px.a != 0 {
+		px.r /= px.a
+		px.g /= px.a
+		px.b /= px.a
 	}
 
 	return px
@@ -323,17 +321,17 @@ func interpolateLinear(xf, yf float32, bounds image.Rectangle, pixGetter *pixelG
 	cfs[3] = xq * yq
 
 	for i := range pxs {
-		wa := pxs[i].A * cfs[i]
-		px.R += pxs[i].R * wa
-		px.G += pxs[i].G * wa
-		px.B += pxs[i].B * wa
-		px.A += wa
+		wa := pxs[i].a * cfs[i]
+		px.r += pxs[i].r * wa
+		px.g += pxs[i].g * wa
+		px.b += pxs[i].b * wa
+		px.a += wa
 	}
 
-	if px.A != 0.0 {
-		px.R /= px.A
-		px.G /= px.A
-		px.B /= px.A
+	if px.a != 0 {
+		px.r /= px.a
+		px.g /= px.a
+		px.b /= px.a
 	}
 
 	return px
@@ -388,8 +386,8 @@ func (p *cropFilter) Draw(dst draw.Image, src image.Image, options *Options) {
 	pixGetter := newPixelGetter(src)
 	pixSetter := newPixelSetter(dst)
 
-	parallelize(options.Parallelization, srcb.Min.Y, srcb.Max.Y, func(pmin, pmax int) {
-		for srcy := pmin; srcy < pmax; srcy++ {
+	parallelize(options.Parallelization, srcb.Min.Y, srcb.Max.Y, func(start, stop int) {
+		for srcy := start; srcy < stop; srcy++ {
 			for srcx := srcb.Min.X; srcx < srcb.Max.X; srcx++ {
 				dstx := dstb.Min.X + srcx - srcb.Min.X
 				dsty := dstb.Min.Y + srcy - srcb.Min.Y
@@ -418,6 +416,7 @@ func Crop(rect image.Rectangle) Filter {
 // Anchor is the anchor point for image cropping.
 type Anchor int
 
+// Anchor point positions.
 const (
 	CenterAnchor Anchor = iota
 	TopLeftAnchor

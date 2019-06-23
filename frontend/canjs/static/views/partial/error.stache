@@ -1,5 +1,0 @@
-<div class="uk-panel uk-panel-box uk-width-1-1">
-    <h1 id="pageTitle" class="uk-text-break">{{i18n 'error.incorrectAccessDetected'}}</h1>
-    <p>{{i18n 'error.pleaseCheckTheURL'}} {{i18n 'error.or'}} <a href="/login">{{i18n 'error.loginPlease'}}</a></p>
-</div>
-

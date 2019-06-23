@@ -7,11 +7,11 @@ import (
 	"github.com/dorajistyle/goyangi/model"
 )
 
-// RetriveUserWithAppIDAndUserName retrieve an user with AppID and user's name
-func RetriveUserWithAppIDAndUserName(appID int64, userName string) (model.User, error) {
+// RetriveUserWithAppIdAndUserName retrieve an user with AppId and user's name
+func RetriveUserWithAppIdAndUserName(appId int64, userName string) (model.User, error) {
 	var user model.User
-	if db.ORM.Where("app_id=? and name=?", appID, userName).First(&user).RecordNotFound() {
-		return user, errors.New("User not found. (Check the AppID and the UserName)")
+	if db.ORM.Where("app_id=? and name=?", appId, userName).First(&user).RecordNotFound() {
+		return user, errors.New("User not found. (Check the AppId and the UserName)")
 	}
 	return user, nil
 }

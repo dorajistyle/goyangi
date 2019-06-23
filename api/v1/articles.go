@@ -18,19 +18,19 @@ func Articles(parentRoute *gin.RouterGroup) {
 
 	route := parentRoute.Group("/articles")
 	route.POST("", userPermission.AuthRequired(createArticle))
-	route.POST("/all", userPermission.AuthRequired(createArticles))
+	// route.POST("/all", userPermission.AuthRequired(createArticles))
 	route.GET("/:id", retrieveArticle)
 	route.GET("", retrieveArticles)
 	route.PUT("/:id", userPermission.AuthRequired(updateArticle))
 	route.DELETE("/:id", userPermission.AuthRequired(deleteArticle))
-	route.POST("/sync", userPermission.AuthRequired(uploadAndSyncArticles))
+	// route.POST("/sync", userPermission.AuthRequired(uploadAndSyncArticles))
 
-	route.POST("/comments", userPermission.AuthRequired(createCommentOnArticle))
+	route.POST("/:id/comments", userPermission.AuthRequired(createCommentOnArticle))
 	route.GET("/:id/comments", retrieveCommentsOnArticle)
 	route.PUT("/:id/comments/:commentId", userPermission.AuthRequired(updateCommentOnArticle))
 	route.DELETE("/:id/comments/:commentId", userPermission.AuthRequired(deleteCommentOnArticle))
 
-	route.POST("/likings", userPermission.AuthRequired(createLikingOnArticle))
+	route.POST("/:id/likings", userPermission.AuthRequired(createLikingOnArticle))
 	route.GET("/:id/likings", retrieveLikingsOnArticles)
 	route.DELETE("/:id/likings/:userId", userPermission.AuthRequired(deleteLikingOnArticle))
 }
@@ -48,12 +48,12 @@ func Articles(parentRoute *gin.RouterGroup) {
 // @Router /articles [post]
 func createArticle(c *gin.Context) {
 	article, status, err := articleService.CreateArticle(c)
-	if err == nil {
-		c.JSON(status, gin.H{"article": article})
-	} else {
+	if err != nil {
 		messageTypes := &response.MessageTypes{InternalServerError: "article.error.notCreated"}
 		response.ErrorJSON(c, status, messageTypes, err)
+		return
 	}
+	c.JSON(status, gin.H{"article": article})
 }
 
 // @Title createArticles
@@ -89,9 +89,9 @@ func createArticles(c *gin.Context) {
 // @Resource /articles
 // @Router /articles/{id} [get]
 func retrieveArticle(c *gin.Context) {
-	article, isAuthor, currentUserId, status, err := articleService.RetrieveArticle(c)
+	article, status, err := articleService.RetrieveArticle(c)
 	if err == nil {
-		c.JSON(status, gin.H{"article": article, "isAuthor": isAuthor, "currentUserId": currentUserId})
+		c.JSON(status, gin.H{"article": article})
 	} else {
 		messageTypes := &response.MessageTypes{
 			NotFound: "article.error.notFound",
@@ -107,10 +107,9 @@ func retrieveArticle(c *gin.Context) {
 // @Resource /articles
 // @Router /articles [get]
 func retrieveArticles(c *gin.Context) {
-	articles, canWrite, category, currentPage, hasPrev, hasNext, status, err := articleService.RetrieveArticles(c)
+	articleList, status, err := articleService.RetrieveArticles(c)
 	if err == nil {
-		c.JSON(status, gin.H{"articles": articles, "canWrite": canWrite, "category": category, "currentPage": currentPage,
-			"hasPrev": hasPrev, "hasNext": hasNext})
+		c.JSON(status, gin.H{"articleList": articleList})
 	} else {
 		messageTypes := &response.MessageTypes{}
 		response.ErrorJSON(c, status, messageTypes, err)
@@ -193,10 +192,10 @@ func createCommentOnArticle(c *gin.Context) {
 // @Resource /articles
 // @Router /articles/{id}/comments [get]
 func retrieveCommentsOnArticle(c *gin.Context) {
-	comments, currentPage, hasPrev, hasNext, count, status, err := articleService.RetrieveCommentsOnArticle(c)
+	commentList, status, err := articleService.RetrieveCommentsOnArticle(c)
 
 	if err == nil {
-		c.JSON(status, gin.H{"comments": comments, "currentPage": currentPage, "hasPrev": hasPrev, "hasNext": hasNext, "count": count})
+		c.JSON(status, gin.H{"commentList": commentList})
 	} else {
 		messageTypes := &response.MessageTypes{
 			NotFound: "comment.error.notFound"}
@@ -286,10 +285,9 @@ func createLikingOnArticle(c *gin.Context) {
 // @Resource /articles
 // @Router /articles/{id}/likings [get]
 func retrieveLikingsOnArticles(c *gin.Context) {
-	likings, currentPage, hasPrev, hasNext, count, status, err := articleService.RetrieveLikingsOnArticles(c)
+	likingList, status, err := articleService.RetrieveLikingsOnArticles(c)
 	if err == nil {
-		c.JSON(status, gin.H{"likings": likings, "currentPage": currentPage,
-			"hasPrev": hasPrev, "hasNext": hasNext, "count": count})
+		c.JSON(status, gin.H{"likingList": likingList})
 	} else {
 		messageTypes := &response.MessageTypes{
 			NotFound: "liking.error.notFound"}

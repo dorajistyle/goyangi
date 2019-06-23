@@ -11,17 +11,21 @@ package reporters
 import (
 	"encoding/xml"
 	"fmt"
-	"github.com/onsi/ginkgo/config"
-	"github.com/onsi/ginkgo/types"
+	"math"
 	"os"
 	"strings"
+
+	"github.com/onsi/ginkgo/config"
+	"github.com/onsi/ginkgo/types"
 )
 
 type JUnitTestSuite struct {
 	XMLName   xml.Name        `xml:"testsuite"`
 	TestCases []JUnitTestCase `xml:"testcase"`
+	Name      string          `xml:"name,attr"`
 	Tests     int             `xml:"tests,attr"`
 	Failures  int             `xml:"failures,attr"`
+	Errors    int             `xml:"errors,attr"`
 	Time      float64         `xml:"time,attr"`
 }
 
@@ -31,6 +35,7 @@ type JUnitTestCase struct {
 	FailureMessage *JUnitFailureMessage `xml:"failure,omitempty"`
 	Skipped        *JUnitSkipped        `xml:"skipped,omitempty"`
 	Time           float64              `xml:"time,attr"`
+	SystemOut      string               `xml:"system-out,omitempty"`
 }
 
 type JUnitFailureMessage struct {
@@ -57,7 +62,7 @@ func NewJUnitReporter(filename string) *JUnitReporter {
 
 func (reporter *JUnitReporter) SpecSuiteWillBegin(config config.GinkgoConfigType, summary *types.SuiteSummary) {
 	reporter.suite = JUnitTestSuite{
-		Tests:     summary.NumberOfSpecsThatWillBeRun,
+		Name:      summary.SuiteDescription,
 		TestCases: []JUnitTestCase{},
 	}
 	reporter.testSuiteName = summary.SuiteDescription
@@ -89,6 +94,7 @@ func (reporter *JUnitReporter) handleSetupSummary(name string, setupSummary *typ
 			Type:    reporter.failureTypeForState(setupSummary.State),
 			Message: failureMessage(setupSummary.Failure),
 		}
+		testCase.SystemOut = setupSummary.CapturedOutput
 		testCase.Time = setupSummary.RunTime.Seconds()
 		reporter.suite.TestCases = append(reporter.suite.TestCases, testCase)
 	}
@@ -104,6 +110,7 @@ func (reporter *JUnitReporter) SpecDidComplete(specSummary *types.SpecSummary) {
 			Type:    reporter.failureTypeForState(specSummary.State),
 			Message: failureMessage(specSummary.Failure),
 		}
+		testCase.SystemOut = specSummary.CapturedOutput
 	}
 	if specSummary.State == types.SpecStateSkipped || specSummary.State == types.SpecStatePending {
 		testCase.Skipped = &JUnitSkipped{}
@@ -113,8 +120,10 @@ func (reporter *JUnitReporter) SpecDidComplete(specSummary *types.SpecSummary) {
 }
 
 func (reporter *JUnitReporter) SpecSuiteDidEnd(summary *types.SuiteSummary) {
-	reporter.suite.Time = summary.RunTime.Seconds()
+	reporter.suite.Tests = summary.NumberOfSpecsThatWillBeRun
+	reporter.suite.Time = math.Trunc(summary.RunTime.Seconds()*1000) / 1000
 	reporter.suite.Failures = summary.NumberOfFailedSpecs
+	reporter.suite.Errors = 0
 	file, err := os.Create(reporter.filename)
 	if err != nil {
 		fmt.Printf("Failed to create JUnit report file: %s\n\t%s", reporter.filename, err.Error())

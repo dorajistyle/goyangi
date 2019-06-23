@@ -6,6 +6,17 @@ import (
 	"math"
 )
 
+type uweight struct {
+	u      int
+	weight float32
+}
+
+type uvweight struct {
+	u      int
+	v      int
+	weight float32
+}
+
 func prepareConvolutionWeights(kernel []float32, normalize bool) (int, []uvweight) {
 	size := int(math.Sqrt(float64(len(kernel))))
 	if size%2 == 0 {
@@ -20,11 +31,11 @@ func prepareConvolutionWeights(kernel []float32, normalize bool) (int, []uvweigh
 	for i := 0; i < size; i++ {
 		for j := 0; j < size; j++ {
 			k := j*size + i
-			w := float32(0.0)
+			w := float32(0)
 			if k < len(kernel) {
 				w = kernel[k]
 			}
-			if w != 0.0 {
+			if w != 0 {
 				weights = append(weights, uvweight{u: i - center, v: j - center, weight: w})
 			}
 		}
@@ -43,9 +54,9 @@ func prepareConvolutionWeights(kernel []float32, normalize bool) (int, []uvweigh
 	}
 
 	var div float32
-	if sum != 0.0 {
+	if sum != 0 {
 		div = sum
-	} else if sumpositive != 0.0 {
+	} else if sumpositive != 0 {
 		div = sumpositive
 	} else {
 		return size, weights
@@ -94,9 +105,9 @@ func (p *convolutionFilter) Draw(dst draw.Image, src image.Image, options *Optio
 	pixGetter := newPixelGetter(src)
 	pixSetter := newPixelSetter(dst)
 
-	parallelize(options.Parallelization, srcb.Min.Y, srcb.Max.Y, func(pmin, pmax int) {
-		// init temp rows
-		starty := pmin
+	parallelize(options.Parallelization, srcb.Min.Y, srcb.Max.Y, func(start, stop int) {
+		// Init temporary rows.
+		starty := start
 		rows := make([][]pixel, ksize)
 		for i := 0; i < ksize; i++ {
 			rowy := starty + i - kcenter
@@ -110,8 +121,8 @@ func (p *convolutionFilter) Draw(dst draw.Image, src image.Image, options *Optio
 			rows[i] = row
 		}
 
-		for y := pmin; y < pmax; y++ {
-			// calculate dst row
+		for y := start; y < stop; y++ {
+			// Calculate dst row.
 			for x := srcb.Min.X; x < srcb.Max.X; x++ {
 				var r, g, b, a float32
 				for _, w := range weights {
@@ -125,11 +136,11 @@ func (p *convolutionFilter) Draw(dst draw.Image, src image.Image, options *Optio
 					rowsy := kcenter + w.v
 
 					px := rows[rowsy][rowsx]
-					r += px.R * w.weight
-					g += px.G * w.weight
-					b += px.B * w.weight
+					r += px.r * w.weight
+					g += px.g * w.weight
+					b += px.b * w.weight
 					if p.alpha {
-						a += px.A * w.weight
+						a += px.a * w.weight
 					}
 				}
 				if p.abs {
@@ -140,7 +151,7 @@ func (p *convolutionFilter) Draw(dst draw.Image, src image.Image, options *Optio
 						a = absf32(a)
 					}
 				}
-				if p.delta != 0.0 {
+				if p.delta != 0 {
 					r += p.delta
 					g += p.delta
 					b += p.delta
@@ -149,13 +160,13 @@ func (p *convolutionFilter) Draw(dst draw.Image, src image.Image, options *Optio
 					}
 				}
 				if !p.alpha {
-					a = rows[kcenter][x-srcb.Min.X].A
+					a = rows[kcenter][x-srcb.Min.X].a
 				}
 				pixSetter.setPixel(dstb.Min.X+x-srcb.Min.X, dstb.Min.Y+y-srcb.Min.Y, pixel{r, g, b, a})
 			}
 
-			// rotate temp rows
-			if y < pmax-1 {
+			// Rotate temporary rows.
+			if y < stop-1 {
 				tmprow := rows[0]
 				for i := 0; i < ksize-1; i++ {
 					rows[i] = rows[i+1]
@@ -205,7 +216,8 @@ func Convolution(kernel []float32, normalize, alpha, abs bool, delta float32) Fi
 	}
 }
 
-// prepare pixel weights using convolution kernel. weights equal to 0 are excluded
+// prepareConvolutionWeights1d prepares pixel weights using a convolution kernel.
+// Weights equal to 0 are excluded.
 func prepareConvolutionWeights1d(kernel []float32) (int, []uweight) {
 	size := len(kernel)
 	if size%2 == 0 {
@@ -217,7 +229,7 @@ func prepareConvolutionWeights1d(kernel []float32) (int, []uweight) {
 	center := size / 2
 	weights := []uweight{}
 	for i := 0; i < size; i++ {
-		w := float32(0.0)
+		w := float32(0)
 		if i < len(kernel) {
 			w = kernel[i]
 		}
@@ -228,7 +240,7 @@ func prepareConvolutionWeights1d(kernel []float32) (int, []uweight) {
 	return size, weights
 }
 
-// calculate pixels for one line according to weights
+// convolveLine convolves a single line of pixels according to the given weights.
 func convolveLine(dstBuf []pixel, srcBuf []pixel, weights []uweight) {
 	max := len(srcBuf) - 1
 	if max < 0 {
@@ -244,10 +256,10 @@ func convolveLine(dstBuf []pixel, srcBuf []pixel, weights []uweight) {
 				k = max
 			}
 			c := srcBuf[k]
-			wa := c.A * w.weight
-			r += c.R * wa
-			g += c.G * wa
-			b += c.B * wa
+			wa := c.a * w.weight
+			r += c.r * wa
+			g += c.g * wa
+			b += c.b * wa
 			a += wa
 		}
 		if a != 0 {
@@ -259,7 +271,7 @@ func convolveLine(dstBuf []pixel, srcBuf []pixel, weights []uweight) {
 	}
 }
 
-// fast vertical 1d convolution
+// convolve1dv performs a fast vertical 1d convolution.
 func convolve1dv(dst draw.Image, src image.Image, kernel []float32, options *Options) {
 	srcb := src.Bounds()
 	dstb := dst.Bounds()
@@ -273,10 +285,10 @@ func convolve1dv(dst draw.Image, src image.Image, kernel []float32, options *Opt
 	_, weights := prepareConvolutionWeights1d(kernel)
 	pixGetter := newPixelGetter(src)
 	pixSetter := newPixelSetter(dst)
-	parallelize(options.Parallelization, srcb.Min.X, srcb.Max.X, func(pmin, pmax int) {
+	parallelize(options.Parallelization, srcb.Min.X, srcb.Max.X, func(start, stop int) {
 		srcBuf := make([]pixel, srcb.Dy())
 		dstBuf := make([]pixel, srcb.Dy())
-		for x := pmin; x < pmax; x++ {
+		for x := start; x < stop; x++ {
 			pixGetter.getPixelColumn(x, &srcBuf)
 			convolveLine(dstBuf, srcBuf, weights)
 			pixSetter.setPixelColumn(dstb.Min.X+x-srcb.Min.X, dstBuf)
@@ -284,7 +296,7 @@ func convolve1dv(dst draw.Image, src image.Image, kernel []float32, options *Opt
 	})
 }
 
-// fast horizontal 1d convolution
+// convolve1dh performs afast horizontal 1d convolution.
 func convolve1dh(dst draw.Image, src image.Image, kernel []float32, options *Options) {
 	srcb := src.Bounds()
 	dstb := dst.Bounds()
@@ -298,10 +310,10 @@ func convolve1dh(dst draw.Image, src image.Image, kernel []float32, options *Opt
 	_, weights := prepareConvolutionWeights1d(kernel)
 	pixGetter := newPixelGetter(src)
 	pixSetter := newPixelSetter(dst)
-	parallelize(options.Parallelization, srcb.Min.Y, srcb.Max.Y, func(pmin, pmax int) {
+	parallelize(options.Parallelization, srcb.Min.Y, srcb.Max.Y, func(start, stop int) {
 		srcBuf := make([]pixel, srcb.Dx())
 		dstBuf := make([]pixel, srcb.Dx())
-		for y := pmin; y < pmax; y++ {
+		for y := start; y < stop; y++ {
 			pixGetter.getPixelRow(y, &srcBuf)
 			convolveLine(dstBuf, srcBuf, weights)
 			pixSetter.setPixelRow(dstb.Min.Y+y-srcb.Min.Y, dstBuf)
@@ -337,12 +349,12 @@ func (p *gausssianBlurFilter) Draw(dst draw.Image, src image.Image, options *Opt
 		return
 	}
 
-	radius := int(math.Ceil(float64(p.sigma * 3.0)))
+	radius := int(math.Ceil(float64(p.sigma * 3)))
 	size := 2*radius + 1
 	center := radius
 	kernel := make([]float32, size)
 
-	kernel[center] = gaussianBlurKernel(0.0, p.sigma)
+	kernel[center] = gaussianBlurKernel(0, p.sigma)
 	sum := kernel[center]
 
 	for i := 1; i <= radius; i++ {
@@ -380,9 +392,9 @@ func GaussianBlur(sigma float32) Filter {
 }
 
 type unsharpMaskFilter struct {
-	sigma    float32
-	amount   float32
-	thresold float32
+	sigma     float32
+	amount    float32
+	threshold float32
 }
 
 func (p *unsharpMaskFilter) Bounds(srcBounds image.Rectangle) (dstBounds image.Rectangle) {
@@ -390,9 +402,9 @@ func (p *unsharpMaskFilter) Bounds(srcBounds image.Rectangle) (dstBounds image.R
 	return
 }
 
-func unsharp(orig, blurred, amount, thresold float32) float32 {
+func unsharp(orig, blurred, amount, threshold float32) float32 {
 	dif := (orig - blurred) * amount
-	if absf32(dif) > absf32(thresold) {
+	if absf32(dif) > absf32(threshold) {
 		return orig + dif
 	}
 	return orig
@@ -418,16 +430,16 @@ func (p *unsharpMaskFilter) Draw(dst draw.Image, src image.Image, options *Optio
 	pixGetterBlur := newPixelGetter(blurred)
 	pixelSetter := newPixelSetter(dst)
 
-	parallelize(options.Parallelization, srcb.Min.Y, srcb.Max.Y, func(pmin, pmax int) {
-		for y := pmin; y < pmax; y++ {
+	parallelize(options.Parallelization, srcb.Min.Y, srcb.Max.Y, func(start, stop int) {
+		for y := start; y < stop; y++ {
 			for x := srcb.Min.X; x < srcb.Max.X; x++ {
 				pxOrig := pixGetterOrig.getPixel(x, y)
 				pxBlur := pixGetterBlur.getPixel(x, y)
 
-				r := unsharp(pxOrig.R, pxBlur.R, p.amount, p.thresold)
-				g := unsharp(pxOrig.G, pxBlur.G, p.amount, p.thresold)
-				b := unsharp(pxOrig.B, pxBlur.B, p.amount, p.thresold)
-				a := unsharp(pxOrig.A, pxBlur.A, p.amount, p.thresold)
+				r := unsharp(pxOrig.r, pxBlur.r, p.amount, p.threshold)
+				g := unsharp(pxOrig.g, pxBlur.g, p.amount, p.threshold)
+				b := unsharp(pxOrig.b, pxBlur.b, p.amount, p.threshold)
+				a := unsharp(pxOrig.a, pxBlur.a, p.amount, p.threshold)
 
 				pixelSetter.setPixel(dstb.Min.X+x-srcb.Min.X, dstb.Min.Y+y-srcb.Min.Y, pixel{r, g, b, a})
 			}
@@ -439,21 +451,21 @@ func (p *unsharpMaskFilter) Draw(dst draw.Image, src image.Image, options *Optio
 // The sigma parameter is used in a gaussian function and affects the radius of effect.
 // Sigma must be positive. Sharpen radius roughly equals 3 * sigma.
 // The amount parameter controls how much darker and how much lighter the edge borders become. Typically between 0.5 and 1.5.
-// The thresold parameter controls the minimum brightness change that will be sharpened. Typically between 0 and 0.05.
+// The threshold parameter controls the minimum brightness change that will be sharpened. Typically between 0 and 0.05.
 //
 // Example:
 //
 //	g := gift.New(
-//		gift.UnsharpMask(1.0, 1.0, 0.0),
+//		gift.UnsharpMask(1, 1, 0),
 //	)
 //	dst := image.NewRGBA(g.Bounds(src.Bounds()))
 //	g.Draw(dst, src)
 //
-func UnsharpMask(sigma, amount, thresold float32) Filter {
+func UnsharpMask(sigma, amount, threshold float32) Filter {
 	return &unsharpMaskFilter{
-		sigma:    sigma,
-		amount:   amount,
-		thresold: thresold,
+		sigma:     sigma,
+		amount:    amount,
+		threshold: threshold,
 	}
 }
 
@@ -489,14 +501,14 @@ func (p *meanFilter) Draw(dst draw.Image, src image.Image, options *Options) {
 
 	if p.disk {
 		diskKernel := genDisk(p.ksize)
-		f := Convolution(diskKernel, true, true, false, 0.0)
+		f := Convolution(diskKernel, true, true, false, 0)
 		f.Draw(dst, src, options)
 	} else {
 		kernel := make([]float32, ksize*ksize)
 		for i := range kernel {
-			kernel[i] = 1.0
+			kernel[i] = 1
 		}
-		f := Convolution(kernel, true, true, false, 0.0)
+		f := Convolution(kernel, true, true, false, 0)
 		f.Draw(dst, src, options)
 	}
 }
@@ -543,15 +555,15 @@ func (p *hvConvolutionFilter) Draw(dst draw.Image, src image.Image, options *Opt
 
 	pixSetter := newPixelSetter(dst)
 
-	parallelize(options.Parallelization, srcb.Min.Y, srcb.Max.Y, func(pmin, pmax int) {
-		for y := pmin; y < pmax; y++ {
+	parallelize(options.Parallelization, srcb.Min.Y, srcb.Max.Y, func(start, stop int) {
+		for y := start; y < stop; y++ {
 			for x := srcb.Min.X; x < srcb.Max.X; x++ {
 				pxh := pixGetterH.getPixel(x, y)
 				pxv := pixGetterV.getPixel(x, y)
-				r := sqrtf32(pxh.R*pxh.R + pxv.R*pxv.R)
-				g := sqrtf32(pxh.G*pxh.G + pxv.G*pxv.G)
-				b := sqrtf32(pxh.B*pxh.B + pxv.B*pxv.B)
-				pixSetter.setPixel(dstb.Min.X+x-srcb.Min.X, dstb.Min.Y+y-srcb.Min.Y, pixel{r, g, b, pxh.A})
+				r := sqrtf32(pxh.r*pxh.r + pxv.r*pxv.r)
+				g := sqrtf32(pxh.g*pxh.g + pxv.g*pxv.g)
+				b := sqrtf32(pxh.b*pxh.b + pxv.b*pxv.b)
+				pixSetter.setPixel(dstb.Min.X+x-srcb.Min.X, dstb.Min.Y+y-srcb.Min.Y, pixel{r, g, b, pxh.a})
 			}
 		}
 	})

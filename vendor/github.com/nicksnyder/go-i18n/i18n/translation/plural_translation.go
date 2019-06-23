@@ -16,6 +16,10 @@ func (pt *pluralTranslation) MarshalInterface() interface{} {
 	}
 }
 
+func (pt *pluralTranslation) MarshalFlatInterface() interface{} {
+	return pt.templates
+}
+
 func (pt *pluralTranslation) ID() string {
 	return pt.id
 }
@@ -46,7 +50,7 @@ func (pt *pluralTranslation) Normalize(l *language.Language) Translation {
 
 func (pt *pluralTranslation) Backfill(src Translation) Translation {
 	for pc, t := range pt.templates {
-		if t == nil || t.src == "" {
+		if (t == nil || t.src == "") && src != nil {
 			pt.templates[pc] = src.Template(language.Other)
 		}
 	}

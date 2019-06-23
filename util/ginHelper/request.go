@@ -1,7 +1,7 @@
 package ginHelper
 
 import (
-    "github.com/gin-gonic/gin"   
+    "github.com/gin-gonic/gin"
 )
 
  // PostFormArray returns a slice of strings for a given form key, plus

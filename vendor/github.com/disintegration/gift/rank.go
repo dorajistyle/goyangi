@@ -57,7 +57,7 @@ func (p *rankFilter) Draw(dst draw.Image, src image.Image, options *Options) {
 	pixGetter := newPixelGetter(src)
 	pixSetter := newPixelSetter(dst)
 
-	parallelize(options.Parallelization, srcb.Min.Y, srcb.Max.Y, func(pmin, pmax int) {
+	parallelize(options.Parallelization, srcb.Min.Y, srcb.Max.Y, func(start, stop int) {
 		pxbuf := []pixel{}
 
 		var rbuf, gbuf, bbuf, abuf []float32
@@ -70,9 +70,9 @@ func (p *rankFilter) Draw(dst draw.Image, src image.Image, options *Options) {
 			}
 		}
 
-		for y := pmin; y < pmax; y++ {
-			// init buffer
-			pxbuf = pxbuf[0:0]
+		for y := start; y < stop; y++ {
+			// Init buffer.
+			pxbuf = pxbuf[:0]
 			for i := srcb.Min.X - kradius; i <= srcb.Min.X+kradius; i++ {
 				for j := y - kradius; j <= y+kradius; j++ {
 					kx, ky := i, j
@@ -93,16 +93,16 @@ func (p *rankFilter) Draw(dst draw.Image, src image.Image, options *Options) {
 			for x := srcb.Min.X; x < srcb.Max.X; x++ {
 				var r, g, b, a float32
 				if p.mode == rankMedian {
-					rbuf = rbuf[0:0]
-					gbuf = gbuf[0:0]
-					bbuf = bbuf[0:0]
+					rbuf = rbuf[:0]
+					gbuf = gbuf[:0]
+					bbuf = bbuf[:0]
 					if !opaque {
-						abuf = abuf[0:0]
+						abuf = abuf[:0]
 					}
 				} else if p.mode == rankMin {
-					r, g, b, a = 1.0, 1.0, 1.0, 1.0
+					r, g, b, a = 1, 1, 1, 1
 				} else if p.mode == rankMax {
-					r, g, b, a = 0.0, 0.0, 0.0, 0.0
+					r, g, b, a = 0, 0, 0, 0
 				}
 
 				sz := 0
@@ -110,32 +110,32 @@ func (p *rankFilter) Draw(dst draw.Image, src image.Image, options *Options) {
 					for j := 0; j < ksize; j++ {
 
 						if p.disk {
-							if disk[i*ksize+j] == 0.0 {
+							if disk[i*ksize+j] == 0 {
 								continue
 							}
 						}
 
 						px := pxbuf[i*ksize+j]
 						if p.mode == rankMedian {
-							rbuf = append(rbuf, px.R)
-							gbuf = append(gbuf, px.G)
-							bbuf = append(bbuf, px.B)
+							rbuf = append(rbuf, px.r)
+							gbuf = append(gbuf, px.g)
+							bbuf = append(bbuf, px.b)
 							if !opaque {
-								abuf = append(abuf, px.A)
+								abuf = append(abuf, px.a)
 							}
 						} else if p.mode == rankMin {
-							r = minf32(r, px.R)
-							g = minf32(g, px.G)
-							b = minf32(b, px.B)
+							r = minf32(r, px.r)
+							g = minf32(g, px.g)
+							b = minf32(b, px.b)
 							if !opaque {
-								a = minf32(a, px.A)
+								a = minf32(a, px.a)
 							}
 						} else if p.mode == rankMax {
-							r = maxf32(r, px.R)
-							g = maxf32(g, px.G)
-							b = maxf32(b, px.B)
+							r = maxf32(r, px.r)
+							g = maxf32(g, px.g)
+							b = maxf32(b, px.b)
 							if !opaque {
-								a = maxf32(a, px.A)
+								a = maxf32(a, px.a)
 							}
 						}
 						sz++
@@ -143,11 +143,11 @@ func (p *rankFilter) Draw(dst draw.Image, src image.Image, options *Options) {
 				}
 
 				if p.mode == rankMedian {
-					qsortf32(rbuf)
-					qsortf32(gbuf)
-					qsortf32(bbuf)
+					sort(rbuf)
+					sort(gbuf)
+					sort(bbuf)
 					if !opaque {
-						qsortf32(abuf)
+						sort(abuf)
 					}
 
 					idx := sz / 2
@@ -158,12 +158,12 @@ func (p *rankFilter) Draw(dst draw.Image, src image.Image, options *Options) {
 				}
 
 				if opaque {
-					a = 1.0
+					a = 1
 				}
 
 				pixSetter.setPixel(dstb.Min.X+x-srcb.Min.X, dstb.Min.Y+y-srcb.Min.Y, pixel{r, g, b, a})
 
-				// rotate buffer columns
+				// Rotate buffer columns.
 				if x < srcb.Max.X-1 {
 					copy(pxbuf[0:], pxbuf[ksize:])
 					pxbuf = pxbuf[0 : ksize*(ksize-1)]

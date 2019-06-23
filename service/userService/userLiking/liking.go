@@ -158,10 +158,10 @@ func RetrieveLikingsOnUser(c *gin.Context) ([]model.User, int, bool, bool, int, 
 		return likings, currentPage, hasPrev, hasNext, http.StatusNotFound, errors.New("User is not found.")
 	}
 	offset, currentPage, hasPrev, hasNext = pagination.Paginate(retrieveListForm.CurrentPage, config.LikingPerPage, user.LikingCount)
-	db.ORM.Limit(config.LikingPerPage).Offset(offset).
-		Joins("JOIN users_followers on users_followers.user_id=?", user.Id).
-		Where("users.id = users_followers.follower_id").
-		Group("users.id").Find(&likings)
+	// db.ORM.Limit(config.LikingPerPage).Offset(offset).
+	// 	Joins("JOIN users_followers on users_followers.user_id=?", user.Id).
+	// 	Where("users.id = users_followers.follower_id").
+	// 	Group("users.id").Find(&likings)
 	return likings, currentPage, hasPrev, hasNext, http.StatusOK, nil
 }
 
@@ -182,10 +182,10 @@ func RetrieveLikedOnUser(c *gin.Context) ([]model.User, int, bool, bool, int, er
 		return liked, currentPage, hasPrev, hasNext, http.StatusNotFound, errors.New("User is not found.")
 	}
 	offset, currentPage, hasPrev, hasNext = pagination.Paginate(retrieveListForm.CurrentPage, config.LikedPerPage, user.LikedCount)
-	db.ORM.Limit(config.LikedPerPage).Offset(offset).
-		Joins("JOIN users_followers on users_followers.follower_id=?", user.Id).
-		Where("users.id = users_followers.user_id").
-		Group("users.id").Find(&liked)
+	// db.ORM.Limit(config.LikedPerPage).Offset(offset).
+	// 	Joins("JOIN users_followers on users_followers.follower_id=?", user.Id).
+	// 	Where("users.id = users_followers.user_id").
+	// 	Group("users.id").Find(&liked)
 
 	return liked, currentPage, hasPrev, hasNext, http.StatusOK, nil
 }

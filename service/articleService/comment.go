@@ -37,20 +37,23 @@ func CreateCommentOnArticle(c *gin.Context) (int, error) {
 }
 
 // RetrieveCommentsOnArticles retrieve comments on an article.
-func RetrieveCommentsOnArticle(c *gin.Context) ([]model.Comment, int, bool, bool, int, int, error) {
+func RetrieveCommentsOnArticle(c *gin.Context) (model.CommentList, int, error) {
 	var article model.Article
-	var comments []model.Comment
+	var commentList model.CommentList
 	var retrieveListForm form.RetrieveListForm
-	var hasPrev, hasNext bool
-	var currentPage, count int
+
 	articleId := c.Params.ByName("id")
 	if db.ORM.First(&article, articleId).RecordNotFound() {
-		return comments, currentPage, hasPrev, hasNext, count, http.StatusNotFound, errors.New("Article is not found.")
+		return commentList, http.StatusNotFound, errors.New("Article is not found.")
 	}
-	c.BindWith(&retrieveListForm, binding.Form)
+	bindErr := c.MustBindWith(&retrieveListForm, binding.Form)
+	log.Debugf("[RetrieveCommentsOnArticle] bind error : %s\n", bindErr)
+	if bindErr != nil {
+		return commentList, http.StatusBadRequest, errors.New("Comments are not retrieved.")
+	}
 	log.Debugf("retrieveListForm : %v", retrieveListForm)
-	comments, currentPage, hasPrev, hasNext, count = commentService.RetrieveComments(article, retrieveListForm.CurrentPage)
-	return comments, currentPage, hasPrev, hasNext, count, http.StatusOK, nil
+	commentList = commentService.RetrieveComments(article, retrieveListForm.CurrentPage)
+	return commentList, http.StatusOK, nil
 }
 
 // UpdateCommentOnArticle updates a comment on an article.

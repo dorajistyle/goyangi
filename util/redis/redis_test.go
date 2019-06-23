@@ -19,8 +19,8 @@ var _ = Describe("Redis", func() {
 	}
 	BeforeEach(func() {
 
-		bestSDK = "Nowplay SDK"
-		worstSDK = "NowWorst SDK"
+		bestSDK = "Goyangi SDK"
+		worstSDK = "Goyak SDK"
 		Resource.Append("bestSDKEver", bestSDK)
 		Resource.Append("worstSDKEver", worstSDK)
 	})
@@ -28,7 +28,7 @@ var _ = Describe("Redis", func() {
 
 		bestSDKEver, err := Resource.Get("bestSDKEver")
 		Context("when redis get a bestSDKEver successfully", func() {
-			It("should equals with Nowplay SDK", func() {
+			It("should equals with Goyangi SDK", func() {
 				Expect(bestSDKEver).To(Equal(bestSDK))
 			})
 			It("should have no error", func() {
