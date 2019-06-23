@@ -1,5 +1,5 @@
 # Goyangi
-[Goyangi](http://en.wikipedia.org/wiki/goyangi) means cat in Korean.
+[Goyangi](https://ko.wikipedia.org/wiki/%EA%B3%A0%EC%96%91%EC%9D%B4) means cat in Korean.
 
 ## The goal
 The goal of Goyangi project is making a reliable foundation for developers who want to make web services with the Go server.
