@@ -1,4 +1,4 @@
-## CanJS
+## CanJS - Legacy
 
 ### Libraries
 * [Canjs](http://canjs.com/), Client-side JavaScript Framework.
