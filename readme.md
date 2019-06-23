@@ -1,7 +1,11 @@
 # Goyangi
+[Goyangi](http://en.wikipedia.org/wiki/goyangi) means cat in Korean.
 
-Goyangi is a web foundation to help you get started with a new web project based on Golang. It suits for you who want to develop a SPA or mobile application.
-It is also a good example of how to develop a large web application that combined fancy Go packages. [Goyangi](http://en.wikipedia.org/wiki/goyangi) means cat in Korean.
+## The goal
+The goal of Goyangi project is making a reliable foundation for developers who want to make web services with the Go server.
+When the Goyangi project becomes more stable, developers would become lazybones.
+Consequently, lazybones could not only show their creativity but also devote themselves to problems what they can solve.
+It is also a good example of how to develop a large web application that combined fancy Go packages. 
 
 ## Why?
 There are some good frameworks like magic([Beego](http://beego.me/), [Revel](http://revel.github.io/)...). However, these are too much.
@@ -10,10 +14,8 @@ It's not easy to select and combine packages though.
 So, Goyangi carefully has chosen packages and combined.
 Keep it simple and DRY.
 
-## The goal
-The goal of Goyangi project is making a reliable foundation for developers who want to make web services with the Go server.
-When the Goyangi project becomes more stable, developers would become lazybones.
-And then lazybones could not only show their creativity but also devote themselves to problems what they can solve.
+
+
 
 ## How it works?
 ![Goyangi How it works](./document/images/goyangi-howitworks.png "Goyangi How it works")
