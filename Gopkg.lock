@@ -3,7 +3,7 @@
 
 [[projects]]
   digest = "1:04457f9f6f3ffc5fea48e71d62f2ca256637dee0a04d710288e27e05c8b41976"
-  name = "github.com/Sirupsen/logrus"
+  name = "github.com/sirupsen/logrus"
   packages = ["."]
   pruneopts = "UT"
   revision = "839c75faf7f98a33d445d181f3018b5c3409a45e"
@@ -24,6 +24,14 @@
   packages = ["."]
   pruneopts = "UT"
   revision = "87cfaf94f7a1b5dd0057a7dcea54d901f6ee5f62"
+
+[[projects]]
+  digest = "1:76dc72490af7174349349838f2fe118996381b31ea83243812a97e5a0fd5ed55"
+  name = "github.com/dgrijalva/jwt-go"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "06ea1031745cb8b3dab3f6a236daf2b0aa468b7e"
+  version = "v3.2.0"
 
 [[projects]]
   digest = "1:b3af453d2bd5c7f1c6242b38d0416aa6cf96485a90b404fe638abeadb7ddd501"
@@ -157,17 +165,6 @@
   pruneopts = "UT"
   revision = "bc6a3c0594130b1e34005880bc600b6d3f49fa7f"
   version = "v1.1.1"
-
-[[projects]]
-  digest = "1:442cbbf2b2b635e9d94e8f8b09fcb105b0cc855ec6a8dac08b45e9e169bba9bf"
-  name = "github.com/mattes/migrate"
-  packages = [
-    "driver/postgres",
-    "migrate",
-  ]
-  pruneopts = "UT"
-  revision = "afc973c4e5a6b746217c2d3950fcd110ed1ba349"
-  version = "v1.3.2"
 
 [[projects]]
   digest = "1:e150b5fafbd7607e2d638e4e5cf43aa4100124e5593385147b0a74e2733d8b0d"
@@ -411,19 +408,6 @@
   revision = "11b919ab4933936a28fb6aeda5c6523091266f37"
 
 [[projects]]
-  digest = "1:29b018fedf4b37e05c4f5ebb95fc9f7b4985276d7f516d622a2d1cc02806a8d6"
-  name = "gopkg.in/mattes/migrate.v1"
-  packages = [
-    "driver",
-    "file",
-    "migrate/direction",
-    "pipe",
-  ]
-  pruneopts = "UT"
-  revision = "afc973c4e5a6b746217c2d3950fcd110ed1ba349"
-  version = "v1.3.2"
-
-[[projects]]
   digest = "1:c805e517269b0ba4c21ded5836019ed7d16953d4026cb7d00041d039c7906be9"
   name = "gopkg.in/natefinch/lumberjack.v2"
   packages = ["."]
@@ -463,9 +447,10 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
-    "github.com/Sirupsen/logrus",
+    "github.com/sirupsen/logrus",
     "github.com/codegangsta/cli",
     "github.com/daddye/vips",
+    "github.com/dgrijalva/jwt-go",
     "github.com/disintegration/gift",
     "github.com/garyburd/redigo/redis",
     "github.com/gin-contrib/cors",
@@ -476,8 +461,6 @@
     "github.com/gorilla/securecookie",
     "github.com/jinzhu/gorm",
     "github.com/lib/pq",
-    "github.com/mattes/migrate/driver/postgres",
-    "github.com/mattes/migrate/migrate",
     "github.com/nicksnyder/go-i18n/i18n",
     "github.com/onsi/ginkgo",
     "github.com/onsi/gomega",

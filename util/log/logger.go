@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"github.com/dorajistyle/goyangi/util/config"
 	// "github.com/dorajistyle/goyangi/util/octokit"
 	lumberjack "gopkg.in/natefinch/lumberjack.v2"
