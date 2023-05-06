@@ -16,14 +16,15 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 
-	"github.com/dorajistyle/goyangi/api/v1"
-	"github.com/dorajistyle/goyangi/config"
+	v1 "github.com/dorajistyle/goyangi/api/v1"
 )
 
 // RouteAPI contains router groups for API
 func RouteAPI(parentRoute *gin.Engine) {
-	route := parentRoute.Group(config.APIURL)
+
+	route := parentRoute.Group(viper.GetString("api.url"))
 	{
 		v1.Users(route)
 		v1.Roles(route)

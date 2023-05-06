@@ -1,32 +1,33 @@
 package redis_test
 
 import (
-	"fmt"
-
 	. "github.com/dorajistyle/goyangi/util/redis"
+	viper "github.com/dorajistyle/goyangi/util/viper"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
+
+func init() {
+	viper.LoadConfig()
+}
 
 var _ = Describe("Redis", func() {
 	var (
 		bestSDK  string
 		worstSDK string
 	)
-	if InitErr != nil {
-		fmt.Printf("Redis connection failed : %s\n", InitErr.Error())
-		return
-	}
+
 	BeforeEach(func() {
 
 		bestSDK = "Goyangi SDK"
 		worstSDK = "Goyak SDK"
-		Resource.Append("bestSDKEver", bestSDK)
-		Resource.Append("worstSDKEver", worstSDK)
+		Append("bestSDKEver", bestSDK)
+		Append("worstSDKEver", worstSDK)
 	})
 	Describe("get best sdk", func() {
 
-		bestSDKEver, err := Resource.Get("bestSDKEver")
+		bestSDKEver, err := Get("bestSDKEver")
+		// fmt.Println("bestSDKEver: %s", bestSDKEver)
 		Context("when redis get a bestSDKEver successfully", func() {
 			It("should equals with Goyangi SDK", func() {
 				Expect(bestSDKEver).To(Equal(bestSDK))
@@ -38,7 +39,7 @@ var _ = Describe("Redis", func() {
 		})
 	})
 	Describe("get worst sdk", func() {
-		worstSdkEver, err := Resource.Get("worstSDKEver")
+		worstSdkEver, err := Get("worstSDKEver")
 		Context("when redis get a worstSDKEver successfully", func() {
 			It("should equals with NowWorst SDK", func() {
 				Expect(worstSdkEver).To(Equal(worstSDK))
@@ -50,13 +51,13 @@ var _ = Describe("Redis", func() {
 		})
 	})
 	Describe("get worst sdk after delete key", func() {
-		delErr := Resource.Del("worstSDKEver")
+		delErr := Del("worstSDKEver")
 		Context("when redis del a worstSDKEver successfully", func() {
 			It("should have no error", func() {
 				Expect(delErr).To(BeNil())
 			})
 		})
-		worstSDKEver, err := Resource.Get("worstSDKEver")
+		worstSDKEver, err := Get("worstSDKEver")
 		Context("when redis get a worstSDKEver successfully", func() {
 			It("should equals with NowWorst SDK", func() {
 				Expect(worstSDKEver).To(BeEmpty())
@@ -67,9 +68,4 @@ var _ = Describe("Redis", func() {
 
 		})
 	})
-	if InitErr == nil {
-		Resource.Close()
-		Pool.Close()
-	}
-
 })

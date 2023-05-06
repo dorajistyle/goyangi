@@ -39,7 +39,8 @@ func OauthGoogle(c *gin.Context) (int, error) {
 	log.Debugf("c.Request.URL : %s", c.Request.URL)
 	var authResponse oauth2.AuthResponse
 	var oauthUser OauthUser
-	c.BindWith(&authResponse, binding.Form)
+	bindErr := c.MustBindWith(&authResponse, binding.Form)
+	log.Debugf("bind error : %s\n", bindErr)
 	log.Debugf("oauthRedirect form: %v", authResponse)
 	response, token, err := oauth2.OauthRequest(google.RequestURL, google.Config, authResponse)
 	if err != nil {

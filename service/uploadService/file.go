@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/dorajistyle/goyangi/config"
 	"github.com/dorajistyle/goyangi/db"
 	"github.com/dorajistyle/goyangi/model"
 	"github.com/dorajistyle/goyangi/service/userService"
@@ -19,12 +18,14 @@ import (
 	"github.com/dorajistyle/goyangi/util/stringHelper"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"github.com/spf13/viper"
 )
 
 // CreateFile creates a file.
 func CreateFile(c *gin.Context) (int, error) {
 	var form FileForm
-	c.BindWith(&form, binding.Form)
+	bindErr := c.MustBindWith(&form, binding.Form)
+	log.Debugf("bind error : %s\n", bindErr)
 	log.Debugf("CreateFile form : %v", form)
 	// err = json.Unmarshal(formDataBuffer[:n], &articles)
 	// file := model.File{Name: form.Name, Size: form.Size}
@@ -42,7 +43,8 @@ func CreateFile(c *gin.Context) (int, error) {
 func CreateFiles(c *gin.Context) (int, error) {
 	var forms FilesForm
 	start := time.Now()
-	c.BindWith(&forms, binding.JSON)
+	bindErr := c.MustBindWith(&forms, binding.JSON)
+	log.Debugf("bind error : %s\n", bindErr)
 	log.Debugf("CreateFiles c form : %v", forms)
 
 	user, _ := userService.CurrentUser(c)
@@ -89,7 +91,8 @@ func UpdateFile(c *gin.Context) (model.File, int, error) {
 	var file model.File
 	var form FileForm
 	id := c.Params.ByName("id")
-	c.BindWith(&form, binding.Form)
+	bindErr := c.MustBindWith(&form, binding.Form)
+	log.Debugf("bind error : %s\n", bindErr)
 	if db.ORM.First(&file, id).RecordNotFound() {
 		return file, http.StatusNotFound, errors.New("File is not found.")
 	}
@@ -117,9 +120,9 @@ func DeleteFile(c *gin.Context) (int, error) {
 	if err != nil {
 		return status, err
 	}
-	switch config.UploadTarget {
+	switch viper.GetString("upload.target") {
 	case "S3":
-		s3UploadPath := config.UploadS3ImagePath + strconv.FormatInt(int64(targetFile.UserId), 10) + "/"
+		s3UploadPath := viper.GetString("upload.path.S3Image") + strconv.FormatInt(int64(targetFile.UserId), 10) + "/"
 		log.Debugf("s3UploadPath %s", s3UploadPath)
 		err = aws.DelFromMyBucket(s3UploadPath, targetFile.Name)
 		if err != nil {

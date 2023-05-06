@@ -5,12 +5,12 @@ import (
 	"io"
 	"os"
 
-	"github.com/dorajistyle/goyangi/util/config"
+	"github.com/spf13/viper"
 )
 
 // UploadPath gets upload path.
 func UploadPath() (string, error) {
-	uploadPath := config.UploadLocalPath
+	uploadPath := viper.GetString("upload.path.local")
 	err := os.MkdirAll(uploadPath, 0777)
 	return uploadPath, err
 }

@@ -4,11 +4,11 @@ import (
 	"fmt"
 
 	"github.com/dorajistyle/goyangi/api/response"
-	"github.com/dorajistyle/goyangi/config"
 	"github.com/dorajistyle/goyangi/service/oauthService"
 	"github.com/dorajistyle/goyangi/service/userService/userPermission"
 	"github.com/dorajistyle/goyangi/util/log"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 )
 
 // @Title Oauth
@@ -73,7 +73,7 @@ func retrieveOauthStatus(c *gin.Context) {
 // @Title googleAuth
 // @Description Get google oauth url.
 // @Accept  json
-// @Success 200 {object} gin.H "OauthURL retrieved"
+// @Success 200 {object} map[string]interface{} "OauthURL retrieved"
 // @Resource /oauth
 // @Router /oauth/google [get]
 func googleAuth(c *gin.Context) {
@@ -84,7 +84,7 @@ func googleAuth(c *gin.Context) {
 // @Title googleRevoke
 // @Description Get google oauth url.
 // @Accept  json
-// @Success 200 {object} gin.H "Revoked"
+// @Success 200 {object} map[string]interface{} "Revoked"
 // @Failure 401 {object} response.BasicResponse "Authentication required"
 // @Failure 404 {object} response.BasicResponse "Connection is not found"
 // @Failure 500 {object} response.BasicResponse "Connection not revoked from user"
@@ -117,13 +117,13 @@ func googleRedirect(c *gin.Context) {
 	if err != nil {
 		log.CheckErrorWithMessage(err, fmt.Sprintf("httpStatusCode : %d", status))
 	}
-	c.Redirect(303, config.HostURL)
+	c.Redirect(303, viper.GetString("api.hostURL"))
 }
 
 // @Title githubAuth
 // @Description Get github oauth url.
 // @Accept  json
-// @Success 200 {object} gin.H "{url: oauthURL}"
+// @Success 200 {object} map[string]interface{} "{url: oauthURL}"
 // @Resource /oauth
 // @Router /oauth/github [get]
 func githubAuth(c *gin.Context) {
@@ -134,7 +134,7 @@ func githubAuth(c *gin.Context) {
 // @Title githubRevoke
 // @Description Get github oauth url.
 // @Accept  json
-// @Success 200 {object} gin.H "Revoked"
+// @Success 200 {object} map[string]interface{} "Revoked"
 // @Failure 401 {object} response.BasicResponse "Authentication required"
 // @Failure 404 {object} response.BasicResponse "Connection is not found"
 // @Failure 500 {object} response.BasicResponse "Connection not revoked from user"
@@ -167,14 +167,14 @@ func githubRedirect(c *gin.Context) {
 	if err != nil {
 		log.CheckErrorWithMessage(err, fmt.Sprintf("httpStatusCode : %d", status))
 	}
-	c.Redirect(303, config.HostURL)
+	c.Redirect(303, viper.GetString("api.hostURL"))
 }
 
 // TODO: Yahoo Ouath
 // // @Title yahooAuth
 // // @Description Get yahoo oauth url.
 // // @Accept  json
-// // @Success 200 {object} gin.H "{url: oauthURL}"
+// // @Success 200 {object} map[string]interface{} "{url: oauthURL}"
 // // @Resource /oauth
 // // @Router /oauth/yahoo [get]
 // func yahooAuth(c *gin.Context) {
@@ -185,7 +185,7 @@ func githubRedirect(c *gin.Context) {
 // // @Title yahooRevoke
 // // @Description Get yahoo oauth url.
 // // @Accept  json
-// // @Success 200 {object} gin.H "Revoked"
+// // @Success 200 {object} map[string]interface{} "Revoked"
 // // @Failure 401 {object} response.BasicResponse "Authentication required"
 // // @Failure 404 {object} response.BasicResponse "Connection is not found"
 // // @Failure 500 {object} response.BasicResponse "Connection not revoked from user"
@@ -217,14 +217,14 @@ func githubRedirect(c *gin.Context) {
 // if err != nil {
 // 	log.CheckErrorWithMessage(err, fmt.Sprintf("httpStatusCode : %d", status))
 // }
-// c.Redirect(303, config.HostURL)
+// c.Redirect(303, viper.GetString("api.hostURL"))
 //
 // }
 
 // @Title facebookAuth
 // @Description Get facebook oauth url.
 // @Accept  json
-// @Success 200 {object} gin.H "{url: oauthURL}"
+// @Success 200 {object} map[string]interface{} "{url: oauthURL}"
 // @Resource /oauth
 // @Router /oauth/facebook [get]
 func facebookAuth(c *gin.Context) {
@@ -235,7 +235,7 @@ func facebookAuth(c *gin.Context) {
 // @Title facebookRevoke
 // @Description Get facebook oauth url.
 // @Accept  json
-// @Success 200 {object} gin.H "Revoked"
+// @Success 200 {object} map[string]interface{} "Revoked"
 // @Failure 401 {object} response.BasicResponse "Authentication required"
 // @Failure 404 {object} response.BasicResponse "Connection is not found"
 // @Failure 500 {object} response.BasicResponse "Connection not revoked from user"
@@ -268,14 +268,14 @@ func facebookRedirect(c *gin.Context) {
 	if err != nil {
 		log.CheckErrorWithMessage(err, fmt.Sprintf("httpStatusCode : %d", status))
 	}
-	c.Redirect(303, config.HostURL)
+	c.Redirect(303, viper.GetString("api.hostURL"))
 }
 
 // TODO: Twitter  Oauth
 // // @Title twitterAuth
 // // @Description Get twitter oauth url.
 // // @Accept  json
-// // @Success 200 {object} gin.H "{url: oauthURL}"
+// // @Success 200 {object} map[string]interface{} "{url: oauthURL}"
 // // @Resource /oauth
 // // @Router /oauth/twitter [get]
 // func twitterAuth(c *gin.Context) {
@@ -287,7 +287,7 @@ func facebookRedirect(c *gin.Context) {
 // // @Title twitterRevoke
 // // @Description Get twitter oauth url.
 // // @Accept  json
-// // @Success 200 {object} gin.H "Revoked"
+// // @Success 200 {object} map[string]interface{} "Revoked"
 // // @Failure 401 {object} response.BasicResponse "Authentication required"
 // // @Failure 404 {object} response.BasicResponse "Connection is not found"
 // // @Failure 500 {object} response.BasicResponse "Connection not revoked from user"
@@ -319,13 +319,13 @@ func facebookRedirect(c *gin.Context) {
 // if err != nil {
 // 	log.CheckErrorWithMessage(err, fmt.Sprintf("httpStatusCode : %d", status))
 // }
-// c.Redirect(303, config.HostURL)
+// c.Redirect(303, viper.GetString("api.hostURL"))
 // }
 
 // @Title linkedinAuth
 // @Description Get linkedin oauth url.
 // @Accept  json
-// @Success 200 {object} gin.H "{url: oauthURL}"
+// @Success 200 {object} map[string]interface{} "{url: oauthURL}"
 // @Resource /oauth
 // @Router /oauth/linkedin [get]
 func linkedinAuth(c *gin.Context) {
@@ -336,7 +336,7 @@ func linkedinAuth(c *gin.Context) {
 // @Title linkedinRevoke
 // @Description Get linkedin oauth url.
 // @Accept  json
-// @Success 200 {object} gin.H "Revoked"
+// @Success 200 {object} map[string]interface{} "Revoked"
 // @Failure 401 {object} response.BasicResponse "Authentication required"
 // @Failure 404 {object} response.BasicResponse "Connection is not found"
 // @Failure 500 {object} response.BasicResponse "Connection not revoked from user"
@@ -369,13 +369,13 @@ func linkedinRedirect(c *gin.Context) {
 	if err != nil {
 		log.CheckErrorWithMessage(err, fmt.Sprintf("httpStatusCode : %d", status))
 	}
-	c.Redirect(303, config.HostURL)
+	c.Redirect(303, viper.GetString("api.hostURL"))
 }
 
 // // @Title kakaoAuth
 // // @Description Get kakao oauth url.
 // // @Accept  json
-// // @Success 200 {object} gin.H "{url: oauthURL}"
+// // @Success 200 {object} map[string]interface{} "{url: oauthURL}"
 // // @Resource /oauth
 // // @Router /oauth/kakao [get]
 // func kakaoAuth(c *gin.Context) {
@@ -386,7 +386,7 @@ func linkedinRedirect(c *gin.Context) {
 // // @Title kakaoRevoke
 // // @Description Get kakao oauth url.
 // // @Accept  json
-// // @Success 200 {object} gin.H "Revoked"
+// // @Success 200 {object} map[string]interface{} "Revoked"
 // // @Failure 401 {object} response.BasicResponse "Authentication required"
 // // @Failure 404 {object} response.BasicResponse "Connection is not found"
 // // @Failure 500 {object} response.BasicResponse "Connection not revoked from user"
@@ -418,14 +418,14 @@ func linkedinRedirect(c *gin.Context) {
 // if err != nil {
 // 	log.CheckErrorWithMessage(err, fmt.Sprintf("httpStatusCode : %d", status))
 // }
-// c.Redirect(303, config.HostURL)
+// c.Redirect(303, viper.GetString("api.hostURL"))
 //
 // }
 
 // // @Title naverAuth
 // // @Description Get naver oauth url.
 // // @Accept  json
-// // @Success 200 {object} gin.H "{url: oauthURL}"
+// // @Success 200 {object} map[string]interface{} "{url: oauthURL}"
 // // @Resource /oauth
 // // @Router /oauth/naver [get]
 // func naverAuth(c *gin.Context) {
@@ -437,7 +437,7 @@ func linkedinRedirect(c *gin.Context) {
 // // @Title naverRevoke
 // // @Description Get naver oauth url.
 // // @Accept  json
-// // @Success 200 {object} gin.H "Revoked"
+// // @Success 200 {object} map[string]interface{} "Revoked"
 // // @Failure 401 {object} response.BasicResponse "Authentication required"
 // // @Failure 404 {object} response.BasicResponse "Connection is not found"
 // // @Failure 500 {object} response.BasicResponse "Connection not revoked from user"
@@ -469,6 +469,6 @@ func linkedinRedirect(c *gin.Context) {
 // if err != nil {
 // 	log.CheckErrorWithMessage(err, fmt.Sprintf("httpStatusCode : %d", status))
 // }
-// c.Redirect(303, config.HostURL)
+// c.Redirect(303, viper.GetString("api.hostURL"))
 //
 // }

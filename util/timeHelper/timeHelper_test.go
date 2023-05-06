@@ -4,10 +4,14 @@ import (
 	"time"
 
 	. "github.com/dorajistyle/goyangi/util/timeHelper"
-
+	viper "github.com/dorajistyle/goyangi/util/viper"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
+
+func init() {
+	viper.LoadConfig()
+}
 
 var _ = Describe("TimeHelper", func() {
 	var (

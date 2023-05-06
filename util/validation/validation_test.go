@@ -2,10 +2,14 @@ package validation_test
 
 import (
 	. "github.com/dorajistyle/goyangi/util/validation"
-
+	viper "github.com/dorajistyle/goyangi/util/viper"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
+
+func init() {
+	viper.LoadConfig()
+}
 
 var _ = Describe("Validation", func() {
 	var (

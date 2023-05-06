@@ -1,20 +1,38 @@
 package db
 
 import (
-	"github.com/dorajistyle/goyangi/config"
 	"github.com/dorajistyle/goyangi/util/log"
+	"github.com/spf13/viper"
+
 	// _ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
 )
 
-var ORM, Errs = GormInit()
+var ORM *gorm.DB
 
 // GormInit init gorm ORM.
-func GormInit() (*gorm.DB, error) {
-	db, err := gorm.Open("postgres", config.PostgresDSL())
-	// db, err := gorm.Open("mysql", config.MysqlDSL())
-	//db, err := gorm.Open("sqlite3", "/tmp/gorm.db")
+func GormInit() {
+	appEnvironmnet := viper.GetString("app.environment")
+	dbType := viper.GetString("database.type")
+	dbHost := viper.GetString("database.host")
+	dbPort := viper.GetString("database.port")
+	dbUser := viper.GetString("database.user")
+	dbPassword := viper.GetString("database.password")
+	dbDatabase := viper.GetString("database.database")
+	dbOptions := viper.GetString("database.options")
+
+	var databaseDSL string
+
+	switch dbType {
+	case "postgres":
+		databaseDSL = "host=" + dbHost + " port=" + dbPort + " dbname=" + dbDatabase + " " + dbOptions + " user=" + dbUser + " password=" + dbPassword
+	case "mysql":
+		databaseDSL = dbUser + ":" + dbPassword + "@tcp(" + dbHost + ":" + dbPort + ")/" + dbDatabase + "?" + dbOptions
+
+	}
+	println(databaseDSL)
+	db, err := gorm.Open(dbType, databaseDSL)
 
 	db.DB()
 
@@ -25,10 +43,9 @@ func GormInit() (*gorm.DB, error) {
 
 	// Disable table name's pluralization
 	// db.SingularTable(true)
-	if config.Environment == "DEVELOPMENT" {
+	if appEnvironmnet == "DEVELOPMENT" {
 		db.LogMode(true)
 	}
 	log.CheckError(err)
-
-	return db, err
+	ORM = db
 }

@@ -47,8 +47,8 @@ func Users(parentRoute *gin.RouterGroup) {
 // @Title createUser
 // @Description Create a user.
 // @Accept  json
-// @Param   registrationEmail        form   string     true        "User Email."
-// @Param   registrationPassword        form   string  true        "User Password."
+// @Param   registrationEmail        formData   string     true        "User Email."
+// @Param   registrationPassword        formData   string  true        "User Password."
 // @Success 201 {object} response.BasicResponse "User is registered successfully"
 // @Failure 401 {object} response.BasicResponse "Authentication required"
 // @Failure 404 {object} response.BasicResponse "User not logged in."
@@ -151,8 +151,8 @@ func deleteUser(c *gin.Context) {
 // @Title addRoleToUser
 // @Description Add a role to user.
 // @Accept  json
-// @Param   userId        form   int  true        "User ID."
-// @Param   roleId        form   int  true        "Role ID."
+// @Param   userId        formData   int  true        "User ID."
+// @Param   roleId        formData   int  true        "Role ID."
 // @Success 201 {object} response.BasicResponse "Created"
 // @Failure 401 {object} response.BasicResponse "Authentication required"
 // @Failure 404 {object} response.BasicResponse "User or role is not found"
@@ -175,7 +175,7 @@ func addRoleToUser(c *gin.Context) {
 // @Description Remove a role from user.
 // @Accept  json
 // @Param   id        path   int  true        "User ID."
-// @Param   roleId        form   int  true        "Role ID."
+// @Param   roleId        formData   int  true        "Role ID."
 // @Success 200 {object} response.BasicResponse "OK"
 // @Failure 401 {object} response.BasicResponse "Authentication required"
 // @Failure 404 {object} response.BasicResponse "Not found"
@@ -197,8 +197,8 @@ func removeRoleFromUser(c *gin.Context) {
 // @Title createLikingOnUser
 // @Description Create a liking on a user.
 // @Accept  json
-// @Param   parentId       form   int     true        "Parent item id."
-// @Param   userId        form   int     true        "User id."
+// @Param   parentId       formData   int     true        "Parent item id."
+// @Param   userId        formData   int     true        "User id."
 // @Success 201 {object} model.PublicUser "Created"
 // @Failure 401 {object} response.BasicResponse "Authentication required"
 // @Failure 404 {object} response.BasicResponse "Not found"
@@ -309,7 +309,7 @@ func retrieveCurrentUser(c *gin.Context) {
 // @Title sendPasswordResetToken
 // @Description Create a user session.
 // @Accept  json
-// @Param   email        form   string     true        "User email."
+// @Param   email        formData   string     true        "User email."
 // @Success 200 {object} response.BasicResponse "Sent"
 // @Failure 401 {object} response.BasicResponse "Authentication required"
 // @Failure 500 {object} response.BasicResponse "Password reset token not sent"
@@ -330,8 +330,8 @@ func sendPasswordResetToken(c *gin.Context) {
 // @Title resetPassword
 // @Description Create a user session.
 // @Accept  json
-// @Param   token        form   string     true        "User password reset token"
-// @Param   newPassword        form   string     true        "New password"
+// @Param   token        formData   string     true        "User password reset token"
+// @Param   newPassword        formData   string     true        "New password"
 // @Success 200 {object} response.BasicResponse "User password updated"
 // @Failure 400 {object} response.BasicResponse "User password is not updated."
 // @Failure 401 {object} response.BasicResponse "Authentication required"
@@ -373,7 +373,7 @@ func sendEmailVerificationToken(c *gin.Context) {
 // @Title verifyEmail
 // @Description Create a user session.
 // @Accept  json
-// @Param   token        form   string     true        "User email validation token"
+// @Param   token        formData   string     true        "User email validation token"
 // @Success 200 {object} response.BasicResponse "User email verified."
 // @Failure 400 {object} response.BasicResponse "User email not verified."
 // @Resource /user

@@ -39,16 +39,17 @@ func SetGithubUser(response *http.Response) (*GithubUser, error) {
 func OauthGithub(c *gin.Context) (int, error) {
 	var authResponse oauth2.AuthResponse
 	var oauthUser OauthUser
-	c.BindWith(&authResponse, binding.Form)
+	bindErr := c.MustBindWith(&authResponse, binding.Form)
+	log.Debugf("bind error : %s\n", bindErr)
 	log.Debugf("oauthRedirect form: %v", authResponse)
 	response, token, err := oauth2.OauthRequest(github.RequestURL, github.Config, authResponse)
 	if err != nil {
-		log.Error("get response error")
+		log.Error("get response error", err)
 		return http.StatusInternalServerError, err
 	}
 	githubUser, err := SetGithubUser(response)
 	if err != nil {
-		log.Error("SetGithubUser error")
+		log.Error("SetGithubUser error", err)
 		return http.StatusInternalServerError, err
 	}
 	modelHelper.AssignValue(&oauthUser, githubUser)
@@ -56,7 +57,7 @@ func OauthGithub(c *gin.Context) (int, error) {
 	log.Debugf("\noauthUser item : %v", oauthUser)
 	status, err := LoginOrCreateOauthUser(c, &oauthUser, github.ProviderId, token)
 	if err != nil {
-		log.Errorf("LoginOrCreateOauthUser error: %d", status)
+		log.Errorf("LoginOrCreateOauthUser error", err, "status", status)
 		return status, err
 	}
 	return http.StatusSeeOther, nil

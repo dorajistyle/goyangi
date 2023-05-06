@@ -4,7 +4,7 @@
 * [gin-gonic/gin](https://gin-gonic.github.io/gin/)[[code](https://github.com/gin-gonic/gin)], Gin is a web framework written in Golang. If you need performance and good productivity, you will love Gin.
 * [go-sql-driver/mysql](http://godoc.org/github.com/go-sql-driver/mysql)[[code](https://github.com/go-sql-driver/mysql)], A MySQL-Driver for Go's database/sql package
 * [jinzhu/gorm](https://godoc.org/github.com/jinzhu/gorm)[[code](https://github.com/jinzhu/gorm)], The fantastic ORM library for Golang, aims to be developer friendly.
-* [Sirupsen/logrus](https://godoc.org/github.com/Sirupsen/logrus)[[code](https://github.com/Sirupsen/logrus)], Structured, pluggable logging for Go.
+* [uber-go/zap](https://github.com/uber-go/zap)[[code](https://github.com/uber-go/zap)], Blazing fast, structured, leveled logging in Go.
 * [onsi/ginkgo](http://onsi.github.io/ginkgo/)[[code](https://github.com/onsi/ginkgo/)], BDD Testing Framework for Go.
 * [onsi/gomega](http://onsi.github.io/gomega/)[[code](https://github.com/onsi/gomega)], Ginkgo's Preferred Matcher Library
 * [goamz/goamz](http://godoc.org/github.com/goamz/goamz)[[code](https://github.com/goamz/goamz)], It enables Go programs to interact with Amazon Web Services.

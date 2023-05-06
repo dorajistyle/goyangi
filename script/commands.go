@@ -3,7 +3,7 @@ package script
 import (
 	"regexp"
 
-	"github.com/codegangsta/cli"
+	"github.com/urfave/cli"
 	"github.com/dorajistyle/goyangi/server"
 )
 

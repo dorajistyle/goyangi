@@ -7,8 +7,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/dorajistyle/goyangi/util/config"
 	"github.com/dorajistyle/goyangi/util/log"
+	"github.com/spf13/viper"
 )
 
 type ConcurrencyStatus bool
@@ -35,7 +35,7 @@ func Concurrent(request *http.Request, result Result) (int, error) {
 		c <- result
 	}()
 
-	timeout := time.After(config.UploadTimeout)
+	timeout := time.After(viper.GetDuration("upload.timeout") * time.Second)
 	select {
 	case res := <-c:
 		log.Debugf("End of Upload : %v", res)

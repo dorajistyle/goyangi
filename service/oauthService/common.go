@@ -111,7 +111,7 @@ func CreateOauthUser(c *gin.Context, oauthUser *OauthUser, connection *model.Con
 	registrationForm.Password = string(generatedPassword)
 	currentUser, err := userService.CurrentUser(c)
 	if err != nil {
-		log.Errorf("currentUser : %v", currentUser)
+		log.Errorf("Something wrong with the currentUser", err, "currentUser", currentUser)
 		user, err = userService.CreateUserFromForm(registrationForm)
 		if err != nil {
 			return user, http.StatusInternalServerError, errors.New("User is not created.")

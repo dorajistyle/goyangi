@@ -23,8 +23,8 @@ func Roles(parentRoute *gin.RouterGroup) {
 // @Title createRole
 // @Description Create a role.
 // @Accept  json
-// @Param   name        form   string     true        "Name of Role."
-// @Param   description        form   string  true        "Description of Role."
+// @Param   name        formData   string     true        "Name of Role."
+// @Param   description        formData   string  true        "Description of Role."
 // @Success 201 {object} model.Role "Created"
 // @Failure 401 {object} response.BasicResponse "Authentication required"
 // @Failure 500 {object} response.BasicResponse "Role is not created"

@@ -3,9 +3,9 @@ package aws
 import (
 	"bytes"
 
-	"github.com/dorajistyle/goyangi/util/config"
 	"github.com/goamz/goamz/aws"
 	"github.com/goamz/goamz/s3"
+	"github.com/spf13/viper"
 )
 
 // Connection create connection of S3.
@@ -25,7 +25,7 @@ func List(bucket *s3.Bucket, prefix, delim, marker string, max int) (*s3.ListRes
 
 // MyTestBucket get bucket from config.
 func MyTestBucket() *s3.Bucket {
-	return Bucket(Connection(Auth(), Region(config.AWSS3RegionName)), config.AWSS3TestBucketName)
+	return Bucket(Connection(Auth(), Region(viper.GetString("aws.s3.region"))), viper.GetString("aws.s3.testBucket.name"))
 }
 
 // MyTestBucketList get list from MyBucket.
@@ -41,22 +41,22 @@ func PutToMyTestBucket(prefix string, keyname string, wb *bytes.Buffer, contentT
 
 // PutToMyPrivateTestBucket put a file to the MyBucket.
 func PutToMyPrivateTestBucket(subdir string, keyname string, wb *bytes.Buffer, contentType string) error {
-	return PutToMyTestBucket(config.AWSS3BucketPrefix, subdir+keyname, wb, contentType, "private")
+	return PutToMyTestBucket(viper.GetString("aws.s3.bucket.prefix"), subdir+keyname, wb, contentType, "private")
 }
 
 // PutToMyPublicTestBucket put a file to the MyBucket.
 func PutToMyPublicTestBucket(subdir string, keyname string, wb *bytes.Buffer, contentType string) error {
-	return PutToMyTestBucket(config.AWSS3TestBucketPrefix, subdir+keyname, wb, contentType, "public-read")
+	return PutToMyTestBucket(viper.GetString("aws.s3.testBucket.prefix"), subdir+keyname, wb, contentType, "public-read")
 }
 
 // DelFromMyTestBucket delete a file from a bucket.
 func DelFromMyTestBucket(prefix string, keyname string) error {
-	return MyTestBucket().Del(config.AWSS3BucketPrefix + prefix + keyname)
+	return MyTestBucket().Del(viper.GetString("aws.s3.bucket.prefix") + prefix + keyname)
 }
 
 // MyBucket get bucket from config.
 func MyBucket() *s3.Bucket {
-	return Bucket(Connection(Auth(), Region(config.AWSS3RegionName)), config.AWSS3BucketName)
+	return Bucket(Connection(Auth(), Region(viper.GetString("aws.s3.region"))), viper.GetString("aws.s3.bucket.name"))
 }
 
 // MyBucketList get list from MyBucket.
@@ -72,15 +72,15 @@ func PutToMyBucket(prefix string, keyname string, wb *bytes.Buffer, contentType 
 
 // PutToMyPrivateBucket put a file to the MyBucket.
 func PutToMyPrivateBucket(subdir string, keyname string, wb *bytes.Buffer, contentType string) error {
-	return PutToMyBucket(config.AWSS3BucketPrefix, subdir+keyname, wb, contentType, "private")
+	return PutToMyBucket(viper.GetString("aws.s3.bucket.prefix"), subdir+keyname, wb, contentType, "private")
 }
 
 // PutToMyPublicBucket put a file to the MyBucket.
 func PutToMyPublicBucket(subdir string, keyname string, wb *bytes.Buffer, contentType string) error {
-	return PutToMyBucket(config.AWSS3BucketPrefix, subdir+keyname, wb, contentType, "public-read")
+	return PutToMyBucket(viper.GetString("aws.s3.bucket.prefix"), subdir+keyname, wb, contentType, "public-read")
 }
 
 // DelFromMyBucket delete a file from a bucket.
 func DelFromMyBucket(prefix string, keyname string) error {
-	return MyBucket().Del(config.AWSS3BucketPrefix + prefix + keyname)
+	return MyBucket().Del(viper.GetString("aws.s3.bucket.prefix") + prefix + keyname)
 }

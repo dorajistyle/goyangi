@@ -1,0 +1,2612 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/articles": {
+            "get": {
+                "description": "Retrieve article array.",
+                "consumes": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Article"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "upload images to storage. And sync article data. Request should contain multipart form data.",
+                "consumes": [
+                    "application/json"
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Uploaded",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Upload failed",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/articles/comments": {
+            "post": {
+                "description": "Create a comment on an article.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Article Id.",
+                        "name": "articleId",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Comment content.",
+                        "name": "content",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Article image name.",
+                        "name": "imageName",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Article description.",
+                        "name": "description",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Comment created",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "FormUser's Id is not identical with currentUser's Id",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Article is not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/articles/likings": {
+            "post": {
+                "description": "Create a liking on an article.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Article Id.",
+                        "name": "articleId",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Liking content.",
+                        "name": "content",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Article image name.",
+                        "name": "imageName",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Article description.",
+                        "name": "description",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Liking created",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "FormUser's Id is not identical with currentUser's Id",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Article is not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/articles/{id}": {
+            "get": {
+                "description": "Retrieve an article.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Article Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Article"
+                        }
+                    },
+                    "404": {
+                        "description": "Article is not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update an article.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Article Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Article"
+                        }
+                    },
+                    "400": {
+                        "description": "Article is not updated",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Article is not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete an article.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Article Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Article deleted",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/articles/{id}/comments": {
+            "get": {
+                "description": "Retrieve comments on an article.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Article Id",
+                        "name": "articleId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Retrieve comments successfully",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Comment"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/articles/{id}/comments/{commentId}": {
+            "put": {
+                "description": "Update a comment on article.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Article Id",
+                        "name": "articleId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Comment Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Comment updated successfully",
+                        "schema": {
+                            "$ref": "#/definitions/model.Comment"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "FormUser's Id is not identical with currentUser's Id",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Comment is not updated",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a comment on article.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Article Id",
+                        "name": "articleId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Comment Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Comment is deleted successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "FormUser's Id is not identical with currentUser's Id",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Comment is not deleted",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/articles/{id}/likings": {
+            "get": {
+                "description": "Retrieve likings on an article.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Article Id",
+                        "name": "articleId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.PublicUser"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/articles/{id}/likings/{likingId}": {
+            "delete": {
+                "description": "Delete a liking on article.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Article Id",
+                        "name": "articleId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Liking Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liking is deleted successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "FormUser's Id is not identical with currentUser's Id",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Liking is not deleted",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/authentications": {
+            "post": {
+                "description": "Create a user session.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User email.",
+                        "name": "loginEmail",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "User password.",
+                        "name": "loginPassword",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "User authentication created",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Password incorrect",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "User is not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a user session.",
+                "consumes": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User logged out successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/oauth": {
+            "get": {
+                "description": "Retrieve oauth connections.",
+                "consumes": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/oauthService.oauthStatusMap"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/oauth/facebook": {
+            "get": {
+                "description": "Get facebook oauth url.",
+                "consumes": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{url: oauthURL}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Get facebook oauth url.",
+                "consumes": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Revoked",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Connection is not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Connection not revoked from user",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/oauth/facebook/redirect": {
+            "get": {
+                "description": "Redirect from Facebook oauth.",
+                "consumes": [
+                    "application/json"
+                ],
+                "responses": {
+                    "303": {
+                        "description": "Connection linked.",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "User is not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Connection not linked",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/oauth/github": {
+            "get": {
+                "description": "Get github oauth url.",
+                "consumes": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{url: oauthURL}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Get github oauth url.",
+                "consumes": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Revoked",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Connection is not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Connection not revoked from user",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/oauth/github/redirect": {
+            "get": {
+                "description": "Redirect from Github oauth.",
+                "consumes": [
+                    "application/json"
+                ],
+                "responses": {
+                    "303": {
+                        "description": "Connection linked.",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "User is not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Connection not linked",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/oauth/google": {
+            "get": {
+                "description": "Get google oauth url.",
+                "consumes": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OauthURL retrieved",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Get google oauth url.",
+                "consumes": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Revoked",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Connection is not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Connection not revoked from user",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/oauth/google/redirect": {
+            "get": {
+                "description": "Redirect from Google oauth.",
+                "consumes": [
+                    "application/json"
+                ],
+                "responses": {
+                    "303": {
+                        "description": "Connection linked.",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "User is not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Connection not linked",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/oauth/linkedin": {
+            "get": {
+                "description": "Get linkedin oauth url.",
+                "consumes": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{url: oauthURL}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Get linkedin oauth url.",
+                "consumes": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Revoked",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Connection is not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Connection not revoked from user",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/oauth/linkedin/redirect": {
+            "get": {
+                "description": "Redirect from Linkedin oauth.",
+                "consumes": [
+                    "application/json"
+                ],
+                "responses": {
+                    "303": {
+                        "description": "Connection linked.",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "User is not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Connection not linked",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/roles": {
+            "get": {
+                "description": "Retrieve role array.",
+                "consumes": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Role"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a role.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Name of Role.",
+                        "name": "name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Description of Role.",
+                        "name": "description",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Role"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Role is not created",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/roles/{id}": {
+            "get": {
+                "description": "Retrieve a role.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Role ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Role"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update a role.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Role ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Role"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Role is not updated",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a role.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Role ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/upload": {
+            "get": {
+                "description": "Retrieve file array.",
+                "consumes": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.File"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a file.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Name of File.",
+                        "name": "name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Description of File.",
+                        "name": "size",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.File"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "File is not created",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/upload/{id}": {
+            "get": {
+                "description": "Retrieve a file.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "File ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.File"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update a file.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "File ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.File"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "File is not updated",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a file.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "File ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/admin": {
+            "get": {
+                "description": "Retrieve user array for admin. It contains more information than normal query.",
+                "consumes": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.User"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/admin/{id}": {
+            "get": {
+                "description": "Retrieve a user for admin. It contains more information than normal query.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/current": {
+            "get": {
+                "description": "Retrieve the current user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Liking is not deleted",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/email/{email}": {
+            "get": {
+                "description": "Retrieve user by email.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User email",
+                        "name": "email",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.PublicUser"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/email/{email}/list": {
+            "get": {
+                "description": "Retrieve user array by email.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User email",
+                        "name": "email",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.PublicUser"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/reset/password": {
+            "put": {
+                "description": "Create a user session.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User password reset token",
+                        "name": "token",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "New password",
+                        "name": "newPassword",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User password updated",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "User password is not updated.",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Password reset token not sent",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/send/email/verification/token": {
+            "post": {
+                "description": "Create a user session.",
+                "consumes": [
+                    "application/json"
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Email verification token not sent",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/send/password/reset/token": {
+            "post": {
+                "description": "Create a user session.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User email.",
+                        "name": "email",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sent",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Password reset token not sent",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/test/send/email": {
+            "get": {
+                "description": "send a test email.",
+                "consumes": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/username/{username}": {
+            "get": {
+                "description": "Retrieve user by username.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User email",
+                        "name": "username",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.PublicUser"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/verify/email": {
+            "put": {
+                "description": "Create a user session.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User email validation token",
+                        "name": "token",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User email verified.",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "User email not verified.",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "description": "Retrieve user array.",
+                "consumes": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.PublicUser"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User Email.",
+                        "name": "registrationEmail",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "User Password.",
+                        "name": "registrationPassword",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "User is registered successfully",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "User not logged in.",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "User is not created.",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/likings": {
+            "post": {
+                "description": "Create a liking on a user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Parent item id.",
+                        "name": "parentId",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "User id.",
+                        "name": "userId",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.PublicUser"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Liking is not created",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/roles": {
+            "post": {
+                "description": "Add a role to user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID.",
+                        "name": "userId",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Role ID.",
+                        "name": "roleId",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "User or role is not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Role is not added to a user",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "description": "Retrieve a user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.PublicUser"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Activate/Deactivate a user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "User is not deleted.",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/liked": {
+            "get": {
+                "description": "Retrieve likings on a user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.PublicUser"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/likings": {
+            "get": {
+                "description": "Retrieve likings on a user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.PublicUser"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/likings/{likingId}": {
+            "delete": {
+                "description": "Delete a liking on user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Liking ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Liking is not deleted",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/roles/{roleId}": {
+            "delete": {
+                "description": "Remove a role from user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID.",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Role ID.",
+                        "name": "roleId",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Authentication required",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Role is not deleted from a user",
+                        "schema": {
+                            "$ref": "#/definitions/response.BasicResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.Article": {
+            "type": "object",
+            "properties": {
+                "active": {
+                    "type": "boolean"
+                },
+                "author": {
+                    "$ref": "#/definitions/model.User"
+                },
+                "categoryId": {
+                    "type": "integer"
+                },
+                "commentCount": {
+                    "type": "integer"
+                },
+                "commentList": {
+                    "$ref": "#/definitions/model.CommentList"
+                },
+                "comments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Comment"
+                    }
+                },
+                "content": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "imageName": {
+                    "type": "string"
+                },
+                "likingCount": {
+                    "type": "integer"
+                },
+                "likingList": {
+                    "$ref": "#/definitions/model.LikingList"
+                },
+                "likings": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.User"
+                    }
+                },
+                "nextId": {
+                    "type": "integer"
+                },
+                "prevId": {
+                    "type": "integer"
+                },
+                "referralId": {
+                    "type": "integer"
+                },
+                "referralUserId": {
+                    "type": "integer"
+                },
+                "sharingCount": {
+                    "type": "integer"
+                },
+                "thumbnailName": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.Comment": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "likingCount": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/model.User"
+                },
+                "userId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.CommentList": {
+            "type": "object",
+            "properties": {
+                "comments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Comment"
+                    }
+                },
+                "count": {
+                    "type": "integer"
+                },
+                "currentPage": {
+                    "type": "integer"
+                },
+                "hasNext": {
+                    "type": "boolean"
+                },
+                "hasPrev": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "model.Connection": {
+            "type": "object",
+            "properties": {
+                "accessToken": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "imageUrl": {
+                    "type": "string"
+                },
+                "profileUrl": {
+                    "type": "string"
+                },
+                "providerId": {
+                    "type": "integer"
+                },
+                "providerUserId": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.File": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "size": {
+                    "type": "integer"
+                },
+                "userId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.Language": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.LikedList": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "currentPage": {
+                    "type": "integer"
+                },
+                "hasNext": {
+                    "type": "boolean"
+                },
+                "hasPrev": {
+                    "type": "boolean"
+                },
+                "liked": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.User"
+                    }
+                }
+            }
+        },
+        "model.LikingList": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "currentPage": {
+                    "type": "integer"
+                },
+                "hasNext": {
+                    "type": "boolean"
+                },
+                "hasPrev": {
+                    "type": "boolean"
+                },
+                "isLiked": {
+                    "type": "boolean"
+                },
+                "likings": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.User"
+                    }
+                }
+            }
+        },
+        "model.PublicUser": {
+            "type": "object",
+            "properties": {
+                "activateUntil": {
+                    "type": "boolean"
+                },
+                "activatedAt": {
+                    "type": "boolean"
+                },
+                "activation": {
+                    "description": "admin",
+                    "type": "boolean"
+                },
+                "activationToken": {
+                    "type": "boolean"
+                },
+                "appId": {
+                    "type": "integer"
+                },
+                "articles": {
+                    "type": "boolean"
+                },
+                "birthday": {
+                    "type": "boolean"
+                },
+                "connections": {
+                    "type": "boolean"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "currentLoginAt": {
+                    "type": "boolean"
+                },
+                "currentLoginIp": {
+                    "type": "boolean"
+                },
+                "deletedAt": {
+                    "type": "boolean"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "boolean"
+                },
+                "gender": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "languages": {
+                    "type": "boolean"
+                },
+                "lastLoginAt": {
+                    "type": "boolean"
+                },
+                "lastLoginIp": {
+                    "type": "boolean"
+                },
+                "liked": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.User"
+                    }
+                },
+                "likedCount": {
+                    "type": "integer"
+                },
+                "likedList": {
+                    "$ref": "#/definitions/model.LikedList"
+                },
+                "likingCount": {
+                    "description": "Liking",
+                    "type": "integer"
+                },
+                "likingList": {
+                    "description": "Liked   []User `gorm:\"many2many:users_followers;foreignkey:follower_id;associationforeignkey:user_id;\"`\nLiked      []User     `gorm:\"foreignkey:follower_id;associationforeignkey:userId;many2many:users_followers;\"`",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.LikingList"
+                        }
+                    ]
+                },
+                "likings": {
+                    "description": "Likings     []User     `gorm:\"foreignkey:userId;associationforeignkey:follower_id;many2many:users_followers;\"`",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.User"
+                    }
+                },
+                "md5": {
+                    "description": "email md5 for gravatar",
+                    "type": "string"
+                },
+                "name": {
+                    "type": "boolean"
+                },
+                "password": {
+                    "type": "boolean"
+                },
+                "passwordResetToken": {
+                    "type": "boolean"
+                },
+                "passwordResetUntil": {
+                    "type": "boolean"
+                },
+                "roles": {
+                    "type": "boolean"
+                },
+                "token": {
+                    "type": "boolean"
+                },
+                "tokenExperiation": {
+                    "type": "boolean"
+                },
+                "updatedAt": {
+                    "type": "boolean"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Role": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.User": {
+            "type": "object",
+            "properties": {
+                "activateUntil": {
+                    "type": "string"
+                },
+                "activatedAt": {
+                    "type": "string"
+                },
+                "activation": {
+                    "description": "admin",
+                    "type": "boolean"
+                },
+                "activationToken": {
+                    "type": "string"
+                },
+                "appId": {
+                    "type": "integer"
+                },
+                "birthday": {
+                    "type": "string"
+                },
+                "connections": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Connection"
+                    }
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "currentLoginAt": {
+                    "type": "string"
+                },
+                "currentLoginIp": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "languages": {
+                    "description": "Many To Many, user_languages is the join table",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Language"
+                    }
+                },
+                "lastLoginAt": {
+                    "type": "string"
+                },
+                "lastLoginIp": {
+                    "type": "string"
+                },
+                "liked": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.User"
+                    }
+                },
+                "likedCount": {
+                    "type": "integer"
+                },
+                "likedList": {
+                    "$ref": "#/definitions/model.LikedList"
+                },
+                "likingCount": {
+                    "description": "Liking",
+                    "type": "integer"
+                },
+                "likingList": {
+                    "description": "Liked   []User `gorm:\"many2many:users_followers;foreignkey:follower_id;associationforeignkey:user_id;\"`\nLiked      []User     `gorm:\"foreignkey:follower_id;associationforeignkey:userId;many2many:users_followers;\"`",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.LikingList"
+                        }
+                    ]
+                },
+                "likings": {
+                    "description": "Likings     []User     `gorm:\"foreignkey:userId;associationforeignkey:follower_id;many2many:users_followers;\"`",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.User"
+                    }
+                },
+                "md5": {
+                    "description": "email md5 for gravatar",
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "passwordResetToken": {
+                    "type": "string"
+                },
+                "passwordResetUntil": {
+                    "type": "string"
+                },
+                "roles": {
+                    "description": "Many To Many, users_roles",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Role"
+                    }
+                },
+                "token": {
+                    "type": "string"
+                },
+                "tokenExperiation": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "oauthService.oauthStatusMap": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "boolean"
+            }
+        },
+        "response.BasicResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "messageType": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}

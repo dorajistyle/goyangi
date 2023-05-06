@@ -6,8 +6,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/dorajistyle/goyangi/util/config"
 	"github.com/dorajistyle/goyangi/util/log"
+	"github.com/spf13/viper"
 	gomail "gopkg.in/gomail.v1"
 )
 
@@ -28,7 +28,7 @@ var (
 )
 
 func InitGomail() *gomail.Mailer {
-	mailer := gomail.NewMailer(config.EmailHost, config.EmailUsername, config.EmailPassword, config.EmailPort)
+	mailer := gomail.NewMailer(viper.GetString("email.host"), viper.GetString("email.username"), viper.GetString("email.password"), viper.GetInt("email.port"))
 	return mailer
 }
 
@@ -37,7 +37,7 @@ func SendEmail(msg *gomail.Message) (emailError EmailError) {
 	go func() {
 		c <- PostOffice(msg, 집배원, Postman, Cartero, Facteur, Yóudìyuán, почтальон, Leterportisto)
 	}()
-	timeout := time.After(config.EmailTimeout)
+	timeout := time.After(viper.GetDuration("email.timeout") * time.Second)
 	for i := 0; i < 3; i++ {
 		select {
 		case emailError = <-c:
@@ -96,8 +96,8 @@ func realPostOfficer() PostOfficer {
 
 func SendEmailFromAdmin(to string, subject string, body string, bodyHTML string) error {
 	msg := gomail.NewMessage()
-	msg.SetHeader("From", config.EmailFrom)
-	msg.SetHeader("To", to, config.EmailTestTo)
+	msg.SetHeader("From", viper.GetString("email.from"))
+	msg.SetHeader("To", to, viper.GetString("email.testTo"))
 	msg.SetHeader("Subject", subject)
 	msg.SetBody("text/plain", body)
 	msg.AddAlternative("text/html", bodyHTML)
@@ -105,7 +105,7 @@ func SendEmailFromAdmin(to string, subject string, body string, bodyHTML string)
 	log.Debugf("subject : %s", subject)
 	log.Debugf("body : %s", body)
 	log.Debugf("bodyHTML : %s", bodyHTML)
-	if config.SendEmail {
+	if viper.GetBool("email.send") {
 		log.Debug("SendEmail performed.")
 		err := SendEmail(msg)
 		return err
@@ -115,9 +115,9 @@ func SendEmailFromAdmin(to string, subject string, body string, bodyHTML string)
 
 func SendTestEmail() error {
 	msg := gomail.NewMessage()
-	msg.SetHeader("From", config.EmailFrom)
-	msg.SetHeader("To", config.EmailTestTo)
-	msg.SetAddressHeader("Cc", config.EmailTestTo, "dorajistyle")
+	msg.SetHeader("From", viper.GetString("email.from"))
+	msg.SetHeader("To", viper.GetString("email.testTo"))
+	msg.SetAddressHeader("Cc", viper.GetString("email.testTo"), "dorajistyle")
 	msg.SetHeader("Subject", "Hi(안녕하세요)?!")
 	msg.SetBody("text/plain", "Hi(안녕하세요)?!")
 	msg.AddAlternative("text/html", "<p><b>Goyangi</b> means <i>cat</i>!!?</p>")

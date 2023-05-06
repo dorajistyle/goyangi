@@ -3,7 +3,7 @@ package google
 import (
 	"net/url"
 
-	"github.com/dorajistyle/goyangi/util/config"
+	oauthHelper "github.com/dorajistyle/goyangi/util/oauth2"
 	"golang.org/x/oauth2"
 )
 
@@ -30,10 +30,11 @@ var Endpoint = oauth2.Endpoint{
 var Config = Oauth2Config()
 
 func Oauth2Config() *oauth2.Config {
+	id, secret, redirectURL := oauthHelper.GetProvider("google")
 	return &oauth2.Config{
-		ClientID:     config.OauthGoogleClientID,
-		ClientSecret: config.OauthGoogleClientSecret,
-		RedirectURL:  config.OauthGoogleRedirectURL,
+		ClientID:     id,
+		ClientSecret: secret,
+		RedirectURL:  redirectURL,
 		Scopes: []string{
 			"email",
 			"profile",

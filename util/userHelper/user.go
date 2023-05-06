@@ -3,6 +3,7 @@ package userHelper
 import (
 	"github.com/dorajistyle/goyangi/db"
 	"github.com/dorajistyle/goyangi/model"
+
 	//   "github.com/gin-gonic/gin"
 	"errors"
 	"net/http"
@@ -46,7 +47,7 @@ func FindOrCreateUser(appId int64, userName string) (model.User, int, error) {
 		// return user, http.StatusBadRequest, err
 		user.Name = userName
 		// user.Token = token
-		user.AppId = appId
+		user.AppId = uint(appId)
 		log.Debugf("user %+v\n", user)
 		if db.ORM.Create(&user).Error != nil {
 			return user, http.StatusBadRequest, errors.New("User is not created.")

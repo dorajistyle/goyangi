@@ -22,22 +22,21 @@ func CacheResponse(c *gin.Context, keyPrefix string, keyBody string, resGenerato
 	var cacheErr error
 	cacheErr = errors.New("It is a default error of cache")
 	cacheKey = stringHelper.ConcatString(keyPrefix, keyBody)
-	if InitErr == nil {
-		cacheStr, cacheErr = Resource.Get(cacheKey)
-	}
+	cacheStr, cacheErr = Get(cacheKey)
+
 	if cacheErr != nil {
 		if resGenerator == nil {
 			log.Debug("resGenerator is nil")
 			return encrypted, status, cacheErr
 		}
 		encrypted, status, resErr = resGenerator(c)
-		if InitErr == nil {
-			log.Debugf("cacheKey : %s\n", cacheKey)
-			appendErr := Resource.Append(cacheKey, encrypted)
-			if appendErr != nil {
-				log.Error(appendErr.Error())
-			}
+
+		log.Debugf("cacheKey : %s\n", cacheKey)
+		appendErr := Append(cacheKey, encrypted)
+		if appendErr != nil {
+			log.Error("Cannot append cache", appendErr)
 		}
+
 	} else {
 		log.Debugf("It has cached response. Key : %s\n", cacheKey)
 		encrypted = cacheStr

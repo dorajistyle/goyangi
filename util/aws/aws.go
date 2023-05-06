@@ -1,15 +1,15 @@
 package aws
 
 import (
-	"github.com/dorajistyle/goyangi/util/config"
 	"github.com/goamz/goamz/aws"
+	"github.com/spf13/viper"
 )
 
 // Auth return the aws authentication.
 func Auth() aws.Auth {
 	return aws.Auth{
-		AccessKey: config.AWSAccessKeyID,
-		SecretKey: config.AWSSecretAccessKey,
+		AccessKey: viper.GetString("aws.accessKeyID"),
+		SecretKey: viper.GetString("aws.secretAccessKey"),
 	}
 }
 

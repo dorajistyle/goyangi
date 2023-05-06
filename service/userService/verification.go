@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/dorajistyle/goyangi/config"
 	"github.com/dorajistyle/goyangi/db"
 	"github.com/dorajistyle/goyangi/model"
 	"github.com/dorajistyle/goyangi/util/crypto"
@@ -15,6 +14,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/nicksnyder/go-i18n/i18n"
+	"github.com/spf13/viper"
 )
 
 // SendEmailVerfication sends an email verification token via email.
@@ -22,8 +22,8 @@ func SendEmailVerfication(to string, token string, locale string) error {
 	T, _ := i18n.Tfunc(locale)
 	err := email.SendEmailFromAdmin(to,
 		T("verify_email_title"),
-		T("link")+" : "+config.HostURL+"/verify/email/"+token,
-		T("verify_email_content")+"<br/><a href=\""+config.HostURL+"/verify/email/"+token+"\" target=\"_blank\">"+config.HostURL+"/verify/email/"+token+"</a>")
+		T("link")+" : "+viper.GetString("api.hostURL")+"/verify/email/"+token,
+		T("verify_email_content")+"<br/><a href=\""+viper.GetString("api.hostURL")+"/verify/email/"+token+"\" target=\"_blank\">"+viper.GetString("api.hostURL")+"/verify/email/"+token+"</a>")
 	return err
 }
 
@@ -68,7 +68,8 @@ func SendVerification(c *gin.Context) (int, error) {
 func EmailVerification(c *gin.Context) (int, error) {
 	var user model.User
 	var verifyEmailForm VerifyEmailForm
-	c.BindWith(&verifyEmailForm, binding.Form)
+	bindErr := c.MustBindWith(&verifyEmailForm, binding.Form)
+	log.Debugf("bind error : %s\n", bindErr)
 	log.Debugf("verifyEmailForm.ActivationToken : %s", verifyEmailForm.ActivationToken)
 	if db.ORM.Where(&model.User{ActivationToken: verifyEmailForm.ActivationToken}).First(&user).RecordNotFound() {
 		return http.StatusNotFound, errors.New("User is not found.")

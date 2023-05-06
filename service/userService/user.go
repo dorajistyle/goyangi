@@ -7,12 +7,13 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/dorajistyle/goyangi/config"
 	"github.com/dorajistyle/goyangi/db"
 	"github.com/dorajistyle/goyangi/model"
 	"github.com/dorajistyle/goyangi/util/crypto"
 	"github.com/dorajistyle/goyangi/util/log"
 	"github.com/dorajistyle/goyangi/util/modelHelper"
+	"github.com/spf13/viper"
+
 	// "github.com/dorajistyle/goyangi/util/pagination"
 	"github.com/dorajistyle/goyangi/util/timeHelper"
 	"github.com/gin-gonic/gin"
@@ -56,7 +57,7 @@ func CreateUserFromForm(registrationForm RegistrationForm) (model.User, error) {
 		return user, errors.New("Token not generated.")
 	}
 	user.Token = token
-	user.TokenExpiration = timeHelper.FewDaysLater(config.AuthTokenExpirationDay)
+	user.TokenExpiration = timeHelper.FewDaysLater(viper.GetInt("auth.tokenExpiration"))
 	log.Debugf("user %+v\n", user)
 	if db.ORM.Create(&user).Error != nil {
 		return user, errors.New("User is not created.")
@@ -71,7 +72,8 @@ func CreateUser(c *gin.Context) (int, error) {
 	var status int
 	var err error
 
-	c.BindWith(&registrationForm, binding.Form)
+	bindErr := c.MustBindWith(&registrationForm, binding.Form)
+	log.Debugf("bind error : %s\n", bindErr)
 
 	password, err := bcrypt.GenerateFromPassword([]byte(registrationForm.Password), 10)
 	if err != nil {
@@ -95,7 +97,7 @@ func RetrieveUser(c *gin.Context) (*model.PublicUser, bool, uint, int, error) {
 	// var publicUser *model.PublicUser
 	// publicUser.User = &user
 	id := c.Params.ByName("id")
-	if db.ORM.Select(config.UserPublicFields).First(&user, id).RecordNotFound() {
+	if db.ORM.Select(viper.GetString("publicFields.user")).First(&user, id).RecordNotFound() {
 		return &model.PublicUser{User: &user}, isAuthor, currentUserId, http.StatusNotFound, errors.New("User is not found.")
 	}
 	currentUser, err := CurrentUser(c)
@@ -109,13 +111,13 @@ func RetrieveUser(c *gin.Context) (*model.PublicUser, bool, uint, int, error) {
 	var likings []model.User
 	var likingCount int
 	db.ORM.Table("users_followers").Where("users_followers.user_id=?", user.Id).Count(&likingCount)
-	// offset, currentPage, hasPrev, hasNext := pagination.Paginate(currentPage, config.LikingPerPage, likingCount)
+	// offset, currentPage, hasPrev, hasNext := pagination.Paginate(currentPage, viper.GetInt("pagination.liking"), likingCount)
 
-	// if err = db.ORM.Limit(config.LikingPerPage).Order(config.LikingOrder).Offset(offset).Select(config.UserPublicFields).
+	// if err = db.ORM.Limit(viper.GetInt("pagination.liking")).Order(viper.GetString("order.liking")).Offset(offset).Select(viper.GetString("publicFields.user")).
 	// 	Joins("JOIN users_followers on users_followers.user_id=?", user.Id).
 	// 	Where("users.id = users_followers.follower_id").
 	// 	Group("users.id").Find(&likings).Error; err != nil {
-	// 	log.Fatal(err.Error())
+	// 	log.Error("DB Error", err)
 	// }
 	user.Likings = likings
 	var likingList model.LikingList
@@ -126,12 +128,12 @@ func RetrieveUser(c *gin.Context) (*model.PublicUser, bool, uint, int, error) {
 	var liked []model.User
 	var likedCount int
 	db.ORM.Table("users_followers").Where("users_followers.follower_id=?", user.Id).Count(&likedCount)
-	// offset, currentPage, hasPrev, hasNext = pagination.Paginate(currentPage, config.LikedPerPage, likedCount)
-	// if err = db.ORM.Limit(config.LikedPerPage).Order(config.LikedOrder).Offset(offset).Select(config.UserPublicFields).
+	// offset, currentPage, hasPrev, hasNext = pagination.Paginate(currentPage, viper.GetInt("pagination.liked"), likedCount)
+	// if err = db.ORM.Limit(viper.GetInt("pagination.liked")).Order(viper.GetString("order.liked")).Offset(offset).Select(viper.GetString("publicFields.user")).
 	// 	Joins("JOIN users_followers on users_followers.follower_id=?", user.Id).
 	// 	Where("users.id = users_followers.user_id").
 	// 	Group("users.id").Find(&liked).Error; err != nil {
-	// 	log.Fatal(err.Error())
+	// 	log.Error("DB Error", err)
 	// }
 	// log.Debug(string(offset))
 	// user.Liked = liked
@@ -148,7 +150,7 @@ func RetrieveUser(c *gin.Context) (*model.PublicUser, bool, uint, int, error) {
 func RetrieveUsers(c *gin.Context) []*model.PublicUser {
 	var users []*model.User
 	var userArr []*model.PublicUser
-	db.ORM.Select(config.UserPublicFields).Find(&users)
+	db.ORM.Select(viper.GetString("publicFields.user")).Find(&users)
 	for _, user := range users {
 		userArr = append(userArr, &model.PublicUser{User: user})
 	}
@@ -163,7 +165,7 @@ func UpdateUserCore(user *model.User) (int, error) {
 		return http.StatusInternalServerError, errors.New("Token not generated.")
 	}
 	user.Token = token
-	user.TokenExpiration = timeHelper.FewDaysLater(config.AuthTokenExpirationDay)
+	user.TokenExpiration = timeHelper.FewDaysLater(viper.GetInt("auth.tokenExpiration"))
 	if db.ORM.Save(user).Error != nil {
 		return http.StatusInternalServerError, errors.New("User is not updated.")
 	}
@@ -180,11 +182,12 @@ func UpdateUser(c *gin.Context) (*model.User, int, error) {
 	switch c.Request.FormValue("type") {
 	case "password":
 		var passwordForm PasswordForm
-		c.BindWith(&passwordForm, binding.Form)
+		bindErr := c.MustBindWith(&passwordForm, binding.Form)
+		log.Debugf("bind error : %s\n", bindErr)
 		log.Debugf("form %+v\n", passwordForm)
 		err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(passwordForm.CurrentPassword))
 		if err != nil {
-			log.Error("Password Incorrect.")
+			log.Error("Password Incorrect.", err)
 			return &user, http.StatusInternalServerError, errors.New("User is not updated. Password Incorrect.")
 		} else {
 			newPassword, err := bcrypt.GenerateFromPassword([]byte(passwordForm.Password), 10)
@@ -197,7 +200,8 @@ func UpdateUser(c *gin.Context) (*model.User, int, error) {
 		}
 	default:
 		var form UserForm
-		c.BindWith(&form, binding.Form)
+		bindErr := c.MustBindWith(&form, binding.Form)
+		log.Debugf("bind error : %s\n", bindErr)
 		log.Debugf("form %+v\n", form)
 		modelHelper.AssignValue(&user, &form)
 	}
@@ -231,8 +235,8 @@ func AddRoleToUser(c *gin.Context) (int, error) {
 	var user model.User
 	var role model.Role
 	var roles []model.Role
-	c.BindWith(&form, binding.Form)
-
+	bindErr := c.MustBindWith(&form, binding.Form)
+	log.Debugf("bind error : %s\n", bindErr)
 	if db.ORM.First(&user, form.UserId).RecordNotFound() {
 		return http.StatusNotFound, errors.New("User is not found.")
 	}
@@ -284,7 +288,7 @@ func RetrieveCurrentUser(c *gin.Context) (model.User, int, error) {
 func RetrieveUserByEmail(c *gin.Context) (*model.PublicUser, string, int, error) {
 	email := c.Params.ByName("email")
 	var user model.User
-	if db.ORM.Unscoped().Select(config.UserPublicFields).Where("email like ?", "%"+email+"%").First(&user).RecordNotFound() {
+	if db.ORM.Unscoped().Select(viper.GetString("publicFields.user")).Where("email like ?", "%"+email+"%").First(&user).RecordNotFound() {
 		return &model.PublicUser{User: &user}, email, http.StatusNotFound, errors.New("User is not found.")
 	}
 	return &model.PublicUser{User: &user}, email, http.StatusOK, nil
@@ -295,7 +299,7 @@ func RetrieveUsersByEmail(c *gin.Context) []*model.PublicUser {
 	var users []*model.User
 	var userArr []*model.PublicUser
 	email := c.Params.ByName("email")
-	db.ORM.Select(config.UserPublicFields).Where("email like ?", "%"+email+"%").Find(&users)
+	db.ORM.Select(viper.GetString("publicFields.user")).Where("email like ?", "%"+email+"%").Find(&users)
 	for _, user := range users {
 		userArr = append(userArr, &model.PublicUser{User: user})
 	}
@@ -306,7 +310,7 @@ func RetrieveUsersByEmail(c *gin.Context) []*model.PublicUser {
 func RetrieveUserByUsername(c *gin.Context) (*model.PublicUser, string, int, error) {
 	username := c.Params.ByName("username")
 	var user model.User
-	if db.ORM.Unscoped().Select(config.UserPublicFields).Where("username like ?", "%"+username+"%").First(&user).RecordNotFound() {
+	if db.ORM.Unscoped().Select(viper.GetString("publicFields.user")).Where("username like ?", "%"+username+"%").First(&user).RecordNotFound() {
 		return &model.PublicUser{User: &user}, username, http.StatusNotFound, errors.New("User is not found.")
 	}
 	return &model.PublicUser{User: &user}, username, http.StatusOK, nil
@@ -342,7 +346,8 @@ func ActivateUser(c *gin.Context) (model.User, int, error) {
 	id := c.Params.ByName("id")
 	var user model.User
 	var form ActivateForm
-	c.BindWith(&form, binding.Form)
+	bindErr := c.MustBindWith(&form, binding.Form)
+	log.Debugf("bind error : %s\n", bindErr)
 	if db.ORM.First(&user, id).RecordNotFound() {
 		return user, http.StatusNotFound, errors.New("User is not found.")
 	}

@@ -4,7 +4,6 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/dorajistyle/goyangi/config"
 	"github.com/dorajistyle/goyangi/db"
 	"github.com/dorajistyle/goyangi/model"
 	"github.com/dorajistyle/goyangi/service/userService/userPermission"
@@ -12,10 +11,10 @@ import (
 	"github.com/dorajistyle/goyangi/util/pagination"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-
+	"github.com/spf13/viper"
 )
 
-func RetrieveLikings(item interface{}, currentUserId uint, currentPages ...int) (model.LikingList) {
+func RetrieveLikings(item interface{}, currentUserId uint, currentPages ...int) model.LikingList {
 	var users []model.User
 	var currentPage int
 	currentUserlikedCount := db.ORM.Model(item).Where("id =?", currentUserId).Association("Likings").Count()
@@ -28,15 +27,14 @@ func RetrieveLikings(item interface{}, currentUserId uint, currentPages ...int) 
 	}
 	log.Debugf("Liking Association : %v", db.ORM.Model(item).Association("Likings"))
 	count := db.ORM.Model(item).Association("Likings").Count()
-	offset, currentPage, hasPrev, hasNext := pagination.Paginate(currentPage, config.LikingPerPage, count)
-	db.ORM.Limit(config.LikingPerPage).Order(config.LikingOrder).Offset(offset).Select(config.UserPublicFields).Model(item).Association("Likings").Find(&users)
-
+	offset, currentPage, hasPrev, hasNext := pagination.Paginate(currentPage, viper.GetInt("pagination.liking"), count)
+	db.ORM.Limit(viper.GetInt("pagination.liking")).Order(viper.GetString("order.liking")).Offset(offset).Select(viper.GetString("publicFields.user")).Model(item).Association("Likings").Find(&users)
 
 	return model.LikingList{Likings: users, HasPrev: hasPrev, HasNext: hasNext, Count: count, CurrentPage: currentPage, IsLiked: isLiked}
 }
 
 // RetrieveLiked retrieves liked.
-func RetrieveLiked(item interface{}, currentPages ...int) (model.LikedList) {
+func RetrieveLiked(item interface{}, currentPages ...int) model.LikedList {
 	var users []model.User
 	var currentPage int
 	if len(currentPages) > 0 {
@@ -45,8 +43,8 @@ func RetrieveLiked(item interface{}, currentPages ...int) (model.LikedList) {
 		currentPage = 1
 	}
 	count := db.ORM.Model(item).Association("Liked").Count()
-	offset, currentPage, hasPrev, hasNext := pagination.Paginate(currentPage, config.LikedPerPage, count)
-	db.ORM.Limit(config.LikedPerPage).Order(config.LikedOrder).Offset(offset).Select(config.UserPublicFields).Model(item).Association("Liked").Find(&users)
+	offset, currentPage, hasPrev, hasNext := pagination.Paginate(currentPage, viper.GetInt("pagination.liked"), count)
+	db.ORM.Limit(viper.GetInt("pagination.liked")).Order(viper.GetString("order.liked")).Offset(offset).Select(viper.GetString("publicFields.user")).Model(item).Association("Liked").Find(&users)
 	//
 	// var likedArr []model.PublicUser
 	// for _, user := range users {
@@ -57,7 +55,6 @@ func RetrieveLiked(item interface{}, currentPages ...int) (model.LikedList) {
 	return model.LikedList{Liked: users, HasPrev: hasPrev, HasNext: hasNext, Count: count, CurrentPage: currentPage}
 }
 
-
 // CreateLiking create a liking.
 func CreateLiking(c *gin.Context, item interface{}) (int, error) {
 	var form CreateLikingForm
@@ -65,7 +62,7 @@ func CreateLiking(c *gin.Context, item interface{}) (int, error) {
 
 	bindErr := c.MustBindWith(&form, binding.Form)
 	log.Debugf("bind error : %s\n", bindErr)
-	if bindErr != nil  {
+	if bindErr != nil {
 		return http.StatusInternalServerError, errors.New("Invalid form.")
 	}
 

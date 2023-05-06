@@ -19,8 +19,8 @@ func Authentications(parentRoute *gin.RouterGroup) {
 // @Title createUserAuthentication
 // @Description Create a user session.
 // @Accept  json
-// @Param   loginEmail        form   string     true        "User email."
-// @Param   loginPassword        form   string  true        "User password."
+// @Param   loginEmail        formData   string     true        "User email."
+// @Param   loginPassword        formData   string  true        "User password."
 // @Success 201 {object} response.BasicResponse "User authentication created"
 // @Failure 401 {object} response.BasicResponse "Password incorrect"
 // @Failure 404 {object} response.BasicResponse "User is not found"

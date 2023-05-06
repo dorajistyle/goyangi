@@ -1,0 +1,12 @@
+version: "3.6"
+
+services:
+    app:
+        build: .
+        image: ${APP_NAME}
+        ports:
+            - ${PORT}:${PORT}
+        environment:
+            PORT: ${PORT}
+            GIN_MODE: ${GIN_MODE}
+    

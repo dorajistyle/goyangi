@@ -2,10 +2,14 @@ package interfaceHelper_test
 
 import (
 	. "github.com/dorajistyle/goyangi/util/interfaceHelper"
-
+	viper "github.com/dorajistyle/goyangi/util/viper"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
+
+func init() {
+	viper.LoadConfig()
+}
 
 var _ = Describe("InterfaceHelper", func() {
 	var (
@@ -24,7 +28,6 @@ var _ = Describe("InterfaceHelper", func() {
 		valueUInt64  uint64
 		valueString  string
 		outputInt64  int64
-		err          error
 	)
 
 	BeforeEach(func() {
@@ -50,55 +53,55 @@ var _ = Describe("InterfaceHelper", func() {
 
 			})
 			It("that casted from float32 type should be valueInt64.", func() {
-				outputInt64, err = GetInt64(valueFloat32)
+				outputInt64, _ = GetInt64(valueFloat32)
 				Expect(outputInt64).To(Equal(valueInt64))
 			})
 			It("that casted from float64 type should be valueInt64.", func() {
-				outputInt64, err = GetInt64(valueFloat64)
+				outputInt64, _ = GetInt64(valueFloat64)
 				Expect(outputInt64).To(Equal(valueInt64))
 			})
 			It("that casted from int type should be valueInt64.", func() {
-				outputInt64, err = GetInt64(valueInt)
+				outputInt64, _ = GetInt64(valueInt)
 				Expect(outputInt64).To(Equal(valueInt64))
 			})
 			It("that casted from int8 type should be valueInt64.", func() {
-				outputInt64, err = GetInt64(valueInt8)
+				outputInt64, _ = GetInt64(valueInt8)
 				Expect(outputInt64).To(Equal(valueInt64))
 			})
 			It("that casted from int16 type should be valueInt64.", func() {
-				outputInt64, err = GetInt64(valueInt16)
+				outputInt64, _ = GetInt64(valueInt16)
 				Expect(outputInt64).To(Equal(valueInt64))
 			})
 			It("that casted from int32 type should be valueInt64.", func() {
-				outputInt64, err = GetInt64(valueInt32)
+				outputInt64, _ = GetInt64(valueInt32)
 				Expect(outputInt64).To(Equal(valueInt64))
 			})
 			It("that casted from int64 type should be valueInt64.", func() {
-				outputInt64, err = GetInt64(valueInt64)
+				outputInt64, _ = GetInt64(valueInt64)
 				Expect(outputInt64).To(Equal(valueInt64))
 			})
 			It("that casted from uint type should be valueInt64.", func() {
-				outputInt64, err = GetInt64(valueUInt)
+				outputInt64, _ = GetInt64(valueUInt)
 				Expect(outputInt64).To(Equal(valueInt64))
 			})
 			It("that casted from uint8 type should be valueInt64.", func() {
-				outputInt64, err = GetInt64(valueUInt8)
+				outputInt64, _ = GetInt64(valueUInt8)
 				Expect(outputInt64).To(Equal(valueInt64))
 			})
 			It("that casted from uint16 type should be valueInt64.", func() {
-				outputInt64, err = GetInt64(valueUInt16)
+				outputInt64, _ = GetInt64(valueUInt16)
 				Expect(outputInt64).To(Equal(valueInt64))
 			})
 			It("that casted from uint32 type should be valueInt64.", func() {
-				outputInt64, err = GetInt64(valueUInt32)
+				outputInt64, _ = GetInt64(valueUInt32)
 				Expect(outputInt64).To(Equal(valueInt64))
 			})
 			It("that casted from uint64 type should be valueInt64.", func() {
-				outputInt64, err = GetInt64(valueUInt64)
+				outputInt64, _ = GetInt64(valueUInt64)
 				Expect(outputInt64).To(Equal(valueInt64))
 			})
 			It("that casted from string type should be valueInt64.", func() {
-				outputInt64, err = GetInt64(valueString)
+				outputInt64, _ = GetInt64(valueString)
 				Expect(outputInt64).To(Equal(valueInt64))
 			})
 

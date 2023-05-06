@@ -4,7 +4,6 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/dorajistyle/goyangi/config"
 	"github.com/dorajistyle/goyangi/db"
 	"github.com/dorajistyle/goyangi/form"
 	"github.com/dorajistyle/goyangi/model"
@@ -14,6 +13,7 @@ import (
 	"github.com/dorajistyle/goyangi/util/pagination"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"github.com/spf13/viper"
 )
 
 // UpdateUserLikingCount updates user liking count.
@@ -53,7 +53,8 @@ type CreateLikingForm struct {
 func CreateLiking(c *gin.Context, user interface{}) (int, error) {
 	var form CreateLikingForm
 	var likingUser model.User
-	c.BindWith(&form, binding.Form)
+	bindErr := c.MustBindWith(&form, binding.Form)
+	log.Debugf("bind error : %s\n", bindErr)
 	log.Debugf("liking_form : %v", form)
 	if db.ORM.First(user, form.ParentId).RecordNotFound() {
 		return http.StatusNotFound, errors.New("User is not found.")
@@ -150,15 +151,16 @@ func RetrieveLikingsOnUser(c *gin.Context) ([]model.User, int, bool, bool, int, 
 	var offset, currentPage int
 	userId := c.Params.ByName("id")
 	log.Debugf("Liking params : %v", c.Params)
-	c.BindWith(&retrieveListForm, binding.Form)
+	bindErr := c.MustBindWith(&retrieveListForm, binding.Form)
+	log.Debugf("bind error : %s\n", bindErr)
 	log.Debugf("retrieveListForm %+v\n", retrieveListForm)
 	log.Debugf("offset %+d\n", offset)
 	// if hasUserId := log.CheckError(err); hasUserId {
 	if db.ORM.First(&user, userId).RecordNotFound() {
 		return likings, currentPage, hasPrev, hasNext, http.StatusNotFound, errors.New("User is not found.")
 	}
-	offset, currentPage, hasPrev, hasNext = pagination.Paginate(retrieveListForm.CurrentPage, config.LikingPerPage, user.LikingCount)
-	// db.ORM.Limit(config.LikingPerPage).Offset(offset).
+	offset, currentPage, hasPrev, hasNext = pagination.Paginate(retrieveListForm.CurrentPage, viper.GetInt("pagination.liking"), user.LikingCount)
+	// db.ORM.Limit(viper.GetInt("pagination.liking")).Offset(offset).
 	// 	Joins("JOIN users_followers on users_followers.user_id=?", user.Id).
 	// 	Where("users.id = users_followers.follower_id").
 	// 	Group("users.id").Find(&likings)
@@ -174,15 +176,16 @@ func RetrieveLikedOnUser(c *gin.Context) ([]model.User, int, bool, bool, int, er
 	var offset, currentPage int
 	userId := c.Params.ByName("id")
 	log.Debugf("Liked params : %v", c.Params)
-	c.BindWith(&retrieveListForm, binding.Form)
+	bindErr := c.MustBindWith(&retrieveListForm, binding.Form)
+	log.Debugf("bind error : %s\n", bindErr)
 	log.Debugf("retrieveListForm %+v\n", retrieveListForm)
 	log.Debugf("offset %+d\n", offset)
 
 	if db.ORM.First(&user, userId).RecordNotFound() {
 		return liked, currentPage, hasPrev, hasNext, http.StatusNotFound, errors.New("User is not found.")
 	}
-	offset, currentPage, hasPrev, hasNext = pagination.Paginate(retrieveListForm.CurrentPage, config.LikedPerPage, user.LikedCount)
-	// db.ORM.Limit(config.LikedPerPage).Offset(offset).
+	offset, currentPage, hasPrev, hasNext = pagination.Paginate(retrieveListForm.CurrentPage, viper.GetInt("pagination.liked"), user.LikedCount)
+	// db.ORM.Limit(viper.GetInt("pagination.liked")).Offset(offset).
 	// 	Joins("JOIN users_followers on users_followers.follower_id=?", user.Id).
 	// 	Where("users.id = users_followers.user_id").
 	// 	Group("users.id").Find(&liked)

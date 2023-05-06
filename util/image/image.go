@@ -12,8 +12,8 @@ import (
 
 	"github.com/daddye/vips"
 	"github.com/disintegration/gift"
-	"github.com/dorajistyle/goyangi/util/config"
 	"github.com/dorajistyle/goyangi/util/stringHelper"
+	"github.com/spf13/viper"
 )
 
 func GenerateURL(imageURLPrefix string, types string, id int64, name string) string {
@@ -30,7 +30,7 @@ func GenerateURL(imageURLPrefix string, types string, id int64, name string) str
 func LargeOption() vips.Options {
 	options := vips.Options{
 		Width:        0,
-		Height:       config.LargeHeight,
+		Height:       viper.GetInt("image.large.height"),
 		Crop:         false,
 		Extend:       vips.EXTEND_WHITE,
 		Interpolator: vips.BICUBIC,
@@ -43,7 +43,7 @@ func LargeOption() vips.Options {
 func MediumOption() vips.Options {
 	options := vips.Options{
 		Width:        0,
-		Height:       config.MediumHeight,
+		Height:       viper.GetInt("image.medium.height"),
 		Crop:         false,
 		Extend:       vips.EXTEND_WHITE,
 		Interpolator: vips.BICUBIC,
@@ -55,8 +55,8 @@ func MediumOption() vips.Options {
 
 func ThumbnailOption() vips.Options {
 	options := vips.Options{
-		Width:        config.ThumbnailWidth,
-		Height:       config.ThumbnailHeight,
+		Width:        viper.GetInt("image.thumbnail.width"),
+		Height:       viper.GetInt("image.thumbnail.height"),
 		Crop:         true,
 		Extend:       vips.EXTEND_WHITE,
 		Interpolator: vips.BILINEAR,
@@ -79,11 +79,11 @@ func ResizeThumbnailVips(inBuf []byte) ([]byte, error) {
 }
 
 func MediumFilter() *gift.GIFT {
-	return ResizeFilter(config.ImageWidth, 0)
+	return ResizeFilter(viper.GetInt("image.default.width"), 0)
 }
 
 func ThumbnailFilter() *gift.GIFT {
-	return ResizeFilter(config.ThumbnailWidth, 0)
+	return ResizeFilter(viper.GetInt("image.thumbnail.width"), 0)
 }
 
 func ResizeFilter(width int, height int) *gift.GIFT {
@@ -160,7 +160,6 @@ func ParseImage(imageFormat string, r io.Reader, g *gift.GIFT) (*bytes.Buffer, e
 	switch imageFormat {
 	case "image/jpeg":
 		err = ParseJpeg(wb, r, g)
-		//		log.Debugf("image type : %s %d %d\n", imageFormat, config.Width, config.Height)
 	case "image/png":
 		err = ParsePng(wb, r, g)
 	case "image/gif":
@@ -177,11 +176,11 @@ func ResizeMedium(imageFormat string, r io.Reader) (*bytes.Buffer, error) {
 	var err error
 	switch imageFormat {
 	case "image/jpeg":
-		err = ResizeJpeg(wb, r, g, config.ImageWidth, config.ImageHeight)
+		err = ResizeJpeg(wb, r, g, viper.GetInt("image.default.width"), viper.GetInt("image.default.height"))
 	case "image/png":
-		err = ResizePng(wb, r, g, config.ImageWidth, config.ImageHeight)
+		err = ResizePng(wb, r, g, viper.GetInt("image.default.width"), viper.GetInt("image.default.height"))
 	case "image/gif":
-		err = ResizeGif(wb, r, g, config.ImageWidth, config.ImageHeight)
+		err = ResizeGif(wb, r, g, viper.GetInt("image.default.width"), viper.GetInt("image.default.height"))
 	default:
 		err = fmt.Errorf("unsupported image type. %s\n", imageFormat)
 	}
@@ -194,11 +193,11 @@ func ResizeThumbnail(imageFormat string, r io.Reader) (*bytes.Buffer, error) {
 	var err error
 	switch imageFormat {
 	case "image/jpeg":
-		err = ResizeJpeg(wb, r, g, config.ImageWidth, config.ImageHeight)
+		err = ResizeJpeg(wb, r, g, viper.GetInt("image.default.width"), viper.GetInt("image.default.height"))
 	case "image/png":
-		err = ResizePng(wb, r, g, config.ImageWidth, config.ImageHeight)
+		err = ResizePng(wb, r, g, viper.GetInt("image.default.width"), viper.GetInt("image.default.height"))
 	case "image/gif":
-		err = ResizeGif(wb, r, g, config.ImageWidth, config.ImageHeight)
+		err = ResizeGif(wb, r, g, viper.GetInt("image.default.width"), viper.GetInt("image.default.height"))
 	default:
 		err = fmt.Errorf("unsupported image type. %s\n", imageFormat)
 	}

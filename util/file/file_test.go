@@ -3,11 +3,17 @@ package file_test
 import (
 	"bytes"
 
+	viper "github.com/dorajistyle/goyangi/util/viper"
+
 	. "github.com/dorajistyle/goyangi/util/file"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
+
+func init() {
+	viper.LoadConfig()
+}
 
 var _ = Describe("File", func() {
 	var (

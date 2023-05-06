@@ -3,10 +3,12 @@ package log
 import (
 	"net/http"
 	"os"
+	"time"
 
-	"github.com/Sirupsen/logrus"
-	"github.com/dorajistyle/goyangi/util/config"
 	// "github.com/dorajistyle/goyangi/util/octokit"
+	"github.com/lmittmann/tint"
+	"github.com/spf13/viper"
+	"golang.org/x/exp/slog"
 	lumberjack "gopkg.in/natefinch/lumberjack.v2"
 )
 
@@ -20,59 +22,31 @@ func LumberJackLogger(filePath string, maxSize int, maxBackups int, maxAge int) 
 }
 
 func InitLogToStdoutDebug() {
-	logrus.SetFormatter(&logrus.TextFormatter{ForceColors: true})
-	logrus.SetOutput(os.Stdout)
-	logrus.SetLevel(logrus.DebugLevel)
+
+	// var programLevel = new(slog.LevelVar)
+	// programLevel.Set()
+	// h := slog.HandlerOptions{Level: programLevel}.NewTextHandler(os.Stdout) # Legacy without tint
+	h := tint.Options{Level: slog.LevelDebug, TimeFormat: time.Kitchen}.NewHandler(os.Stdout)
+	slog.SetDefault(slog.New(h))
+
 }
 
 func InitLogToStdout() {
-	logrus.SetFormatter(&logrus.TextFormatter{})
-	logrus.SetOutput(os.Stdout)
-	logrus.SetLevel(logrus.WarnLevel)
+	h := tint.Options{Level: slog.LevelWarn, TimeFormat: time.DateTime}.NewHandler(os.Stdout)
+	slog.SetDefault(slog.New(h))
 }
 
 func InitLogToFile() {
-	logrus.SetFormatter(&logrus.JSONFormatter{})
-	// f, err := os.OpenFile(config.ErrorLogFilePath+config.ErrorLogFileExtension, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	// if err != nil {
-	// 	Fatalf("error opening file: %v", err)
-	// }
-	out := LumberJackLogger(config.ErrorLogFilePath+config.ErrorLogFileExtension, config.ErrorLogMaxSize, config.ErrorLogMaxBackups, config.ErrorLogMaxAge)
-	// defer f.Close()
-	// logrus.SetOutput(os.Stderr)
-	logrus.SetOutput(out)
-	logrus.SetLevel(logrus.WarnLevel)
+	out := LumberJackLogger(viper.GetString("log.error.filepath"), viper.GetInt("log.error.maxSize"), viper.GetInt("log.error.maxBackups"), viper.GetInt("log.error.maxAge"))
+	var programLevel = new(slog.LevelVar)
+	programLevel.Set(slog.LevelWarn)
+	h := slog.HandlerOptions{Level: programLevel}.NewJSONHandler(out)
+	slog.SetDefault(slog.New(h))
 }
 
-// DEPRECATED BEACAUSE OF code.google.com/p/go-netrc/netrc
-// func InitLogToGithub() {
-// 	logrus.SetFormatter(&logrus.TextFormatter{})
-// 	logrus.AddHook(octokit.NewOctokitHook(config.OctokitGitHubAPIURL,
-// 		config.OctokitUserAgent,
-// 		config.OctokitAccessToken,
-// 		config.OctokitTargetOwner,
-// 		config.OctokitTargetRepo))
-//     logrus.SetOutput(os.Stdout)
-// 	logrus.SetLevel(logrus.WarnLevel)
-// }
-
-// func InitLogToGithubAndFile() {
-// 	logrus.SetFormatter(&logrus.TextFormatter{})
-// 	logrus.AddHook(octokit.NewOctokitHook(config.OctokitGitHubAPIURL,
-// 		config.OctokitUserAgent,
-// 		config.OctokitAccessToken,
-// 		config.OctokitTargetOwner,
-// 		config.OctokitTargetRepo))
-// 	out := LumberJackLogger(config.ErrorLogFilePath+config.ErrorLogFileExtension, config.ErrorLogMaxSize, config.ErrorLogMaxBackups, config.ErrorLogMaxAge)
-// 	logrus.SetOutput(out)
-// 	logrus.SetLevel(logrus.WarnLevel)
-// }
-
-// Init logrus
+// Init slog
 func Init(environment string) {
-	// Use the Airbrake hook to report errors that have Error severity or above to
-	// an exception tracker. You can create custom hooks, see the Hooks section.
-	//  logrus.AddHook(&log_airbrake.AirbrakeHook{})
+
 	switch environment {
 	case "DEVELOPMENT":
 		InitLogToStdoutDebug()
@@ -81,67 +55,47 @@ func Init(environment string) {
 	case "PRODUCTION":
 		InitLogToFile()
 	}
-	logrus.Debugf("Environment : %s", environment)
+	slog.Info("", "Environment", environment)
 }
 
 // Debug logs a message with debug log level.
 func Debug(msg string) {
-	logrus.Debug(msg)
+	slog.Debug(msg)
 }
 
 // Debugf logs a formatted message with debug log level.
 func Debugf(msg string, args ...interface{}) {
-	logrus.Debugf(msg, args...)
+	slog.Debug(msg, args...)
 }
 
 // Info logs a message with info log level.
 func Info(msg string) {
-	logrus.Info(msg)
+	slog.Info(msg)
 }
 
 // Infof logs a formatted message with info log level.
 func Infof(msg string, args ...interface{}) {
-	logrus.Infof(msg, args...)
+	slog.Info(msg, args...)
 }
 
 // Warn logs a message with warn log level.
 func Warn(msg string) {
-	logrus.Warn(msg)
+	slog.Warn(msg)
 }
 
 // Warnf logs a formatted message with warn log level.
 func Warnf(msg string, args ...interface{}) {
-	logrus.Warnf(msg, args...)
+	slog.Warn(msg, args...)
 }
 
 // Error logs a message with error log level.
-func Error(msg string) {
-	logrus.Error(msg)
+func Error(msg string, err error) {
+	slog.Error(msg, err)
 }
 
 // Errorf logs a formatted message with error log level.
-func Errorf(msg string, args ...interface{}) {
-	logrus.Errorf(msg, args...)
-}
-
-// Fatal logs a message with fatal log level.
-func Fatal(msg string) {
-	logrus.Fatal(msg)
-}
-
-// Fatalf logs a formatted message with fatal log level.
-func Fatalf(msg string, args ...interface{}) {
-	logrus.Fatalf(msg, args...)
-}
-
-// Panic logs a message with panic log level.
-func Panic(msg string) {
-	logrus.Panic(msg)
-}
-
-// Panicf logs a formatted message with panic log level.
-func Panicf(msg string, args ...interface{}) {
-	logrus.Panicf(msg, args...)
+func Errorf(msg string, err error, args ...any) {
+	slog.Error(msg, err, args)
 }
 
 // log response body data for debugging
@@ -154,6 +108,6 @@ func DebugResponse(response *http.Response) string {
 		}
 		str += string(bodyBuffer[:count])
 	}
-	Debugf("response data : %v", str)
+	slog.Debug("response data : %v", str)
 	return str
 }

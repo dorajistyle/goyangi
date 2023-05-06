@@ -33,20 +33,20 @@ func UploadImageFile(target string, environment string, s3UploadPath string, par
 	buf, err := image.ResizeLargeVips(inbuf)
 	if err != nil {
 		// log.CheckErrorWithMessage(err, "Image resizing failed.")
-		log.Errorf("Image large resizing failed. %s", err.Error())
+		log.Error("Image large resizing failed.", err)
 		dstLarge = nil
 	} else {
 		dstLarge = bytes.NewBuffer(buf)
 		mbuf, err := image.ResizeMediumVips(buf)
 		if err != nil {
 			dstMedium = nil
-			log.Errorf("Image medium resizing failed. %s", err.Error())
+			log.Error("Image medium resizing failed.", err)
 		} else {
 			dstMedium = bytes.NewBuffer(mbuf)
 			tbuf, err := image.ResizeThumbnailVips(mbuf)
 			if err != nil {
 				dstThumbnail = nil
-				log.Errorf("Image small resizing failed. %s", err.Error())
+				log.Error("Image small resizing failed.", err)
 			} else {
 				dstThumbnail = bytes.NewBuffer(tbuf)
 			}

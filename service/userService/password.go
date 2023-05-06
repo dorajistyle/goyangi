@@ -8,7 +8,6 @@ import (
 
 	"time"
 
-	"github.com/dorajistyle/goyangi/config"
 	"github.com/dorajistyle/goyangi/db"
 	"github.com/dorajistyle/goyangi/model"
 	"github.com/dorajistyle/goyangi/util/crypto"
@@ -19,6 +18,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/nicksnyder/go-i18n/i18n"
+	"github.com/spf13/viper"
 )
 
 // SendEmailPasswordResetToken sends a password reset token via email.
@@ -26,8 +26,8 @@ func SendEmailPasswordResetToken(to string, token string, locale string) error {
 	T, _ := i18n.Tfunc(locale)
 	err := email.SendEmailFromAdmin(to,
 		T("reset_password_title"),
-		T("link")+" : "+config.HostURL+"/reset/password/"+token,
-		T("reset_password_content")+"<br/><a href=\""+config.HostURL+"/reset/password/"+token+"\" target=\"_blank\">"+config.HostURL+"/reset/password/"+token+"</a>")
+		T("link")+" : "+viper.GetString("api.hostURL")+"/reset/password/"+token,
+		T("reset_password_content")+"<br/><a href=\""+viper.GetString("api.hostURL")+"/reset/password/"+token+"\" target=\"_blank\">"+viper.GetString("api.hostURL")+"/reset/password/"+token+"</a>")
 	return err
 }
 
@@ -37,7 +37,8 @@ func SendPasswordResetToken(c *gin.Context) (int, error) {
 	var sendPasswordResetForm SendPasswordResetForm
 	var err error
 	log.Debugf("c.Params : %v", c.Params)
-	c.BindWith(&sendPasswordResetForm, binding.Form)
+	bindErr := c.MustBindWith(&sendPasswordResetForm, binding.Form)
+	log.Debugf("bind error : %s\n", bindErr)
 	if db.ORM.Where(&model.User{Email: sendPasswordResetForm.Email}).First(&user).RecordNotFound() {
 		return http.StatusNotFound, errors.New("User is not found. Please Check the email.")
 	}
@@ -62,7 +63,8 @@ func SendPasswordResetToken(c *gin.Context) (int, error) {
 func ResetPassword(c *gin.Context) (int, error) {
 	var user model.User
 	var passwordResetForm PasswordResetForm
-	c.BindWith(&passwordResetForm, binding.Form)
+	bindErr := c.MustBindWith(&passwordResetForm, binding.Form)
+	log.Debugf("bind error : %s\n", bindErr)
 	if db.ORM.Where(&model.User{PasswordResetToken: passwordResetForm.PasswordResetToken}).First(&user).RecordNotFound() {
 		return http.StatusNotFound, errors.New("User is not found.")
 	}
