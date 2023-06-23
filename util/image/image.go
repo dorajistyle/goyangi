@@ -10,7 +10,6 @@ import (
 	"io"
 	"strconv"
 
-	"github.com/daddye/vips"
 	"github.com/disintegration/gift"
 	"github.com/dorajistyle/goyangi/util/stringHelper"
 	"github.com/spf13/viper"
@@ -27,59 +26,12 @@ func GenerateURL(imageURLPrefix string, types string, id int64, name string) str
 	return imageURLBuffer.String()
 }
 
-func LargeOption() vips.Options {
-	options := vips.Options{
-		Width:        0,
-		Height:       viper.GetInt("image.large.height"),
-		Crop:         false,
-		Extend:       vips.EXTEND_WHITE,
-		Interpolator: vips.BICUBIC,
-		Gravity:      vips.CENTRE,
-		Quality:      95,
-	}
-	return options
-}
-
-func MediumOption() vips.Options {
-	options := vips.Options{
-		Width:        0,
-		Height:       viper.GetInt("image.medium.height"),
-		Crop:         false,
-		Extend:       vips.EXTEND_WHITE,
-		Interpolator: vips.BICUBIC,
-		Gravity:      vips.CENTRE,
-		Quality:      90,
-	}
-	return options
-}
-
-func ThumbnailOption() vips.Options {
-	options := vips.Options{
-		Width:        viper.GetInt("image.thumbnail.width"),
-		Height:       viper.GetInt("image.thumbnail.height"),
-		Crop:         true,
-		Extend:       vips.EXTEND_WHITE,
-		Interpolator: vips.BILINEAR,
-		Gravity:      vips.CENTRE,
-		Quality:      90,
-	}
-	return options
-}
-
-func ResizeLargeVips(inBuf []byte) ([]byte, error) {
-	return vips.Resize(inBuf, LargeOption())
-}
-
-func ResizeMediumVips(inBuf []byte) ([]byte, error) {
-	return vips.Resize(inBuf, MediumOption())
-}
-
-func ResizeThumbnailVips(inBuf []byte) ([]byte, error) {
-	return vips.Resize(inBuf, ThumbnailOption())
+func LargeFilter() *gift.GIFT {
+	return ResizeFilter(viper.GetInt("image.large.width"), 0)
 }
 
 func MediumFilter() *gift.GIFT {
-	return ResizeFilter(viper.GetInt("image.default.width"), 0)
+	return ResizeFilter(viper.GetInt("image.medium.width"), 0)
 }
 
 func ThumbnailFilter() *gift.GIFT {
@@ -170,17 +122,36 @@ func ParseImage(imageFormat string, r io.Reader, g *gift.GIFT) (*bytes.Buffer, e
 	return wb, err
 }
 
+func ResizeLarge(imageFormat string, r io.Reader) (*bytes.Buffer, error) {
+	wb := new(bytes.Buffer)
+	g := MediumFilter()
+	var err error
+	w, h := viper.GetInt("image.large.width"), viper.GetInt("image.large.height")
+	switch imageFormat {
+	case "image/jpeg":
+		err = ResizeJpeg(wb, r, g, w, h)
+	case "image/png":
+		err = ResizePng(wb, r, g, w, h)
+	case "image/gif":
+		err = ResizeGif(wb, r, g, w, h)
+	default:
+		err = fmt.Errorf("unsupported image type. %s\n", imageFormat)
+	}
+	return wb, err
+}
+
 func ResizeMedium(imageFormat string, r io.Reader) (*bytes.Buffer, error) {
 	wb := new(bytes.Buffer)
 	g := MediumFilter()
 	var err error
+	w, h := viper.GetInt("image.medium.width"), viper.GetInt("image.medium.height")
 	switch imageFormat {
 	case "image/jpeg":
-		err = ResizeJpeg(wb, r, g, viper.GetInt("image.default.width"), viper.GetInt("image.default.height"))
+		err = ResizeJpeg(wb, r, g, w, h)
 	case "image/png":
-		err = ResizePng(wb, r, g, viper.GetInt("image.default.width"), viper.GetInt("image.default.height"))
+		err = ResizePng(wb, r, g, w, h)
 	case "image/gif":
-		err = ResizeGif(wb, r, g, viper.GetInt("image.default.width"), viper.GetInt("image.default.height"))
+		err = ResizeGif(wb, r, g, w, h)
 	default:
 		err = fmt.Errorf("unsupported image type. %s\n", imageFormat)
 	}
@@ -191,13 +162,14 @@ func ResizeThumbnail(imageFormat string, r io.Reader) (*bytes.Buffer, error) {
 	wb := new(bytes.Buffer)
 	g := ThumbnailFilter()
 	var err error
+	w, h := viper.GetInt("image.thumbnail.width"), viper.GetInt("image.thumbnail.height")
 	switch imageFormat {
 	case "image/jpeg":
-		err = ResizeJpeg(wb, r, g, viper.GetInt("image.default.width"), viper.GetInt("image.default.height"))
+		err = ResizeJpeg(wb, r, g, w, h)
 	case "image/png":
-		err = ResizePng(wb, r, g, viper.GetInt("image.default.width"), viper.GetInt("image.default.height"))
+		err = ResizePng(wb, r, g, w, h)
 	case "image/gif":
-		err = ResizeGif(wb, r, g, viper.GetInt("image.default.width"), viper.GetInt("image.default.height"))
+		err = ResizeGif(wb, r, g, w, h)
 	default:
 		err = fmt.Errorf("unsupported image type. %s\n", imageFormat)
 	}

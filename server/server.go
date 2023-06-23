@@ -6,7 +6,6 @@ import (
 	"github.com/dorajistyle/goyangi/api"
 	"github.com/spf13/viper"
 
-	// "github.com/dorajistyle/goyangi/frontend/vuejs"
 	docs "github.com/dorajistyle/goyangi/docs"
 	"github.com/dorajistyle/goyangi/util/log"
 	"github.com/gin-contrib/cors"
@@ -30,9 +29,9 @@ func init() {
 // CORSMiddleware for CORS
 func CORSMiddleware() gin.HandlerFunc {
 	corsConfig := cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:8080"},
-		AllowMethods:     []string{"PUT", "PATCH", "DELETE"},
-		AllowHeaders:     []string{"Origin"},
+		AllowOrigins:     []string{"http://localhost:8080", "http://localhost"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE"},
+		AllowHeaders:     []string{"Origin", "access-control-allow-origin"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 		AllowOriginFunc: func(origin string) bool {
@@ -40,6 +39,7 @@ func CORSMiddleware() gin.HandlerFunc {
 		},
 		MaxAge: 12 * time.Hour,
 	})
+	// corsConfig = cors.Default()
 	return corsConfig
 }
 
@@ -65,5 +65,5 @@ func Run() {
 
 	// Listen and server on 0.0.0.0:3001
 	//    r.Run("localhost:3001")
-	r.Run(":3001")
+	r.Run(":80")
 }

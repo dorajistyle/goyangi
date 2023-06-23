@@ -17,6 +17,9 @@ import router from '@/router'
 //   (error) => Promise.reject(error)
 // )
 
+// The below line commented to prevent an error: gin has been blocked by CORS policy: The value of the 'Access-Control-Allow-Origin' header in the response must not be the wildcard '*' when the request's credentials mode is 'include'. The credentials mode of requests initiated by the XMLHttpRequest is controlled by the withCredentials attribute.
+// axios.defaults.headers['Access-Control-Allow-Headers'] = "Access-Control-Allow-Headers, , access-control-allow-origin, Access-Control-Allow-Origin, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"
+axios.defaults.headers['Access-Control-Allow-Origin'] = ['http://localhost:3001', 'http://localhost']
 axios.defaults.withCredentials = true
 
 axios.interceptors.response.use((response) => {

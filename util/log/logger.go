@@ -26,13 +26,13 @@ func InitLogToStdoutDebug() {
 	// var programLevel = new(slog.LevelVar)
 	// programLevel.Set()
 	// h := slog.HandlerOptions{Level: programLevel}.NewTextHandler(os.Stdout) # Legacy without tint
-	h := tint.Options{Level: slog.LevelDebug, TimeFormat: time.Kitchen}.NewHandler(os.Stdout)
+	h := tint.NewHandler(os.Stdout, &tint.Options{Level: slog.LevelDebug, TimeFormat: time.Kitchen})
 	slog.SetDefault(slog.New(h))
 
 }
 
 func InitLogToStdout() {
-	h := tint.Options{Level: slog.LevelWarn, TimeFormat: time.DateTime}.NewHandler(os.Stdout)
+	h := tint.NewHandler(os.Stdout, &tint.Options{Level: slog.LevelWarn, TimeFormat: time.DateTime})
 	slog.SetDefault(slog.New(h))
 }
 
@@ -40,7 +40,7 @@ func InitLogToFile() {
 	out := LumberJackLogger(viper.GetString("log.error.filepath"), viper.GetInt("log.error.maxSize"), viper.GetInt("log.error.maxBackups"), viper.GetInt("log.error.maxAge"))
 	var programLevel = new(slog.LevelVar)
 	programLevel.Set(slog.LevelWarn)
-	h := slog.HandlerOptions{Level: programLevel}.NewJSONHandler(out)
+	h := slog.NewJSONHandler(out, &slog.HandlerOptions{Level: programLevel})
 	slog.SetDefault(slog.New(h))
 }
 

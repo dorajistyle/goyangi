@@ -22,10 +22,10 @@ COPY . .
 
 # Build the command inside the container.
 # RUN CGO_ENABLED=0 GOOS=linux go build -v -o app main.go # with this option, I got 'executor failed' error
-RUN go build -v -o backend main.go
+RUN go build -v -o goyangi-backend main.go
 
 # Distribution
-FROM alpine:latest
+FROM golang:1.20-alpine as prod
 
 RUN apk update && apk upgrade && \
     apk --update --no-cache add tzdata && \
@@ -37,7 +37,7 @@ WORKDIR /app
 
 COPY --from=builder /app /app
 
-CMD ["/app/backend"]
+ENTRYPOINT ["/app/goyangi-backend"]
 
 # Use a Docker multi-stage build to create a lean production image.
 # FROM gcr.io/distroless/base-debian11

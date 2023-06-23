@@ -4,7 +4,7 @@ app:
   environment: DEVELOPMENT
 
 api:
-  hostURL: "http://localhost:3000"  
+  hostURL: "http://localhost"  
   url: "api/v1"
 
 # Gin
@@ -15,7 +15,8 @@ gin:
 # Database
 database:
   type: postgres
-  host: 172.19.102.44
+  # host: 127.0.0.1 # when you directly run 'go run main.go'
+  host: host.docker.internal # for docker
   port: 5432
   user: postgres
   password: 1234
