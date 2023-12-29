@@ -51,7 +51,6 @@ Connect to http://localhost/api/v1/commands/migrate while running the server.
 Connect to http://localhost
 
 
-
 ## Getting Started (cli)
 
 ### Pre installation
