@@ -37,7 +37,7 @@ Therefore, I decided to update Goyangi for better use.
 
 ### Run commands below
 ~~~
-$ git clone github.com/dorajistyle/goyangi
+$ git clone https://github.com/dorajistyle/goyangi.git
 $ cd goyangi
 $ docker compose up -d --build
 ~~~
