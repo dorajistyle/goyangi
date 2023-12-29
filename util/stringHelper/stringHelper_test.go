@@ -5,10 +5,15 @@ import (
 	"strings"
 
 	. "github.com/dorajistyle/goyangi/util/stringHelper"
+	viper "github.com/dorajistyle/goyangi/util/viper"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
+
+func init() {
+	viper.LoadConfig()
+}
 
 var _ = Describe("StringHelper", func() {
 	var (

@@ -15,28 +15,64 @@ So, Goyangi carefully has chosen packages and combined.
 Keep it simple and DRY.
 
 
-
-
 ## How it works?
 ![Goyangi How it works](./document/images/goyangi-howitworks.png "Goyangi How it works")
 
+## Update 2023
+There are various remarkable projects for building API servers.
+I tested some of them. Then came back to a simple API server starter Goyangi.
+Even though Goyangi is an outdated project, I recognised that it still works properly.
+Therefore, I decided to update Goyangi for better use.
+* Update Golang modules
+* Use Go modules rather than 'go dep'.
+* Use '[slog](https://pkg.go.dev/golang.org/x/exp/slog)' rather than 'logrus'.
+* Use '[Viper](https://github.com/spf13/viper)' Environment manager.
+* Use Docker Compose.
 
-## Getting Started
+## Getting Started (Docker)
+
+### Pre installation
+* [Docker](https://www.docker.com/) - Docker
+
+
+### Run commands below
+~~~
+$ git clone github.com/dorajistyle/goyangi
+$ cd goyangi
+$ docker compose up -d --build
+~~~
+
+### Migration (First time only)
+Please check your 'goyangi-backend' container logs first.
+If you cannot connect to Postgres, restart the 'goyangi-backend' container.
+Connect to http://localhost/api/v1/commands/migrate while running the server.
+
+### Use
+Connect to http://localhost
+
+
+
+## Getting Started (cli)
 
 ### Pre installation
 * [dep](https://github.com/golang/dep) - Install the dependency management for Go.
 * [PostgreSQL](https://www.postgresql.org) - Install and run the postgresql service. [username: postgres / password: postgres]
 * [yarn](https://yarnpkg.com) - Install a dependency management tool.
 
-### Clone the source
+
+### Run commands below
 ~~~
 $ git clone github.com/dorajistyle/goyangi
 $ cd goyangi
-$ dep ensure
+$ go mod -U .
+$ go mod tidy
 ~~~
+
+### Edit config.yml file
+
 ### Run server
 ~~~
-SOURCE_ROOT $ go run main.go
+$ go run main.go
 ~~~
 
 ### Migration (First time only)
@@ -45,7 +81,7 @@ createdb goyangi_dev -U postgres;
 createdb goyangi_test  -U postgres;
 createdb goyangi  -U postgres;
 ~~~
-Connect to http://localhost:3001/api/v1/commands/migrate while running the server.
+Connect to http://localhost/api/v1/commands/migrate while running the server.
 
 ### Run frontend (Vue.js)
 ~~~
@@ -61,27 +97,6 @@ VUE_JS_ROOT $ yarn serve
 ![Goyangi Vue.js Home](./document/images/goyangi-vuejs-home.JPG "Goyangi Vue.js Home")
 
 ![Goyangi Vue.js Board](./document/images/goyangi-vuejs-board.JPG "Goyangi Vue.js Board")
-
-
-### Configuration
-
-### Backend
-You can find all configuration files in ./config
-
-* api.go : API related configuration.
-* authentication.go : Authentication related configuration.
-* aws.go : If you want to use aws S3, you should setup configuration here.
-* db.go : Be sure that you have a database for migration and run application.
-* email.go : If you want to send an email to users, set your email information.
-* environment.go : It has three types of environments. DEVELOPMENT | TEST | PRODUCTION
-* image.go : Image related configuration.
-* logger.go : Log related configuration.
-* oauth.go : When you want to connect with oauth, set your oauth information.
-* order.go : Ordering of models.
-* pagination.go : Pagination of models.
-* public.go : Public fields of user for privacy.
-* uploader.go : Uploader related configuration.
-
 
 ## Features
 * Restful support
@@ -120,7 +135,7 @@ It is a foundation of basic file upload.
 
 ##### Image
 Image handling included in uploads function.
-- [x] Resize (vips)
+- [x] Resize (gift)
 - [x] Filtering (gift)
 
 ##### App management for permissions
@@ -139,24 +154,8 @@ We can add any foundation API we need.
    $ go run main.go test
 ~~~
 
-#### Deployment
-- [x] Generate API document
-Requires [swagger]() and [asciidoctor](http://asciidoctor.org/) to generate API documents.
-
-##### Install swagger
-~~~
-  go get github.com/yvasiyarov/swagger
-~~~
-
-##### Install Asciidoctor
-~~~
-   sudo gem update --system
-sudo gem install -n /usr/local/bin asciidoctor -N
-~~~
-
-~~~
-   go run goyangi.go generateAPI
-~~~
+#### API Document
+Connect to http://localhost/swagger/index.html while running the server.
 
 ### SPA ready
 Goyangi separates server and frontend clearly. And default SPA frontend used Vue.js.

@@ -26,29 +26,29 @@ func UploadImageFile(target string, environment string, s3UploadPath string, par
 	}
 	// Image resize is a bottleneck. How can we improve this?
 	// https://github.com/fawick/speedtest-resize said vipsthumbnail is fastest one.
-	// Currenctly goyangi uses vips(https://github.com/DAddYE/vips).
-	// dst, _ := image.ResizeMedium(mediatype, bytes.NewReader(inBuf))
+	// Currently goyangi uses gift(https://github.com/disintegration/gift). Previously goyangi used vips(https://github.com/DAddYE/vips).
+
 	var dst, dstLarge, dstMedium, dstThumbnail *bytes.Buffer
 	dst = bytes.NewBuffer(inbuf)
-	buf, err := image.ResizeLargeVips(inbuf)
+	dst, err = image.ResizeLarge(mediatype, bytes.NewReader(inbuf))
 	if err != nil {
 		// log.CheckErrorWithMessage(err, "Image resizing failed.")
-		log.Errorf("Image large resizing failed. %s", err.Error())
+		log.Error("Image large resizing failed.", err)
 		dstLarge = nil
 	} else {
-		dstLarge = bytes.NewBuffer(buf)
-		mbuf, err := image.ResizeMediumVips(buf)
+		dstLarge = dst
+		mbuf, err := image.ResizeMedium(mediatype, dstLarge)
 		if err != nil {
 			dstMedium = nil
-			log.Errorf("Image medium resizing failed. %s", err.Error())
+			log.Error("Image medium resizing failed.", err)
 		} else {
-			dstMedium = bytes.NewBuffer(mbuf)
-			tbuf, err := image.ResizeThumbnailVips(mbuf)
+			dstMedium = mbuf
+			tbuf, err := image.ResizeThumbnail(mediatype, dstMedium)
 			if err != nil {
 				dstThumbnail = nil
-				log.Errorf("Image small resizing failed. %s", err.Error())
+				log.Error("Image small resizing failed.", err)
 			} else {
-				dstThumbnail = bytes.NewBuffer(tbuf)
+				dstThumbnail = tbuf
 			}
 		}
 	}

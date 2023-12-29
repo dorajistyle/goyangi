@@ -4,9 +4,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/dorajistyle/goyangi/util/config"
-
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 )
 
 var (
@@ -33,12 +32,12 @@ func GetContextLogInfo(c *gin.Context) (string, int, string, string, string) {
 
 // AccessLogger write access log into a file.
 func AccessLogger() gin.HandlerFunc {
-	// f, err := os.OpenFile(config.AccessLogFilePath+config.AccessLogFileExtension, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	// f, err := os.OpenFile(viper.GetString("log.access.filepath"), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	// if err != nil {
 	// 	Fatalf("error opening file: %v", err)
 	// }
 	// defer f.Close()
-	out := LumberJackLogger(config.AccessLogFilePath+config.AccessLogFileExtension, config.AccessLogMaxSize, config.AccessLogMaxBackups, config.AccessLogMaxAge)
+	out := LumberJackLogger(viper.GetString("log.access.filepath"), viper.GetInt("log.access.maxSize"), viper.GetInt("log.access.maxBackups"), viper.GetInt("log.access.maxAge"))
 	stdlogger := log.New(out, "", 0)
 	// stdlogger := log.New(f, "", 0)
 	// stdlogger := log.New(os.Stdout, "", 0)
@@ -104,12 +103,12 @@ func colorForMethod(method string) string {
 }
 
 // func AccessLoggerLegacy() gin.HandlerFunc {
-// 	// f, err := os.OpenFile(config.AccessLogFilePath+config.AccessLogFileExtension, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+// 	// f, err := os.OpenFile(viper.GetString("log.access.filepath"), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 // 	// if err != nil {
 // 	// 	Fatalf("error opening file: %v", err)
 // 	// }
 // 	// defer f.Close()
-// 	out := LumberJackLogger(config.AccessLogFilePath+config.AccessLogFileExtension, config.AccessLogMaxSize, config.AccessLogMaxBackups, config.AccessLogMaxAge)
+// 	out := LumberJackLogger(viper.GetString("log.access.filepath"), viper.GetInt("log.access.maxSize"), viper.GetInt("log.access.maxBackups"), viper.GetInt("log.access.maxAge"))
 // 	stdlogger := log.New(out, "", 0)
 // 	// stdlogger := log.New(f, "", 0)
 // 	// stdlogger := log.New(os.Stdout, "", 0)

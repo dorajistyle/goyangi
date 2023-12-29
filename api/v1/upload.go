@@ -26,7 +26,7 @@ func Upload(parentRoute *gin.RouterGroup) {
 // @Title uploadImages
 // @Description upload images to storage. Request should contain multipart form data.
 // @Accept  json
-// @Success 201 {object} gin.H "Uploaded"
+// @Success 201 {object} map[string]interface{} "Uploaded"
 // @Failure 401 {object} response.BasicResponse "Authentication required"
 // @Failure 500 {object} response.BasicResponse "Upload failed"
 // @Resource /upload/images
@@ -48,8 +48,8 @@ func uploadImages(c *gin.Context) {
 // @Title createFile
 // @Description Create a file.
 // @Accept  json
-// @Param   name        form   string     true        "Name of File."
-// @Param   size        form   int  true        "Description of File."
+// @Param   name        formData   string     true        "Name of File."
+// @Param   size        formData   int  true        "Description of File."
 // @Success 201 {object} model.File "Created"
 // @Failure 401 {object} response.BasicResponse "Authentication required"
 // @Failure 500 {object} response.BasicResponse "File is not created"
@@ -77,8 +77,8 @@ func createFile(c *gin.Context) {
 // @Title createFiles
 // @Description Create a file.
 // @Accept  json
-// @Param   name        form   string     true        "Name of File."
-// @Param   size        form   int  true        "Description of File."
+// @Param   name        formData   string     true        "Name of File."
+// @Param   size        formData   int  true        "Description of File."
 // @Success 201 {object} model.File "Created"
 // @Failure 401 {object} response.BasicResponse "Authentication required"
 // @Failure 500 {object} response.BasicResponse "File is not created"

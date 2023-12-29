@@ -4,7 +4,6 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/dorajistyle/goyangi/config"
 	"github.com/dorajistyle/goyangi/db"
 	"github.com/dorajistyle/goyangi/model"
 	"github.com/dorajistyle/goyangi/service/userService"
@@ -14,13 +13,14 @@ import (
 	"github.com/dorajistyle/goyangi/util/pagination"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"github.com/spf13/viper"
 )
 
 // AssignRelatedUser assign related user of comment.
 func AssignRelatedUser(comments []model.Comment) {
 	for i, comment := range comments {
 		var tempUser model.User
-		if db.ORM.Model(&comment).Select(config.UserPublicFields).Related(&tempUser).RecordNotFound() {
+		if db.ORM.Model(&comment).Select(viper.GetString("publicFields.user")).Related(&tempUser).RecordNotFound() {
 			log.Warn("user is not found.")
 		}
 		// comments[i].User = model.PublicUser{User: &tempUser}
@@ -44,7 +44,7 @@ func CreateComment(c *gin.Context, item interface{}) (int, error) {
 
 	bindErr := c.MustBindWith(&form, binding.Form)
 	log.Debugf("bind error : %s\n", bindErr)
-	if bindErr != nil  {
+	if bindErr != nil {
 		return http.StatusInternalServerError, errors.New("Invalid form.")
 	}
 
@@ -58,7 +58,7 @@ func CreateComment(c *gin.Context, item interface{}) (int, error) {
 }
 
 // RetrieveComments retrieves comments.
-func RetrieveComments(item interface{}, currentPages ...int) (model.CommentList) {
+func RetrieveComments(item interface{}, currentPages ...int) model.CommentList {
 	var comments []model.Comment
 	var currentPage int
 	if len(currentPages) > 0 {
@@ -67,8 +67,8 @@ func RetrieveComments(item interface{}, currentPages ...int) (model.CommentList)
 		currentPage = 1
 	}
 	count := db.ORM.Model(item).Association("Comments").Count()
-	offset, currentPage, hasPrev, hasNext := pagination.Paginate(currentPage, config.CommentPerPage, count)
-	db.ORM.Limit(config.CommentPerPage).Order(config.CommentOrder).Offset(offset).Model(item).Association("Comments").Find(&comments)
+	offset, currentPage, hasPrev, hasNext := pagination.Paginate(currentPage, viper.GetInt("pagination.comment"), count)
+	db.ORM.Limit(viper.GetInt("pagination.comment")).Order(viper.GetString("order.cmment")).Offset(offset).Model(item).Association("Comments").Find(&comments)
 	AssignRelatedUser(comments)
 	log.Debugf("comments : %v", comments)
 	return model.CommentList{Comments: comments, HasPrev: hasPrev, HasNext: hasNext, Count: count, CurrentPage: currentPage}
@@ -86,7 +86,7 @@ func UpdateComment(c *gin.Context, item interface{}) (int, error) {
 
 	bindErr := c.MustBindWith(&form, binding.Form)
 	log.Debugf("bind error : %s\n", bindErr)
-	if bindErr != nil  {
+	if bindErr != nil {
 		return http.StatusInternalServerError, errors.New("Invalid form.")
 	}
 

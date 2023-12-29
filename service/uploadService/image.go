@@ -9,8 +9,8 @@ import (
 
 	"github.com/dorajistyle/goyangi/service/userService"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 
-	"github.com/dorajistyle/goyangi/config"
 	"github.com/dorajistyle/goyangi/model"
 	"github.com/dorajistyle/goyangi/util/concurrency"
 	"github.com/dorajistyle/goyangi/util/log"
@@ -56,9 +56,9 @@ func imageUploader() concurrency.ConcurrencyManager {
 				log.Debug("File name is empty.")
 				continue
 			}
-			err = upload.UploadImageFile(config.UploadTarget, config.Environment, s3UploadPath, part)
+			err = upload.UploadImageFile(viper.GetString("upload.target"), viper.GetString("app.environment"), s3UploadPath, part)
 			if err != nil {
-				log.Error("Image uploading failed. : " + err.Error())
+				log.Error("Image uploading failed. : ", err)
 				result.Code = http.StatusBadRequest
 				result.Error = err
 				return result
@@ -75,7 +75,7 @@ func UploadImages(c *gin.Context) (int, error) {
 	r := c.Request
 	// reader, err := r.MultipartReader()
 	user, _ = userService.CurrentUser(c)
-	s3UploadPath = config.UploadS3ImagePath + strconv.FormatInt(int64(user.Id), 10) + "/"
+	s3UploadPath = viper.GetString("upload.path.S3Image") + strconv.FormatInt(int64(user.Id), 10) + "/"
 	// if err != nil {
 	// 	return http.StatusInternalServerError, err
 	// }

@@ -1,0 +1,170 @@
+# App
+app:
+  name: Goyangi
+  environment: DEVELOPMENT
+
+api:
+  hostURL: "http://localhost"  
+  url: "api/v1"
+
+# Gin
+gin:
+  port: 8080
+  mode: debug
+
+# Database
+database:
+  type: postgres
+  # host: 127.0.0.1 # when you directly run 'go run main.go'
+  host: host.docker.internal # for docker
+  port: 5432
+  user: postgres
+  password: 1234
+  database: goyangi_dev
+  options: "sslmode=disable"
+
+# db table public fields
+publicFields:
+  user: "id, username, md5, description, created_at, liking_count, liked_count"
+
+# db table select pagination
+pagination:
+  article: 10
+  liking: 5
+  liked: 5
+  comment: 5
+
+# db table select order
+order:
+  article: "created_at desc"
+  liking: "created_at desc"
+  liked: "created_at desc"
+  comment: "created_at desc"  
+
+
+# Redis
+redis:
+  addr: "172.19.102.44"
+  port: "6379"   
+
+# Upload
+upload:
+  path:
+    local: "/tmp/upload/"
+    S3Image: "images/"
+  target: "LOCAL" # LOCAL | S3
+  bucket: "TEST" # TEST | PRODUCTION
+  timeout: 30
+
+auth:
+  tokenExpiration: 1000 # Unit: day
+
+aws:
+  accessKeyID: ""
+  secretAccessKey: ""
+  s3:
+    region: ""
+    bucket:
+      prefix: ""
+      name: ""
+    testBucket:
+      prefix: ""
+      name: ""
+    staticBucket:
+      name: ""      
+  elasticbeanstalk:
+    region: ""
+    appName: ""
+    environment:
+      id: ""
+      name: ""
+    s3:
+      bucket:
+        name: ""
+  cloudfrontURL: ""
+    
+
+# Email
+email:
+  send: false # true | false
+  from: ""
+  testTo: ""
+  host: ""
+  username: ""
+  password: ""
+  port: 465
+  timeout: 10 # seconds
+
+# Image
+image:
+  default:
+    width: 500
+    height: 500
+  large:
+    width: 1920
+    height: 1080
+  medium:
+    width: 1024
+    height: 768
+  thumbnail:
+    width: 340
+    height: 270
+
+# Log
+log:
+  access:
+    filepath: "log/access.txt"
+    maxSize: 5  # megabytes
+    maxBackups: 7
+    maxAge: 30 # days
+  error:
+    filepath: "log/error.json"    
+    maxSize: 5  # megabytes
+    maxBackups: 7
+    maxAge: 30 # days    
+
+# Oauth
+oauth:
+  google:
+    id: ""
+    secret: ""
+  github:
+    id: ""
+    secret: ""
+  facebook:
+    id: ""
+    secret: ""    
+  twitter:
+    id: ""
+    secret: ""    
+  linkedin:
+    id: ""
+    secret: ""    
+  kakao:
+    id: ""
+    secret: ""
+  naver:
+    id: ""
+    secret: "" 
+  yahoo:
+    id: ""
+    secret: ""      
+
+# JWT
+jwt:
+  client:
+    method: HMAC256 # HMAC256 | RSA256
+    key:
+     private: "secretRSA" # secret 
+     public: "secretRSAPUBLIC"
+      
+  server:
+    method: HMAC256 # HMAC256 | RSA256
+    expirationHour: 24 # Hours
+    key:
+      private: > # secret
+        -----BEGIN RSA PRIVATE KEY-----
+        -----END RSA PRIVATE KEY-----        
+      public: >
+        -----BEGIN PUBLIC KEY-----
+        -----END PUBLIC KEY-----

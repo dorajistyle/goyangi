@@ -5,9 +5,9 @@ import (
 	"net/http"
 
 	"github.com/gorilla/securecookie"
+	"github.com/spf13/viper"
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/dorajistyle/goyangi/config"
 	"github.com/dorajistyle/goyangi/db"
 	"github.com/dorajistyle/goyangi/model"
 	"github.com/dorajistyle/goyangi/util/log"
@@ -136,7 +136,8 @@ func RegisterHanderFromForm(c *gin.Context, registrationForm RegistrationForm) (
 // RegisterHandler sets a cookie when user registered.
 func RegisterHandler(c *gin.Context) (int, error) {
 	var registrationForm RegistrationForm
-	c.BindWith(&registrationForm, binding.Form)
+	bindErr := c.MustBindWith(&registrationForm, binding.Form)
+	log.Debugf("bind error : %s\n", bindErr)
 	status, err := RegisterHanderFromForm(c, registrationForm)
 	return status, err
 }
@@ -145,8 +146,8 @@ func RegisterHandler(c *gin.Context) (int, error) {
 
 func CurrentUserByToken(token string) (model.User, error) {
 	var user model.User
-	
-	if db.ORM.Select(config.UserPublicFields+", email").Where("token = ?", token).First(&user).RecordNotFound() {
+
+	if db.ORM.Select(viper.GetString("publicFields.user")+", email").Where("token = ?", token).First(&user).RecordNotFound() {
 		return user, errors.New("User is not found.")
 	}
 	db.ORM.Model(&user).Association("Languages").Find(&user.Languages)

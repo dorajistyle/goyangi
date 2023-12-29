@@ -10,10 +10,9 @@ import (
 	"io"
 	"strconv"
 
-	"github.com/daddye/vips"
 	"github.com/disintegration/gift"
-	"github.com/dorajistyle/goyangi/util/config"
 	"github.com/dorajistyle/goyangi/util/stringHelper"
+	"github.com/spf13/viper"
 )
 
 func GenerateURL(imageURLPrefix string, types string, id int64, name string) string {
@@ -27,63 +26,16 @@ func GenerateURL(imageURLPrefix string, types string, id int64, name string) str
 	return imageURLBuffer.String()
 }
 
-func LargeOption() vips.Options {
-	options := vips.Options{
-		Width:        0,
-		Height:       config.LargeHeight,
-		Crop:         false,
-		Extend:       vips.EXTEND_WHITE,
-		Interpolator: vips.BICUBIC,
-		Gravity:      vips.CENTRE,
-		Quality:      95,
-	}
-	return options
-}
-
-func MediumOption() vips.Options {
-	options := vips.Options{
-		Width:        0,
-		Height:       config.MediumHeight,
-		Crop:         false,
-		Extend:       vips.EXTEND_WHITE,
-		Interpolator: vips.BICUBIC,
-		Gravity:      vips.CENTRE,
-		Quality:      90,
-	}
-	return options
-}
-
-func ThumbnailOption() vips.Options {
-	options := vips.Options{
-		Width:        config.ThumbnailWidth,
-		Height:       config.ThumbnailHeight,
-		Crop:         true,
-		Extend:       vips.EXTEND_WHITE,
-		Interpolator: vips.BILINEAR,
-		Gravity:      vips.CENTRE,
-		Quality:      90,
-	}
-	return options
-}
-
-func ResizeLargeVips(inBuf []byte) ([]byte, error) {
-	return vips.Resize(inBuf, LargeOption())
-}
-
-func ResizeMediumVips(inBuf []byte) ([]byte, error) {
-	return vips.Resize(inBuf, MediumOption())
-}
-
-func ResizeThumbnailVips(inBuf []byte) ([]byte, error) {
-	return vips.Resize(inBuf, ThumbnailOption())
+func LargeFilter() *gift.GIFT {
+	return ResizeFilter(viper.GetInt("image.large.width"), 0)
 }
 
 func MediumFilter() *gift.GIFT {
-	return ResizeFilter(config.ImageWidth, 0)
+	return ResizeFilter(viper.GetInt("image.medium.width"), 0)
 }
 
 func ThumbnailFilter() *gift.GIFT {
-	return ResizeFilter(config.ThumbnailWidth, 0)
+	return ResizeFilter(viper.GetInt("image.thumbnail.width"), 0)
 }
 
 func ResizeFilter(width int, height int) *gift.GIFT {
@@ -160,7 +112,6 @@ func ParseImage(imageFormat string, r io.Reader, g *gift.GIFT) (*bytes.Buffer, e
 	switch imageFormat {
 	case "image/jpeg":
 		err = ParseJpeg(wb, r, g)
-		//		log.Debugf("image type : %s %d %d\n", imageFormat, config.Width, config.Height)
 	case "image/png":
 		err = ParsePng(wb, r, g)
 	case "image/gif":
@@ -171,17 +122,36 @@ func ParseImage(imageFormat string, r io.Reader, g *gift.GIFT) (*bytes.Buffer, e
 	return wb, err
 }
 
+func ResizeLarge(imageFormat string, r io.Reader) (*bytes.Buffer, error) {
+	wb := new(bytes.Buffer)
+	g := MediumFilter()
+	var err error
+	w, h := viper.GetInt("image.large.width"), viper.GetInt("image.large.height")
+	switch imageFormat {
+	case "image/jpeg":
+		err = ResizeJpeg(wb, r, g, w, h)
+	case "image/png":
+		err = ResizePng(wb, r, g, w, h)
+	case "image/gif":
+		err = ResizeGif(wb, r, g, w, h)
+	default:
+		err = fmt.Errorf("unsupported image type. %s\n", imageFormat)
+	}
+	return wb, err
+}
+
 func ResizeMedium(imageFormat string, r io.Reader) (*bytes.Buffer, error) {
 	wb := new(bytes.Buffer)
 	g := MediumFilter()
 	var err error
+	w, h := viper.GetInt("image.medium.width"), viper.GetInt("image.medium.height")
 	switch imageFormat {
 	case "image/jpeg":
-		err = ResizeJpeg(wb, r, g, config.ImageWidth, config.ImageHeight)
+		err = ResizeJpeg(wb, r, g, w, h)
 	case "image/png":
-		err = ResizePng(wb, r, g, config.ImageWidth, config.ImageHeight)
+		err = ResizePng(wb, r, g, w, h)
 	case "image/gif":
-		err = ResizeGif(wb, r, g, config.ImageWidth, config.ImageHeight)
+		err = ResizeGif(wb, r, g, w, h)
 	default:
 		err = fmt.Errorf("unsupported image type. %s\n", imageFormat)
 	}
@@ -192,13 +162,14 @@ func ResizeThumbnail(imageFormat string, r io.Reader) (*bytes.Buffer, error) {
 	wb := new(bytes.Buffer)
 	g := ThumbnailFilter()
 	var err error
+	w, h := viper.GetInt("image.thumbnail.width"), viper.GetInt("image.thumbnail.height")
 	switch imageFormat {
 	case "image/jpeg":
-		err = ResizeJpeg(wb, r, g, config.ImageWidth, config.ImageHeight)
+		err = ResizeJpeg(wb, r, g, w, h)
 	case "image/png":
-		err = ResizePng(wb, r, g, config.ImageWidth, config.ImageHeight)
+		err = ResizePng(wb, r, g, w, h)
 	case "image/gif":
-		err = ResizeGif(wb, r, g, config.ImageWidth, config.ImageHeight)
+		err = ResizeGif(wb, r, g, w, h)
 	default:
 		err = fmt.Errorf("unsupported image type. %s\n", imageFormat)
 	}

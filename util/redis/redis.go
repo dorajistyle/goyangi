@@ -2,65 +2,46 @@ package redis
 
 import (
 	// "github.com/dorajistyle/goyangi/util/log"
-	"time"
 
-	"github.com/dorajistyle/goyangi/util/config"
-	"github.com/garyburd/redigo/redis"
-	"github.com/youtube/vitess/go/pools"
+	"github.com/dorajistyle/goyangi/util/log"
+	"github.com/rueian/rueidis"
+	"github.com/spf13/viper"
 	"golang.org/x/net/context"
 )
 
-var Pool, Resource, InitErr = RedisInit()
-
-// ResourceConn adapts a Redigo connection to a Vitess Resource.
-type ResourceConn struct {
-	redis.Conn
-}
-
-func (r ResourceConn) Close() {
-	r.Conn.Close()
-}
-
-func RedisInit() (*pools.ResourcePool, ResourceConn, error) {
-	var resourceConn ResourceConn
-	pool := pools.NewResourcePool(func() (pools.Resource, error) {
-		c, err := redis.Dial("tcp", config.RedisAddr())
-		return ResourceConn{c}, err
-	}, config.Capacity, config.MaxCap, time.Minute)
-	// defer p.Close()
-	ctx := context.TODO()
-	r, err := pool.Get(ctx)
+func GetClient() rueidis.Client {
+	redisAddr := viper.GetString("redis.addr") + ":" + viper.GetString("redis.port")
+	options := rueidis.ClientOption{
+		InitAddress: []string{redisAddr},
+	}
+	client, err := rueidis.NewClient(options)
 	if err != nil {
-		// log.Fatal(err.Error())
-		return pool, resourceConn, err
+		log.Error("Cannot get ruedis client.", err)
 	}
-	defer pool.Put(r)
-	resourceConn = r.(ResourceConn)
-	return pool, resourceConn, nil
+	return client
 }
 
-func (*ResourceConn) Append(key string, value string) error {
-	if InitErr != nil {
-		return InitErr
-	}
-	_, err := Resource.Do("SET", key, value)
-	return err
+func Append(key string, value string) error {
+	client := GetClient()
+	defer client.Close()
+	cmd := client.B().Set().Key(key).Value(value).Build()
+	res := client.Do(context.Background(), cmd)
+	return res.Error()
 }
 
-func (*ResourceConn) Get(key string) (string, error) {
-	var value string
-	var err error
-	if InitErr != nil {
-		return value, InitErr
-	}
-	value, err = redis.String(Resource.Do("GET", key))
-	return value, err
+func Get(key string) (value string, err error) {
+	client := GetClient()
+	defer client.Close()
+	cmd := client.B().Get().Key(key).Build()
+	res := client.Do(context.Background(), cmd)
+	value, _ = res.ToString()
+	return value, res.Error()
 }
 
-func (*ResourceConn) Del(key string) error {
-	if InitErr != nil {
-		return InitErr
-	}
-	_, err := Resource.Do("DEL", key)
-	return err
+func Del(key string) error {
+	client := GetClient()
+	defer client.Close()
+	cmd := client.B().Del().Key(key).Build()
+	res := client.Do(context.Background(), cmd)
+	return res.Error()
 }

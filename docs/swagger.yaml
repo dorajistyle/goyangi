@@ -1,0 +1,1718 @@
+definitions:
+  model.Article:
+    properties:
+      active:
+        type: boolean
+      author:
+        $ref: '#/definitions/model.User'
+      categoryId:
+        type: integer
+      commentCount:
+        type: integer
+      commentList:
+        $ref: '#/definitions/model.CommentList'
+      comments:
+        items:
+          $ref: '#/definitions/model.Comment'
+        type: array
+      content:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      id:
+        type: integer
+      imageName:
+        type: string
+      likingCount:
+        type: integer
+      likingList:
+        $ref: '#/definitions/model.LikingList'
+      likings:
+        items:
+          $ref: '#/definitions/model.User'
+        type: array
+      nextId:
+        type: integer
+      prevId:
+        type: integer
+      referralId:
+        type: integer
+      referralUserId:
+        type: integer
+      sharingCount:
+        type: integer
+      thumbnailName:
+        type: string
+      title:
+        type: string
+      updatedAt:
+        type: string
+      url:
+        type: string
+      userId:
+        type: integer
+    type: object
+  model.Comment:
+    properties:
+      content:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      id:
+        type: integer
+      likingCount:
+        type: integer
+      updatedAt:
+        type: string
+      user:
+        $ref: '#/definitions/model.User'
+      userId:
+        type: integer
+    type: object
+  model.CommentList:
+    properties:
+      comments:
+        items:
+          $ref: '#/definitions/model.Comment'
+        type: array
+      count:
+        type: integer
+      currentPage:
+        type: integer
+      hasNext:
+        type: boolean
+      hasPrev:
+        type: boolean
+    type: object
+  model.Connection:
+    properties:
+      accessToken:
+        type: string
+      id:
+        type: integer
+      imageUrl:
+        type: string
+      profileUrl:
+        type: string
+      providerId:
+        type: integer
+      providerUserId:
+        type: string
+      userId:
+        type: integer
+    type: object
+  model.File:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      size:
+        type: integer
+      userId:
+        type: integer
+    type: object
+  model.Language:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  model.LikedList:
+    properties:
+      count:
+        type: integer
+      currentPage:
+        type: integer
+      hasNext:
+        type: boolean
+      hasPrev:
+        type: boolean
+      liked:
+        items:
+          $ref: '#/definitions/model.User'
+        type: array
+    type: object
+  model.LikingList:
+    properties:
+      count:
+        type: integer
+      currentPage:
+        type: integer
+      hasNext:
+        type: boolean
+      hasPrev:
+        type: boolean
+      isLiked:
+        type: boolean
+      likings:
+        items:
+          $ref: '#/definitions/model.User'
+        type: array
+    type: object
+  model.PublicUser:
+    properties:
+      activateUntil:
+        type: boolean
+      activatedAt:
+        type: boolean
+      activation:
+        description: admin
+        type: boolean
+      activationToken:
+        type: boolean
+      appId:
+        type: integer
+      articles:
+        type: boolean
+      birthday:
+        type: boolean
+      connections:
+        type: boolean
+      createdAt:
+        type: string
+      currentLoginAt:
+        type: boolean
+      currentLoginIp:
+        type: boolean
+      deletedAt:
+        type: boolean
+      description:
+        type: string
+      email:
+        type: boolean
+      gender:
+        type: boolean
+      id:
+        type: integer
+      languages:
+        type: boolean
+      lastLoginAt:
+        type: boolean
+      lastLoginIp:
+        type: boolean
+      liked:
+        items:
+          $ref: '#/definitions/model.User'
+        type: array
+      likedCount:
+        type: integer
+      likedList:
+        $ref: '#/definitions/model.LikedList'
+      likingCount:
+        description: Liking
+        type: integer
+      likingList:
+        allOf:
+        - $ref: '#/definitions/model.LikingList'
+        description: |-
+          Liked   []User `gorm:"many2many:users_followers;foreignkey:follower_id;associationforeignkey:user_id;"`
+          Liked      []User     `gorm:"foreignkey:follower_id;associationforeignkey:userId;many2many:users_followers;"`
+      likings:
+        description: Likings     []User     `gorm:"foreignkey:userId;associationforeignkey:follower_id;many2many:users_followers;"`
+        items:
+          $ref: '#/definitions/model.User'
+        type: array
+      md5:
+        description: email md5 for gravatar
+        type: string
+      name:
+        type: boolean
+      password:
+        type: boolean
+      passwordResetToken:
+        type: boolean
+      passwordResetUntil:
+        type: boolean
+      roles:
+        type: boolean
+      token:
+        type: boolean
+      tokenExperiation:
+        type: boolean
+      updatedAt:
+        type: boolean
+      username:
+        type: string
+    type: object
+  model.Role:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  model.User:
+    properties:
+      activateUntil:
+        type: string
+      activatedAt:
+        type: string
+      activation:
+        description: admin
+        type: boolean
+      activationToken:
+        type: string
+      appId:
+        type: integer
+      birthday:
+        type: string
+      connections:
+        items:
+          $ref: '#/definitions/model.Connection'
+        type: array
+      createdAt:
+        type: string
+      currentLoginAt:
+        type: string
+      currentLoginIp:
+        type: string
+      deletedAt:
+        type: string
+      description:
+        type: string
+      email:
+        type: string
+      gender:
+        type: integer
+      id:
+        type: integer
+      languages:
+        description: Many To Many, user_languages is the join table
+        items:
+          $ref: '#/definitions/model.Language'
+        type: array
+      lastLoginAt:
+        type: string
+      lastLoginIp:
+        type: string
+      liked:
+        items:
+          $ref: '#/definitions/model.User'
+        type: array
+      likedCount:
+        type: integer
+      likedList:
+        $ref: '#/definitions/model.LikedList'
+      likingCount:
+        description: Liking
+        type: integer
+      likingList:
+        allOf:
+        - $ref: '#/definitions/model.LikingList'
+        description: |-
+          Liked   []User `gorm:"many2many:users_followers;foreignkey:follower_id;associationforeignkey:user_id;"`
+          Liked      []User     `gorm:"foreignkey:follower_id;associationforeignkey:userId;many2many:users_followers;"`
+      likings:
+        description: Likings     []User     `gorm:"foreignkey:userId;associationforeignkey:follower_id;many2many:users_followers;"`
+        items:
+          $ref: '#/definitions/model.User'
+        type: array
+      md5:
+        description: email md5 for gravatar
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      passwordResetToken:
+        type: string
+      passwordResetUntil:
+        type: string
+      roles:
+        description: Many To Many, users_roles
+        items:
+          $ref: '#/definitions/model.Role'
+        type: array
+      token:
+        type: string
+      tokenExperiation:
+        type: string
+      updatedAt:
+        type: string
+      username:
+        type: string
+    type: object
+  oauthService.oauthStatusMap:
+    additionalProperties:
+      type: boolean
+    type: object
+  response.BasicResponse:
+    properties:
+      message:
+        type: string
+      messageType:
+        type: string
+      status:
+        type: integer
+    type: object
+info:
+  contact: {}
+paths:
+  /articles:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve article array.
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Article'
+            type: array
+    post:
+      consumes:
+      - application/json
+      description: upload images to storage. And sync article data. Request should
+        contain multipart form data.
+      responses:
+        "201":
+          description: Uploaded
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "500":
+          description: Upload failed
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /articles/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an article.
+      parameters:
+      - description: Article Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: Article deleted
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+    get:
+      consumes:
+      - application/json
+      description: Retrieve an article.
+      parameters:
+      - description: Article Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Article'
+        "404":
+          description: Article is not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+    put:
+      consumes:
+      - application/json
+      description: Update an article.
+      parameters:
+      - description: Article Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Article'
+        "400":
+          description: Article is not updated
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: Article is not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /articles/{id}/comments:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve comments on an article.
+      parameters:
+      - description: Article Id
+        in: path
+        name: articleId
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: Retrieve comments successfully
+          schema:
+            items:
+              $ref: '#/definitions/model.Comment'
+            type: array
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /articles/{id}/comments/{commentId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a comment on article.
+      parameters:
+      - description: Article Id
+        in: path
+        name: articleId
+        required: true
+        type: integer
+      - description: Comment Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: Comment is deleted successfully
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "403":
+          description: FormUser's Id is not identical with currentUser's Id
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "500":
+          description: Comment is not deleted
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+    put:
+      consumes:
+      - application/json
+      description: Update a comment on article.
+      parameters:
+      - description: Article Id
+        in: path
+        name: articleId
+        required: true
+        type: integer
+      - description: Comment Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: Comment updated successfully
+          schema:
+            $ref: '#/definitions/model.Comment'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "403":
+          description: FormUser's Id is not identical with currentUser's Id
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "500":
+          description: Comment is not updated
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /articles/{id}/likings:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve likings on an article.
+      parameters:
+      - description: Article Id
+        in: path
+        name: articleId
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.PublicUser'
+            type: array
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /articles/{id}/likings/{likingId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a liking on article.
+      parameters:
+      - description: Article Id
+        in: path
+        name: articleId
+        required: true
+        type: integer
+      - description: Liking Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: Liking is deleted successfully
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "403":
+          description: FormUser's Id is not identical with currentUser's Id
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "500":
+          description: Liking is not deleted
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /articles/comments:
+    post:
+      consumes:
+      - application/json
+      description: Create a comment on an article.
+      parameters:
+      - description: Article Id.
+        in: formData
+        name: articleId
+        required: true
+        type: integer
+      - description: Comment content.
+        in: formData
+        name: content
+        required: true
+        type: string
+      - description: Article image name.
+        in: formData
+        name: imageName
+        required: true
+        type: string
+      - description: Article description.
+        in: formData
+        name: description
+        type: string
+      responses:
+        "201":
+          description: Comment created
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "403":
+          description: FormUser's Id is not identical with currentUser's Id
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: Article is not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /articles/likings:
+    post:
+      consumes:
+      - application/json
+      description: Create a liking on an article.
+      parameters:
+      - description: Article Id.
+        in: formData
+        name: articleId
+        required: true
+        type: integer
+      - description: Liking content.
+        in: formData
+        name: content
+        required: true
+        type: string
+      - description: Article image name.
+        in: formData
+        name: imageName
+        required: true
+        type: string
+      - description: Article description.
+        in: formData
+        name: description
+        type: string
+      responses:
+        "201":
+          description: Liking created
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "403":
+          description: FormUser's Id is not identical with currentUser's Id
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: Article is not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /authentications:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a user session.
+      responses:
+        "200":
+          description: User logged out successfully
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+    post:
+      consumes:
+      - application/json
+      description: Create a user session.
+      parameters:
+      - description: User email.
+        in: formData
+        name: loginEmail
+        required: true
+        type: string
+      - description: User password.
+        in: formData
+        name: loginPassword
+        required: true
+        type: string
+      responses:
+        "201":
+          description: User authentication created
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "401":
+          description: Password incorrect
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: User is not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /oauth:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve oauth connections.
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/oauthService.oauthStatusMap'
+            type: array
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /oauth/facebook:
+    delete:
+      consumes:
+      - application/json
+      description: Get facebook oauth url.
+      responses:
+        "200":
+          description: Revoked
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: Connection is not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "500":
+          description: Connection not revoked from user
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+    get:
+      consumes:
+      - application/json
+      description: Get facebook oauth url.
+      responses:
+        "200":
+          description: '{url: oauthURL}'
+          schema:
+            additionalProperties: true
+            type: object
+  /oauth/facebook/redirect:
+    get:
+      consumes:
+      - application/json
+      description: Redirect from Facebook oauth.
+      responses:
+        "303":
+          description: Connection linked.
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: User is not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "500":
+          description: Connection not linked
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /oauth/github:
+    delete:
+      consumes:
+      - application/json
+      description: Get github oauth url.
+      responses:
+        "200":
+          description: Revoked
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: Connection is not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "500":
+          description: Connection not revoked from user
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+    get:
+      consumes:
+      - application/json
+      description: Get github oauth url.
+      responses:
+        "200":
+          description: '{url: oauthURL}'
+          schema:
+            additionalProperties: true
+            type: object
+  /oauth/github/redirect:
+    get:
+      consumes:
+      - application/json
+      description: Redirect from Github oauth.
+      responses:
+        "303":
+          description: Connection linked.
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: User is not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "500":
+          description: Connection not linked
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /oauth/google:
+    delete:
+      consumes:
+      - application/json
+      description: Get google oauth url.
+      responses:
+        "200":
+          description: Revoked
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: Connection is not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "500":
+          description: Connection not revoked from user
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+    get:
+      consumes:
+      - application/json
+      description: Get google oauth url.
+      responses:
+        "200":
+          description: OauthURL retrieved
+          schema:
+            additionalProperties: true
+            type: object
+  /oauth/google/redirect:
+    get:
+      consumes:
+      - application/json
+      description: Redirect from Google oauth.
+      responses:
+        "303":
+          description: Connection linked.
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: User is not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "500":
+          description: Connection not linked
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /oauth/linkedin:
+    delete:
+      consumes:
+      - application/json
+      description: Get linkedin oauth url.
+      responses:
+        "200":
+          description: Revoked
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: Connection is not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "500":
+          description: Connection not revoked from user
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+    get:
+      consumes:
+      - application/json
+      description: Get linkedin oauth url.
+      responses:
+        "200":
+          description: '{url: oauthURL}'
+          schema:
+            additionalProperties: true
+            type: object
+  /oauth/linkedin/redirect:
+    get:
+      consumes:
+      - application/json
+      description: Redirect from Linkedin oauth.
+      responses:
+        "303":
+          description: Connection linked.
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: User is not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "500":
+          description: Connection not linked
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /roles:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve role array.
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Role'
+            type: array
+    post:
+      consumes:
+      - application/json
+      description: Create a role.
+      parameters:
+      - description: Name of Role.
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: Description of Role.
+        in: formData
+        name: description
+        required: true
+        type: string
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Role'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "500":
+          description: Role is not created
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /roles/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a role.
+      parameters:
+      - description: Role ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a role.
+      parameters:
+      - description: Role ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Role'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+    put:
+      consumes:
+      - application/json
+      description: Update a role.
+      parameters:
+      - description: Role ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Role'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "500":
+          description: Role is not updated
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /upload:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve file array.
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.File'
+            type: array
+    post:
+      consumes:
+      - application/json
+      description: Create a file.
+      parameters:
+      - description: Name of File.
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: Description of File.
+        in: formData
+        name: size
+        required: true
+        type: integer
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.File'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "500":
+          description: File is not created
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /upload/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a file.
+      parameters:
+      - description: File ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a file.
+      parameters:
+      - description: File ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.File'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+    put:
+      consumes:
+      - application/json
+      description: Update a file.
+      parameters:
+      - description: File ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.File'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "500":
+          description: File is not updated
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /user/admin:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve user array for admin. It contains more information than
+        normal query.
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.User'
+            type: array
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /user/admin/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a user for admin. It contains more information than normal
+        query.
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /user/current:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the current user.
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "500":
+          description: Liking is not deleted
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /user/email/{email}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve user by email.
+      parameters:
+      - description: User email
+        in: path
+        name: email
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.PublicUser'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /user/email/{email}/list:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve user array by email.
+      parameters:
+      - description: User email
+        in: path
+        name: email
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.PublicUser'
+            type: array
+  /user/reset/password:
+    put:
+      consumes:
+      - application/json
+      description: Create a user session.
+      parameters:
+      - description: User password reset token
+        in: formData
+        name: token
+        required: true
+        type: string
+      - description: New password
+        in: formData
+        name: newPassword
+        required: true
+        type: string
+      responses:
+        "200":
+          description: User password updated
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "400":
+          description: User password is not updated.
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "500":
+          description: Password reset token not sent
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /user/send/email/verification/token:
+    post:
+      consumes:
+      - application/json
+      description: Create a user session.
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "500":
+          description: Email verification token not sent
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /user/send/password/reset/token:
+    post:
+      consumes:
+      - application/json
+      description: Create a user session.
+      parameters:
+      - description: User email.
+        in: formData
+        name: email
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Sent
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "500":
+          description: Password reset token not sent
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /user/test/send/email:
+    get:
+      consumes:
+      - application/json
+      description: send a test email.
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /user/username/{username}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve user by username.
+      parameters:
+      - description: User email
+        in: path
+        name: username
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.PublicUser'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /user/verify/email:
+    put:
+      consumes:
+      - application/json
+      description: Create a user session.
+      parameters:
+      - description: User email validation token
+        in: formData
+        name: token
+        required: true
+        type: string
+      responses:
+        "200":
+          description: User email verified.
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "400":
+          description: User email not verified.
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve user array.
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.PublicUser'
+            type: array
+    post:
+      consumes:
+      - application/json
+      description: Create a user.
+      parameters:
+      - description: User Email.
+        in: formData
+        name: registrationEmail
+        required: true
+        type: string
+      - description: User Password.
+        in: formData
+        name: registrationPassword
+        required: true
+        type: string
+      responses:
+        "201":
+          description: User is registered successfully
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: User not logged in.
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "500":
+          description: User is not created.
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a user.
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "500":
+          description: User is not deleted.
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a user.
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.PublicUser'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+    put:
+      consumes:
+      - application/json
+      description: Activate/Deactivate a user.
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /users/{id}/liked:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve likings on a user.
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.PublicUser'
+            type: array
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /users/{id}/likings:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve likings on a user.
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.PublicUser'
+            type: array
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /users/{id}/likings/{likingId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a liking on user.
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      - description: Liking ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "500":
+          description: Liking is not deleted
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /users/{id}/roles/{roleId}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove a role from user.
+      parameters:
+      - description: User ID.
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Role ID.
+        in: formData
+        name: roleId
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "500":
+          description: Role is not deleted from a user
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /users/likings:
+    post:
+      consumes:
+      - application/json
+      description: Create a liking on a user.
+      parameters:
+      - description: Parent item id.
+        in: formData
+        name: parentId
+        required: true
+        type: integer
+      - description: User id.
+        in: formData
+        name: userId
+        required: true
+        type: integer
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.PublicUser'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: Not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "500":
+          description: Liking is not created
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+  /users/roles:
+    post:
+      consumes:
+      - application/json
+      description: Add a role to user.
+      parameters:
+      - description: User ID.
+        in: formData
+        name: userId
+        required: true
+        type: integer
+      - description: Role ID.
+        in: formData
+        name: roleId
+        required: true
+        type: integer
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "401":
+          description: Authentication required
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "404":
+          description: User or role is not found
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+        "500":
+          description: Role is not added to a user
+          schema:
+            $ref: '#/definitions/response.BasicResponse'
+swagger: "2.0"

@@ -7,10 +7,17 @@ import (
 	"os"
 
 	"github.com/disintegration/gift"
+
 	. "github.com/dorajistyle/goyangi/util/image"
+	viper "github.com/dorajistyle/goyangi/util/viper"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
+
+func init() {
+	viper.LoadConfig()
+}
 
 func ReadFile(filename string) (io.Reader, error) {
 	file, err := os.Open(filename)

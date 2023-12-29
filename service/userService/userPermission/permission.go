@@ -47,7 +47,7 @@ func AuthRequired(f func(c *gin.Context)) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, err := userService.CurrentUser(c)
 		if err != nil {
-			log.Error("Auth failed.")
+			log.Error("Auth failed.", err)
 			response.KnownErrorJSON(c, http.StatusUnauthorized, "error.loginPlease", errors.New("Auth failed."))
 			return
 		}
@@ -67,7 +67,7 @@ func AdminRequired(f func(c *gin.Context)) gin.HandlerFunc {
 				return
 			}
 		}
-		log.Error("Admin role required.")
+		log.Error("Admin role required.", err)
 		response.KnownErrorJSON(c, http.StatusUnauthorized, "error.adminRequired", errors.New("Admin role required."))
 		return
 	}

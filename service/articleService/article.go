@@ -7,7 +7,6 @@ import (
 
 	"net/http"
 
-	"github.com/dorajistyle/goyangi/config"
 	"github.com/dorajistyle/goyangi/db"
 	"github.com/dorajistyle/goyangi/model"
 	"github.com/dorajistyle/goyangi/service/commentService"
@@ -20,6 +19,7 @@ import (
 	"github.com/dorajistyle/goyangi/util/stringHelper"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"github.com/spf13/viper"
 )
 
 // canUserWrite check that user can write an article.
@@ -41,7 +41,7 @@ func canUserWrite(c *gin.Context, category int) bool {
 // assignRelatedUser assign related user to the article.
 func assignRelatedUser(article *model.Article) {
 	var tempUser model.User
-	if db.ORM.Model(&article).Select(config.UserPublicFields).Related(&tempUser).RecordNotFound() {
+	if db.ORM.Model(&article).Select(viper.GetString("publicFields.user")).Related(&tempUser).RecordNotFound() {
 		log.Warn("user is not found.")
 	}
 	// article.Author = model.PublicUser{User: &tempUser}
@@ -121,7 +121,7 @@ func RetrieveArticles(c *gin.Context) (model.ArticleList, int, error) {
 
 	filter := &ArticleFilter{}
 
-	articlePerPage = config.ArticlePerPage
+	articlePerPage = viper.GetInt("pagination.article")
 
 	whereBuffer := new(bytes.Buffer)
 	whereValues := []interface{}{}
@@ -157,7 +157,7 @@ func RetrieveArticles(c *gin.Context) (model.ArticleList, int, error) {
 	offset, currentPage, hasPrev, hasNext := pagination.Paginate(filter.CurrentPage, articlePerPage, articleCount)
 	log.Debugf("currentPage, perPage, total : %d, %d, %d", filter.CurrentPage, articlePerPage, articleCount)
 	log.Debugf("offset, currentPage, hasPrev, hasNext : %d, %d, %t, %t", offset, currentPage, hasPrev, hasNext)
-	db.ORM.Limit(articlePerPage).Offset(offset).Order(config.ArticleOrder).Where(whereStr, whereValues...).Find(&articles)
+	db.ORM.Limit(articlePerPage).Offset(offset).Order(viper.GetString("order.article")).Where(whereStr, whereValues...).Find(&articles)
 	return model.ArticleList{Articles: articles, Category: category, HasPrev: hasPrev, HasNext: hasNext, Count: articleCount, CurrentPage: currentPage, PerPage: articlePerPage}, http.StatusOK, nil
 }
 

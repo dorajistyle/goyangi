@@ -4,16 +4,20 @@ import (
 	"net/http"
 	// "github.com/gin-gonic/gin"
 	"bytes"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
 	"sync/atomic"
 
 	"github.com/dorajistyle/goyangi/util/concurrency"
+	viper "github.com/dorajistyle/goyangi/util/viper"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
+
+func init() {
+	viper.LoadConfig()
+}
 
 // mockCocurrencytManager
 func mockCocurrencytManager() concurrency.ConcurrencyManager {
@@ -48,8 +52,6 @@ func mockCocurrencytManager() concurrency.ConcurrencyManager {
 				continue
 			}
 			result.Code, result.Error = ConcurrencyRun(part, userAgent)
-			fmt.Printf("count : %d\n", count)
-			fmt.Printf("count : %s\n", part)
 		}
 		return result
 	}
@@ -91,7 +93,7 @@ var _ = Describe("concurrency", func() {
 				}
 				// multipart, err := req.MultipartReader()
 				// if multipart == nil {
-				//     t.Errorf("expected multipart; error: %v", err)
+				//     t.Error("expected multipart;", err)
 				// }
 
 				// req.Header = Header{"Content-Type": {"text/plain"}}

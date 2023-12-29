@@ -14,7 +14,8 @@ import (
 // CreateRole creates a role.
 func CreateRole(c *gin.Context) (model.Role, int, error) {
 	var form RoleForm
-	c.BindWith(&form, binding.Form)
+	bindErr := c.MustBindWith(&form, binding.Form)
+	log.Debugf("bind error : %s\n", bindErr)
 	name := form.Name
 	description := form.Description
 	role := model.Role{Name: name, Description: description}
@@ -46,7 +47,8 @@ func UpdateRole(c *gin.Context) (model.Role, int, error) {
 	var role model.Role
 	var form RoleForm
 	id := c.Params.ByName("id")
-	c.BindWith(&form, binding.Form)
+	bindErr := c.MustBindWith(&form, binding.Form)
+	log.Debugf("bind error : %s\n", bindErr)
 	if db.ORM.First(&role, id).RecordNotFound() {
 		return role, http.StatusNotFound, errors.New("Role is not found.")
 	}

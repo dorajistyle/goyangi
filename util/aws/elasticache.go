@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/dorajistyle/goyangi/util/config"
 	"github.com/goamz/goamz/aws"
+	"github.com/spf13/viper"
 )
 
 var (
@@ -110,7 +110,7 @@ func NewElasticacheWithParam(auth aws.Auth, region aws.Region) *ElastiCache {
 
 // NewElasticache creates a new ElastiCache instance
 func NewElasticache() *ElastiCache {
-	return NewElasticacheWithParam(Auth(), Region(config.AWSS3RegionName))
+	return NewElasticacheWithParam(Auth(), Region(viper.GetString("aws.s3.region")))
 }
 
 // DescribeReplicationGroup returns information about a cache replication group

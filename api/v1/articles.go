@@ -38,9 +38,9 @@ func Articles(parentRoute *gin.RouterGroup) {
 // @Title createArticle
 // @Description Create an article.
 // @Accept  json
-// @Param   title        form   string     true        "Article title."
-// @Param   url        form   string     true        "Article url."
-// @Param   content        form   string  false        "Article content."
+// @Param   title        formData   string     true        "Article title."
+// @Param   url        formData   string     true        "Article url."
+// @Param   content        formData   string  false        "Article content."
 // @Success 201 {object} model.Article "Created"
 // @Failure 401 {object} response.BasicResponse "Authentication required"
 // @Failure 500 {object} response.BasicResponse "Article is not created"
@@ -59,10 +59,10 @@ func createArticle(c *gin.Context) {
 // @Title createArticles
 // @Description Create a file.
 // @Accept  json
-// @Param   title        form   string     true        "Article title."
-// @Param   url        form   string     true        "Article url."
-// @Param   imageName        form   string     true        "Article imagename."
-// @Param   content        form   string  false        "Article content."
+// @Param   title        formData   string     true        "Article title."
+// @Param   url        formData   string     true        "Article url."
+// @Param   imageName        formData   string     true        "Article imagename."
+// @Param   content        formData   string  false        "Article content."
 // @Success 201 {object} model.Article "Created"
 // @Failure 401 {object} response.BasicResponse "Authentication required"
 // @Failure 500 {object} response.BasicResponse "Article is not created"
@@ -162,10 +162,10 @@ func deleteArticle(c *gin.Context) {
 // @Title createCommentOnArticle
 // @Description Create a comment on an article.
 // @Accept  json
-// @Param   articleId        form   int     true        "Article Id."
-// @Param   content        form   string     true        "Comment content."
-// @Param   imageName        form   string     true        "Article image name."
-// @Param   description        form   string  false        "Article description."
+// @Param   articleId        formData   int     true        "Article Id."
+// @Param   content        formData   string     true        "Comment content."
+// @Param   imageName        formData   string     true        "Article image name."
+// @Param   description        formData   string  false        "Article description."
 // @Success 201 {object} response.BasicResponse "Comment created"
 // @Failure 401 {object} response.BasicResponse "Authentication required"
 // @Failure 403 {object} response.BasicResponse "FormUser's Id is not identical with currentUser's Id"
@@ -254,10 +254,10 @@ func deleteCommentOnArticle(c *gin.Context) {
 // @Title createLikingOnArticle
 // @Description Create a liking on an article.
 // @Accept  json
-// @Param   articleId        form   int     true        "Article Id."
-// @Param   content        form   string     true        "Liking content."
-// @Param   imageName        form   string     true        "Article image name."
-// @Param   description        form   string  false        "Article description."
+// @Param   articleId        formData   int     true        "Article Id."
+// @Param   content        formData   string     true        "Liking content."
+// @Param   imageName        formData   string     true        "Article image name."
+// @Param   description        formData   string  false        "Article description."
 // @Success 201 {object} response.BasicResponse "Liking created"
 // @Failure 401 {object} response.BasicResponse "Authentication required"
 // @Failure 403 {object} response.BasicResponse "FormUser's Id is not identical with currentUser's Id"
@@ -323,7 +323,7 @@ func deleteLikingOnArticle(c *gin.Context) {
 // @Title uploadAndSyncArticles
 // @Description upload images to storage. And sync article data. Request should contain multipart form data.
 // @Accept  json
-// @Success 201 {object} gin.H "Uploaded"
+// @Success 201 {object} response.BasicResponse "Uploaded"
 // @Failure 401 {object} response.BasicResponse "Authentication required"
 // @Failure 500 {object} response.BasicResponse "Upload failed"
 // @Resource /articles/sync
